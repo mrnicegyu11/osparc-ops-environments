@@ -38,17 +38,16 @@ make help
 A self-signed certificate may be generated. The system host file may be modified using the default **osparc.local** fully qualified domain name (FQDN) to point to the local machine.
 
 The services above will be deployed and pre-configured on the following endpoints:
-  - Traefik: [https://osparc.local:9001/dashboard/](https://osparc.local:9001/dashboard/)
-  - Portainer: [https://osparc.local/portainer/](https://osparc.local/portainer/)
-  - Minio: [https://osparc.local/minio](https://osparc.local/minio) and [https://osparc.local:10000](https://osparc.local:10000)
-  - Portus: [https://osparc.local:5000](https://osparc.local:5000)
+  - Traefik: [https://osparc01.speag.com:9001/dashboard/](https://osparc01.speag.com:9001/dashboard/)
+  - Portainer: [https://osparc01.speag.com/portainer/](https://osparc01.speag.com/portainer/)
+  - Minio: [https://osparc01.speag.com/minio](https://osparc01.speag.com/minio) and [https://osparc01.speag.com:10000](https://osparc01.speag.com:10000)
+  - Portus: [https://osparc01.speag.com:5000](https://osparc01.speag.com:5000)
   - Deployment agent: no UI
-  - Graylog: [https://osparc.local/graylog/](https://osparc.local/graylog/)
-  - Jaeger: [https://osparc.local/jaeger](https://osparc.local/jaeger)
-  - Adminer: [https://osparc.local/adminer](https://osparc.local/adminer)
-  - Monitoring: [https://osparc.local/grafana](https://osparc.local/grafana) and Prometheus: [http://osparc.local:9090](http://osparc.local:9090)
+  - Graylog: [https://osparc01.speag.com/graylog/](https://osparc01.speag.com/graylog/)
+  - Adminer: [https://osparc01.speag.com/adminer](https://osparc01.speag.com/adminer)
+  - Monitoring: [https://osparc01.speag.com/grafana](https://osparc01.speag.com/grafana) and Prometheus: [http://osparc01.speag.com:9090](http://osparc01.speag.com:9090)
   - Maintenance: not reversed proxied yet
-  - **Simcore:** **[https://osparc.local](https://osparc.local)**
+  - **Simcore:** **[https://osparc01.speag.com](https://osparc01.speag.com)**
 
 Default credentials are the following:
   user: admin
@@ -64,4 +63,3 @@ Each service may be configured and deployed according to the needs. Please see e
 ### virtual_cluster (deprecated)
 
 - Deploy a virtual cluster to your own host.  Suitable as an infrastructure plaform for oSPARC Simcore.
-
