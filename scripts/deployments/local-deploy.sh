@@ -125,19 +125,6 @@ echo -e "\e[1;33mstarting monitoring...\e[0m"
 service_dir="${repo_basedir}"/services/monitoring
 substitute_environs "${service_dir}"/grafana/template-config.monitoring "${service_dir}"/grafana/config.monitoring
 substitute_environs "${service_dir}"/grafana/provisioning/datasources/datasource.yml.template "${service_dir}"/grafana/provisioning/datasources/datasource.yml
-# if  the script is running under Windows, this line need to be commented : - /etc/hostname:/etc/host_hostname
-if grep -qEi "(Microsoft|WSL)" /proc/version;
-then 
-    if [ ! "$(grep -qEi  "#- /etc/hostname:/etc/nodename # don't work with windows" &> /dev/null "${service_dir}"/docker-compose.yml)" ]
-    then
-        $psed --in-place --expression="s~- /etc/hostname:/etc/nodename # don't work with windows~#- /etc/hostname:/etc/nodename # don't work with windows~" "${service_dir}"/docker-compose.yml
-    fi
-else
-    if [ "$(grep  "#- /etc/hostname:/etc/nodename # don't work with windows" &> /dev/null "${service_dir}"/docker-compose.yml)" ]  
-    then
-        $psed --in-place --expression="s~#- /etc/hostname:/etc/nodename # don't work with windows~- /etc/hostname:/etc/nodename # don't work with windows~" "${service_dir}"/docker-compose.yml
-    fi
-fi
 call_make "${service_dir}" up
 # -------------------------------- JAEGER -------------------------------
 echo
@@ -155,19 +142,6 @@ call_make "${service_dir}" up
 echo
 echo -e "\e[1;33mstarting graylog...\e[0m"
 service_dir="${repo_basedir}"/services/graylog
-# if  the script is running under Windows, this line need to be commented : - /etc/hostname:/etc/host_hostname
-if grep -qEi "(Microsoft|WSL)" /proc/version;
-then 
-    if [ ! "$(grep -qEi  "#- /etc/hostname:/etc/host_hostname # does not work in windows" &> /dev/null "${service_dir}"/docker-compose.yml)" ]
-    then
-        $psed --in-place --expression="s~- /etc/hostname:/etc/host_hostname # does not work in windows~#- /etc/hostname:/etc/host_hostname # does not work in windows~" "${service_dir}"/docker-compose.yml
-    fi
-else
-    if [ "$(grep  "#- /etc/hostname:/etc/host_hostname # does not work in windows" &> /dev/null "${service_dir}"/docker-compose.yml)" ]
-    then
-        $psed --in-place --expression="s~#- /etc/hostname:/etc/host_hostname # does not work in windows~- /etc/hostname:/etc/host_hostname # does not work in windows~" "${service_dir}"/docker-compose.yml
-    fi
-fi
 call_make "${service_dir}" up
 call_make "${service_dir}" configure-instance
 

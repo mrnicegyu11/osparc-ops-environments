@@ -33,6 +33,7 @@ up-letsencrypt: .init .env ${TEMP_COMPOSE}-letsencrypt  ## Deploys registry stac
 
 .PHONY: up-aws
 up-aws: .env ${TEMP_COMPOSE}-aws  ## Deploys registry on AWS
+	@$(create-s3-bucket)
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 

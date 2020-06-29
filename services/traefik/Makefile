@@ -36,10 +36,16 @@ ${TEMP_COMPOSE}-local: docker-compose.yml docker-compose.local.yml
 
 .PHONY: ${TEMP_COMPOSE}-letsencrypt
 ${TEMP_COMPOSE}-letsencrypt: docker-compose.yml docker-compose.letsencrypt.yml
+	@set -o allexport; \
+	source .env; \
+	set +o allexport; \
 	@docker-compose -f $< -f docker-compose.letsencrypt.yml --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE}-aws
 ${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml
+	@set -o allexport; \
+	source .env; \
+	set +o allexport; \
 	@docker-compose -f $< -f docker-compose.aws.yml --log-level=ERROR config > $@
 
 
