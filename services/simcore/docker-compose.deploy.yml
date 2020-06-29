@@ -60,12 +60,12 @@ services:
 
   # need to pass self-signed certificate in /usr/local/share/ca-certificates and call update-ca-certificates
   storage:
-    secrets:
-      - source: rootca.crt
-        target: /usr/local/share/ca-certificates/osparc.crt
+    #secrets:
+      #- source: rootca.crt
+        #target: /usr/local/share/ca-certificates/osparc.crt
     environment:
       # minio sdk uses this env to use self-signed certs
-      - SSL_CERT_FILE=/usr/local/share/ca-certificates/osparc.crt
+      #- SSL_CERT_FILE=/usr/local/share/ca-certificates/osparc.crt
       - LOGSPOUT_MULTILINE=true
     networks:
       - monitored
@@ -88,16 +88,16 @@ services:
 
   director:
     # Certificate necessary for local deploiement only
-    secrets:
-      - source: rootca.crt
-        target: /usr/local/share/ca-certificates/osparc.crt
+    #secrets:
+      #- source: rootca.crt
+        #target: /usr/local/share/ca-certificates/osparc.crt
     environment:
       - LOGSPOUT_MULTILINE=true
       # needed to pass the self-signed certificate to the spawned services
       - DIRECTOR_SELF_SIGNED_SSL_FILENAME=/usr/local/share/ca-certificates/osparc.crt
       # - DIRECTOR_SELF_SIGNED_SSL_SECRET_ID=some_id
       - DIRECTOR_SELF_SIGNED_SSL_SECRET_NAME=rootca.crt
-      - SSL_CERT_FILE=/usr/local/share/ca-certificates/osparc.crt
+      #- SSL_CERT_FILE=/usr/local/share/ca-certificates/osparc.crt
     networks:
       - monitored
     deploy:
