@@ -172,9 +172,9 @@ $psed --in-place "s~S3_SECRET_KEY:.*~S3_SECRET_KEY: ${SECRET_ACCESS_KEY}~" deplo
 $psed --in-place "/- url: .*portainer:9000/{n;s/username:.*/username: ${SERVICES_USER}/}" ${agent_compose_default}
 $psed --in-place "/- url: .*portainer:9000/{n;n;s/password:.*/password: ${SERVICES_PASSWORD}/}" ${agent_compose_default}
 # extra_hosts
-$psed --in-place "s|extra_hosts: \[\]|extra_hosts:\n - \"${MACHINE_FQDN}:${machine_ip}\"|" ${agent_compose_default}
+$psed --in-place "s|extra_hosts: \[\]|extra_hosts:\n        - \"${MACHINE_FQDN}:${machine_ip}\n ${MONITORING_DOMAIN}:${machine_ip}\n ${REGISTRY_DOMAIN}:${machine_ip}\n ${API_DOMAIN}:${machine_ip} \"|" ${agent_compose_default}
 #Update
-$psed --in-place "/extra_hosts:/{n;s/- .*/- \"${MACHINE_FQDN}:${machine_ip}\"/}" ${agent_compose_default}
+$psed --in-place "/extra_hosts:/{n;s/- .*/- \"${MACHINE_FQDN}:${machine_ip}\n ${MONITORING_DOMAIN}:${machine_ip}\n ${REGISTRY_DOMAIN}:${machine_ip}\n ${API_DOMAIN}:${machine_ip}\"/}" ${agent_compose_default}
 
 # We don't use Minio and postgresql with AWS
 $psed --in-place "s~excluded_services:.*~excluded_services: [webclient, minio, postgres]~" deployment_config.default.yaml

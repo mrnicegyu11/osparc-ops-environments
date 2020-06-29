@@ -201,11 +201,12 @@ if [ "$devel_mode" -eq 0 ]; then
     $psed --in-place "/- url: .*portainer:9000/{n;s/username:.*/username: ${SERVICES_USER}/}" ${agent_compose_default}
     $psed --in-place "/- url: .*portainer:9000/{n;n;s/password:.*/password: ${SERVICES_PASSWORD}/}" ${agent_compose_default}
     # extra_hosts
-    $psed --in-place "s|extra_hosts: \[\]|extra_hosts:\n        - \"${MACHINE_FQDN}:${machine_ip}\n ${MACHINE_FQDN}:${machine_ip}\"|" ${agent_compose_default}
+    $psed --in-place "s|extra_hosts: \[\]|extra_hosts:\n        - \"${MACHINE_FQDN}:${machine_ip}\"|" ${agent_compose_default}
+    # update
+    $psed --in-place "/extra_hosts:/{n;s/- .*/- \"${MACHINE_FQDN}:${machine_ip}\"/}" ${agent_compose_default}    
     # AWS don't use Minio and Postgresql. We need to use them again in local.
     $psed --in-place "s~excluded_services:.*~excluded_services: [webclient]~" ${agent_compose_default}
-    # update
-    $psed --in-place "/extra_hosts:/{n;s/- .*/- \"${MACHINE_FQDN}:${machine_ip}\"/}" ${agent_compose_default}
+
     make down up;
     popd
 fi
