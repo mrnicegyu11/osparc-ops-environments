@@ -62,7 +62,7 @@ pushd "${repo_basedir}"/services/simcore;
 simcore_env=".env"
 simcore_compose="docker-compose.deploy.yml"
 
-substitute_environs ${simcore_env}
+substitute_environs template${simcore_env} ${simcore_env}
 
 # for aws use we need http for the traefik entrypoint in simcore. Https is handled by aws
 $psed --in-place --expression='s/traefik.http.routers.${PREFIX_STACK_NAME}_webserver.entrypoints=.*/traefik.http.routers.${PREFIX_STACK_NAME}_webserver.entrypoints=http/' ${simcore_compose}
@@ -142,36 +142,9 @@ call_make "${service_dir}" up-aws
 # -------------------------------- GRAYLOG -------------------------------
 echo
 echo -e "\e[1;33mstarting graylog...\e[0m"
-
 service_dir="${repo_basedir}"/services/graylog
-GRAYLOG_ROOT_PASSWORD_SHA2=$(echo -n "$GRAYLOG_ROOT_PASSWORD" | sha256sum | cut -d ' ' -f1)
-export GRAYLOG_ROOT_PASSWORD_SHA2
-substitute_environs "${service_dir}"/template.env "${service_dir}"/.env
-make -C "${service_dir}" up-aws
-
-# Wait for Graylog to start, then send a request configuring one INPUT to allow graylogs to receive logs transmitted by LOGSPOUT
-echo
-echo "waiting for graylog to run..."
-while [ ! $(curl -s -o /dev/null -I -w "%{http_code}" --max-time 10 -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://$MONITORING_DOMAIN/graylog/api/users) = 401 ]; do
-    echo "waiting for graylog to run..."
-    sleep 5s
-done
-json_data=$(cat <<EOF
-{
-"title": "standard GELF UDP input",
-    "type": "org.graylog2.inputs.gelf.udp.GELFUDPInput",
-    "global": "true",
-    "configuration": {
-        "bind_address": "0.0.0.0",
-        "port":12201
-    }
-}
-EOF
-)
-curl -u $GRAYLOG_LOGIN:$GRAYLOG_ROOT_PASSWORD --header "Content-Type: application/json" \
-    --header "X-Requested-By: cli" -X POST \
-    --data "$json_data" https://$MONITORING_DOMAIN/graylog/api/system/inputs
-popd
+call_make "${service_dir}" up-aws
+call_make "${service_dir}" configure-instance
 
 
 
@@ -195,6 +168,13 @@ $psed --in-place "s~environment: {}~$YAML_STRING~" deployment_config.default.yam
 $psed --in-place "s/S3_ENDPOINT:.*/S3_ENDPOINT: ${S3_ENDPOINT}/" deployment_config.default.yaml
 $psed --in-place "s~S3_ACCESS_KEY:.*~S3_ACCESS_KEY: ${ACCESS_KEY_ID}~" deployment_config.default.yaml
 $psed --in-place "s~S3_SECRET_KEY:.*~S3_SECRET_KEY: ${SECRET_ACCESS_KEY}~" deployment_config.default.yaml
+# portainer
+$psed --in-place "/- url: .*portainer:9000/{n;s/username:.*/username: ${SERVICES_USER}/}" ${agent_compose_default}
+$psed --in-place "/- url: .*portainer:9000/{n;n;s/password:.*/password: ${SERVICES_PASSWORD}/}" ${agent_compose_default}
+# extra_hosts
+$psed --in-place "s|extra_hosts: \[\]|extra_hosts:\n - \"${MACHINE_FQDN}:${machine_ip}\"|" ${agent_compose_default}
+#Update
+$psed --in-place "/extra_hosts:/{n;s/- .*/- \"${MACHINE_FQDN}:${machine_ip}\"/}" ${agent_compose_default}
 
 # We don't use Minio and postgresql with AWS
 $psed --in-place "s~excluded_services:.*~excluded_services: [webclient, minio, postgres]~" deployment_config.default.yaml
