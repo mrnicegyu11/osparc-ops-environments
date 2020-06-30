@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-  portainer:
+  redis-commander:
     deploy:
       labels:
         - traefik.http.routers.redis.tls=false

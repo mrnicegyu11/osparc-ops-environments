@@ -41,6 +41,7 @@ repo_basedir=$(realpath "${this_script_dir}"/../../)
 current_git_url=$(git config --get remote.origin.url)
 current_git_branch=$(git rev-parse --abbrev-ref HEAD)
 
+machine_ip=$(get_this_ip)
 
 # Loads configurations variables
 # See https://askubuntu.com/questions/743493/best-way-to-read-a-config-file-in-bash
@@ -152,22 +153,23 @@ call_make "${service_dir}" configure-instance
 echo
 echo -e "\e[1;33mstarting deployment-agent for simcore...\e[0m"
 pushd "${repo_basedir}"/services/deployment-agent;
+agent_compose_default="deployment_config.default.yaml"
 if [[ $current_git_url == git* ]]; then
     # it is a ssh style link let's get the organisation name and just replace this cause that conf only accepts https git repos
     current_organisation=$(echo "$current_git_url" | cut -d":" -f2 | cut -d"/" -f1)
-    $psed --in-place "s|https://github.com/ITISFoundation/osparc-ops.git|https://github.com/$current_organisation/osparc-ops.git|" deployment_config.default.yaml
+    $psed --in-place "s|https://github.com/ITISFoundation/osparc-ops.git|https://github.com/$current_organisation/osparc-ops.git|" ${agent_compose_default}
 else
-    $psed --in-place "/- id: simcore-ops-repo/{n;s|url:.*|url: $current_git_url|}" deployment_config.default.yaml
+    $psed --in-place "/- id: simcore-ops-repo/{n;s|url:.*|url: $current_git_url|}" ${agent_compose_default}
 fi
-$psed --in-place "/- id: simcore-ops-repo/{n;n;s|branch:.*|branch: $current_git_branch|}" deployment_config.default.yaml
+$psed --in-place "/- id: simcore-ops-repo/{n;n;s|branch:.*|branch: $current_git_branch|}" ${agent_compose_default}
 
 # Add environment variable that will be used by the simcore stack when deployed with the deployment-agent
-YAML_STRING="environment:\n        S3_ENDPOINT: ${S3_ENDPOINT}\n        S3_ACCESS_KEY: ${ACCESS_KEY_ID}\n        S3_SECRET_KEY: ${SECRET_ACCESS_KEY}"
-$psed --in-place "s~environment: {}~$YAML_STRING~" deployment_config.default.yaml
+YAML_STRING="environment:\n        S3_ENDPOINT: ${S3_ENDPOINT}\n        S3_ACCESS_KEY: ${S3_ACCESS_KEY}\n        S3_SECRET_KEY: ${S3_SECRET_KEY}"
+$psed --in-place "s~environment: {}~$YAML_STRING~" ${agent_compose_default}
 # update in case there is already something in "environment: {}"
-$psed --in-place "s/S3_ENDPOINT:.*/S3_ENDPOINT: ${S3_ENDPOINT}/" deployment_config.default.yaml
-$psed --in-place "s~S3_ACCESS_KEY:.*~S3_ACCESS_KEY: ${ACCESS_KEY_ID}~" deployment_config.default.yaml
-$psed --in-place "s~S3_SECRET_KEY:.*~S3_SECRET_KEY: ${SECRET_ACCESS_KEY}~" deployment_config.default.yaml
+$psed --in-place "s/S3_ENDPOINT:.*/S3_ENDPOINT: ${S3_ENDPOINT}/" ${agent_compose_default}
+$psed --in-place "s~S3_ACCESS_KEY:.*~S3_ACCESS_KEY: ${S3_ACCESS_KEY}~" ${agent_compose_default}
+$psed --in-place "s~S3_SECRET_KEY:.*~S3_SECRET_KEY: ${S3_SECRET_KEY}~" ${agent_compose_default}
 # portainer
 $psed --in-place "/- url: .*portainer:9000/{n;s/username:.*/username: ${SERVICES_USER}/}" ${agent_compose_default}
 $psed --in-place "/- url: .*portainer:9000/{n;n;s/password:.*/password: ${SERVICES_PASSWORD}/}" ${agent_compose_default}
@@ -177,6 +179,6 @@ $psed --in-place "s|extra_hosts: \[\]|extra_hosts:\n        - \"${MACHINE_FQDN}:
 $psed --in-place "/extra_hosts:/{n;s/- .*/- \"${MACHINE_FQDN}:${machine_ip}\n ${MONITORING_DOMAIN}:${machine_ip}\n ${REGISTRY_DOMAIN}:${machine_ip}\n ${API_DOMAIN}:${machine_ip}\"/}" ${agent_compose_default}
 
 # We don't use Minio and postgresql with AWS
-$psed --in-place "s~excluded_services:.*~excluded_services: [webclient, minio, postgres]~" deployment_config.default.yaml
+$psed --in-place "s~excluded_services:.*~excluded_services: [webclient, minio, postgres]~" ${agent_compose_default}
 make down up;
 popd

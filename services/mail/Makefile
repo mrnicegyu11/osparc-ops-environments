@@ -11,11 +11,8 @@ TEMP_COMPOSE=.stack.${STACK_NAME}.yaml
 # External VARIABLES
 include .env
 
-# TARGETS --------------------------------------------------
-include $(realpath $(CURDIR)/../../scripts/common.Makefile)
-
 # Makefile including function used by every services
-include ../common.Makefile
+include ../../scripts/common.Makefile
 
 .PHONY: up-aws
 up-aws: .env ${TEMP_COMPOSE}  ## Deploys mail stack in aws
