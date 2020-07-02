@@ -35,6 +35,8 @@ services:
     environment:
       - LOGSPOUT_MULTILINE=true
       - PYTHONTRACEMALLOC=1
+      - DIRECTOR_HOST=${PREFIX_STACK_NAME}_director
+      - STORAGE_HOST=${PREFIX_STACK_NAME}_storage
       - DIAGNOSTICS_MAX_AVG_LATENCY=10
     deploy:
       labels:
@@ -42,7 +44,7 @@ services:
         # NOTE: traefik does not like - in the sslheader middleware, so we override it here
         # NOTE: in deploy mode with SSL they must be set to https!
         - traefik.http.middlewares.${SWARM_STACK_NAME_NO_HYPHEN}_sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
-        - traefik.http.routers.${SWARM_STACK_NAME}_webserver.middlewares=gzip@docker, ${SWARM_STACK_NAME_NO_HYPHEN}_sslheader
+        - traefik.http.routers.${SWARM_STACK_NAME}_webserver.middlewares= gzip@docker, ${SWARM_STACK_NAME_NO_HYPHEN}_sslheader
       update_config:
         parallelism: 2
         order: start-first
@@ -121,6 +123,7 @@ services:
   sidecar:
     environment:
       - LOGSPOUT_MULTILINE=true
+      - RABBIT_HOST=${PREFIX_STACK_NAME}_rabbit
     deploy:
       replicas: 8
       update_config:
