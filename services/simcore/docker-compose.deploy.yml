@@ -4,30 +4,30 @@
 # See this issue to have more informations : https://github.com/ITISFoundation/osparc-ops/issues/40
 version: "3.7"
 services:
-  api-server:
-    networks:
-      - public
-      - monitored
-    environment:
-      - LOGSPOUT_MULTILINE=true
-    deploy:
-      labels:
+ # api-server:
+    #networks:
+      #- public
+     # - monitored
+    #environment:
+     # - LOGSPOUT_MULTILINE=true
+    #deploy:
+      #labels:
         # NOTE: apiserver does not need sslheader since there is no socket.io
-        - traefik.http.routers.${SWARM_STACK_NAME}_api-server.middlewares=${SWARM_STACK_NAME}_gzip@docker
-      update_config:
-        parallelism: 2
-        order: start-first
-        failure_action: rollback
-        delay: 10s
-      rollback_config:
-        parallelism: 0
-        order: stop-first
-      restart_policy:
-        condition: any
-        delay: 5s
-        max_attempts: 3
-        window: 120s
-    extra_hosts: []
+      #  - traefik.http.routers.${SWARM_STACK_NAME}_api-server.middlewares=${SWARM_STACK_NAME}_gzip@docker
+      #update_config:
+        #parallelism: 2
+        #order: start-first
+        #failure_action: rollback
+       # delay: 10s
+      #rollback_config:
+       # parallelism: 0
+       # order: stop-first
+      #restart_policy:
+      #  condition: any
+     #   delay: 5s
+    #    max_attempts: 3
+   #     window: 120s
+   # extra_hosts: []
   webserver:
     networks:
       - public
