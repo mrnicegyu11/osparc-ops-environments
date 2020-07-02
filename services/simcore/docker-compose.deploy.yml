@@ -93,10 +93,11 @@ services:
         #target: /usr/local/share/ca-certificates/osparc.crt
     environment:
       - LOGSPOUT_MULTILINE=true
+      - SIMCORE_SERVICES_NETWORK_NAME=${SWARM_STACK_NAME}_interactive_services_subnet
       # needed to pass the self-signed certificate to the spawned services
-      - DIRECTOR_SELF_SIGNED_SSL_FILENAME=/usr/local/share/ca-certificates/osparc.crt
+      #- DIRECTOR_SELF_SIGNED_SSL_FILENAME=/usr/local/share/ca-certificates/osparc.crt
       # - DIRECTOR_SELF_SIGNED_SSL_SECRET_ID=some_id
-      - DIRECTOR_SELF_SIGNED_SSL_SECRET_NAME=rootca.crt
+      #- DIRECTOR_SELF_SIGNED_SSL_SECRET_NAME=rootca.crt
       #- SSL_CERT_FILE=/usr/local/share/ca-certificates/osparc.crt
     networks:
       - monitored
