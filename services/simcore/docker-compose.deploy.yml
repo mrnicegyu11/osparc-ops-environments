@@ -219,6 +219,8 @@ services:
         window: 120s
 
   traefik:
+    command:
+      - '--log.level=DEBUG'
     networks:
       - monitored
       - public
