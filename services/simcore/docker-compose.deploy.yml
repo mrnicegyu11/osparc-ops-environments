@@ -235,7 +235,7 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_traefik.entrypoints=http
         - traefik.http.routers.${SWARM_STACK_NAME}_traefik.priority=1
         - traefik.http.routers.${SWARM_STACK_NAME}_traefik.tls=false
-        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.middlewares=ops_gzip@docker, ops_sslheader
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.middlewares=gzip@docker, ${SWARM_STACK_NAME_NO_HYPHEN}_sslheader
       update_config:
         parallelism: 2
         order: start-first
