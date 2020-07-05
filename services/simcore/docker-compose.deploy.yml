@@ -221,6 +221,7 @@ services:
   traefik:
     command:
       - '--log.level=DEBUG'
+      - '--accesslog=true'
     networks:
       - monitored
       - public
