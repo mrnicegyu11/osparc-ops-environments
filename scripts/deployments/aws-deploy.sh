@@ -33,6 +33,11 @@ declare psed # fixes shellcheck issue with not finding psed
 
 source "$( dirname "${BASH_SOURCE[0]}" )/../portable.sh"
 
+# Set local ip in repo.config
+machine_ip=$(get_this_ip)
+MANAGER_ENDPOINT_IP=${machine_ip}
+export MANAGER_ENDPOINT_IP
+
 # Paths
 this_script_dir=$(dirname "$0")
 repo_basedir=$(realpath "${this_script_dir}"/../../)

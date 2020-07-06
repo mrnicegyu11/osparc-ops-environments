@@ -33,6 +33,11 @@ services:
       labels:
         - traefik.http.routers.api.tls=true
         - traefik.http.routers.api.tls.certresolver=lehttpchallenge
+        # redirect http to https
+        - traefik.http.middlewares.http_to_https.redirectScheme.scheme=https
+        - traefik.http.routers.http_to_https.rule=hostregexp(`{host:.+}`)
+        - traefik.http.routers.http_to_https.entrypoints=http
+        - traefik.http.routers.http_to_https.middlewares=http_to_https
   whoami:
     deploy:
       labels:

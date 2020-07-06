@@ -1,7 +1,6 @@
 version: '3.7'
 services:
   registry:
-    command: ["/bin/sh", "/etc/docker/registry/init"]
     environment:
       # set to true if using self-signed certificates
       UPDATE_CERTIFICATES: "true"

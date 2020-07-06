@@ -50,11 +50,6 @@ services:
         - traefik.docker.network=${PUBLIC_NETWORK}
         # ssl header necessary so that socket.io upgrades correctly from polling to websocket mode. the middleware must be attached to the right connection.
         - traefik.http.middlewares.ops_sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
-        # redirect http to https
-        - traefik.http.middlewares.http_to_https.redirectScheme.scheme=https
-        - traefik.http.routers.http_to_https.rule=hostregexp(`{host:.+}`)
-        - traefik.http.routers.http_to_https.entrypoints=http
-        - traefik.http.routers.http_to_https.middlewares=http_to_https
         # basic authentication
         # Note: all dollar signs in the hash need to be doubled for escaping.
         # To create user:password pair, it's possible to use this command:

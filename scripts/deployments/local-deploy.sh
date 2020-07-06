@@ -63,7 +63,7 @@ case $i in
 esac
 done
 
-# Set local ip in repo.config
+# Set MANAGER_ENDPOINT_IP local ip in repo.config
 MANAGER_ENDPOINT_IP=${machine_ip}
 export MANAGER_ENDPOINT_IP
 

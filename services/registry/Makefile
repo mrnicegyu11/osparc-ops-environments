@@ -23,17 +23,16 @@ endef
 .PHONY: up
 up: .init .env ${TEMP_COMPOSE}  ## Deploys registry stack
 	@$(create-s3-bucket)
-	@docker stack deploy --compose-file ${TEMP_COMPOSE} ${STACK_NAME}
+	docker stack deploy --compose-file ${TEMP_COMPOSE} ${STACK_NAME}
 
 .PHONY: up-letsencrypt
 up-letsencrypt: .init .env ${TEMP_COMPOSE}-letsencrypt  ## Deploys registry stack using let's encrypt
 	# creating bucket
 	@$(create-s3-bucket)
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt ${STACK_NAME}
+	docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt ${STACK_NAME}
 
 .PHONY: up-aws
 up-aws: .env ${TEMP_COMPOSE}-aws  ## Deploys registry on AWS
-	@$(create-s3-bucket)
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 
@@ -41,12 +40,12 @@ up-aws: .env ${TEMP_COMPOSE}-aws  ## Deploys registry on AWS
 
 .PHONY: ${TEMP_COMPOSE}
 ${TEMP_COMPOSE}: docker-compose.yml docker-compose.self-signed.yml
-	@docker-compose -f $< -f docker-compose.self-signed.yml --log-level=ERROR config > $@
+	docker-compose -f $< -f docker-compose.self-signed.yml --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE}-letsencrypt
 ${TEMP_COMPOSE}-letsencrypt: docker-compose.yml docker-compose.letsencrypt.yml
-	@docker-compose -f $< -f docker-compose.letsencrypt.yml --log-level=ERROR config > $@
+	docker-compose -f $< -f docker-compose.letsencrypt.yml --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE}-aws
 ${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml
-	@docker-compose -f $< -f docker-compose.aws.yml --log-level=ERROR config > $@
+	docker-compose -f $< -f docker-compose.aws.yml --log-level=ERROR config > $@

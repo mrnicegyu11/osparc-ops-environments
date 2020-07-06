@@ -23,7 +23,13 @@ services:
       - "--tracing.jaeger.samplingServerURL=http://jaeger:5778/sampling"
       - "--tracing.jaeger.localAgentHostPort=jaeger:6831"
       - "--providers.file.filename=/etc/traefik/dynamic_conf.yml"
-
+    deploy:
+      labels:
+        # redirect http to https
+        - traefik.http.middlewares.http_to_https.redirectScheme.scheme=https
+        - traefik.http.routers.http_to_https.rule=hostregexp(`{host:.+}`)
+        - traefik.http.routers.http_to_https.entrypoints=http
+        - traefik.http.routers.http_to_https.middlewares=http_to_https
     configs:
       - source: traefik_dynamic_config.yml
         target: /etc/traefik/dynamic_conf.yml
