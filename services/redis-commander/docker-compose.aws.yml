@@ -4,4 +4,4 @@ services:
     deploy:
       labels:
         - traefik.http.routers.redis.tls=false
-        - traefik.http.routers.redis.entrypoints=http
+        - traefik.http.routers.redis.entrypoints=http_aws

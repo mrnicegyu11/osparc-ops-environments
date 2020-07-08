@@ -6,4 +6,4 @@ services:
     deploy:
       labels:
         - traefik.http.routers.registry.tls=false
-        - traefik.http.routers.registry.entrypoints=http
+        - traefik.http.routers.registry.entrypoints=http_aws

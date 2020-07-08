@@ -4,4 +4,4 @@ services:
     deploy:
       labels:
         - traefik.http.routers.graylog.tls=false
-        - traefik.http.routers.graylog.entrypoints=http
+        - traefik.http.routers.graylog.entrypoints=http_aws

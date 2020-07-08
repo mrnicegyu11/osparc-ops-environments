@@ -4,4 +4,4 @@ services:
     deploy:
       labels:
         - traefik.http.routers.adminer.tls=false
-        - traefik.http.routers.adminer.entrypoints=http
+        - traefik.http.routers.adminer.http_aws

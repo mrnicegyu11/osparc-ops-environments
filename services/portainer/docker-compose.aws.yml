@@ -4,4 +4,4 @@ services:
     deploy:
       labels:
         - traefik.http.routers.portainer.tls=false
-        - traefik.http.routers.portainer.entrypoints=http
+        - traefik.http.routers.portainer.entrypoints=http_aws

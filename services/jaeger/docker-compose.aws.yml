@@ -4,4 +4,4 @@ services:
     deploy:
       labels:
         - traefik.http.routers.jaeger.tls=false
-        - traefik.http.routers.jaeger.entrypoints=http
+        - traefik.http.routers.jaeger.entrypoints=http_aws
