@@ -256,6 +256,7 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_traefik.priority=1
         - traefik.http.routers.${SWARM_STACK_NAME}_traefik.tls=true
         - traefik.http.routers.${SWARM_STACK_NAME}_traefik.middlewares=gzip@docker, ${SWARM_STACK_NAME_NO_HYPHEN}_sslheader
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.tls.certresolver=lehttpchallenge
       update_config:
         parallelism: 2
         order: start-first
