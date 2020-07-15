@@ -96,6 +96,7 @@ services:
     environment:
       - LOGSPOUT_MULTILINE=true
       - SIMCORE_SERVICES_NETWORK_NAME=${SWARM_STACK_NAME}_interactive_services_subnet
+      - REGISTRY_SSL=true
       # needed to pass the self-signed certificate to the spawned services
       #- DIRECTOR_SELF_SIGNED_SSL_FILENAME=/usr/local/share/ca-certificates/osparc.crt
       # - DIRECTOR_SELF_SIGNED_SSL_SECRET_ID=some_id
