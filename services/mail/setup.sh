@@ -1,8 +1,4 @@
 #!/bin/sh
-set -o errexit
-set -o nounset
-
-IFS=$(printf '\n\t')
 
 ##
 # Wrapper for various setup scripts included in the docker-mailserver
@@ -12,7 +8,7 @@ CRI=
 
 _check_root() {
   if [[ $EUID -ne 0 ]]; then
-    echo "Curently docker-mailserver doesn't support podman's rootless mode, please run this script as root user." 
+    echo "Curently docker-mailserver doesn't support podman's rootless mode, please run this script as root user."
     exit 1
   fi
 }
@@ -31,11 +27,12 @@ fi
 
 INFO=$($CRI ps \
   --no-trunc \
-  --format="{{.Image}} {{.Names}} {{.Command}}" | \
-  grep "supervisord -c /etc/supervisor/supervisord.conf")
+  --format "{{.Image}};{{.Names}}" \
+  --filter label=org.label-schema.name="docker-mailserver" | \
+  tail -1)
 
-IMAGE_NAME=$(echo $INFO | awk '{print $1}')
-CONTAINER_NAME=$(echo $INFO | awk '{print $2}')
+IMAGE_NAME=${INFO%;*}
+CONTAINER_NAME=${INFO#*;}
 DEFAULT_CONFIG_PATH="$(pwd)/config"
 USE_CONTAINER=false
 
@@ -79,7 +76,7 @@ _usage() {
 OPTIONS:
 
   -i IMAGE_NAME     The name of the docker-mailserver image, by default
-                    'tvial/docker-mailserver:latest' for docker, and 
+                    'tvial/docker-mailserver:latest' for docker, and
                     'docker.io/tvial/docker-mailserver:latest' for podman.
 
   -c CONTAINER_NAME The name of the running container.
@@ -100,6 +97,10 @@ SUBCOMMANDS:
     $0 alias add <email> <recipient>
     $0 alias del <email> <recipient>
     $0 alias list
+
+  quota:
+    $0 quota set <email> [<quota>]
+    $0 quota del <email>
 
   config:
 
@@ -131,7 +132,7 @@ _docker_image_exists() {
   fi
 }
 
-if [ -t 1 ] ; then
+if tty -s ; then
   USE_TTY="-ti"
 fi
 
@@ -249,6 +250,23 @@ case $1 in
         list)
           shift
           _docker_image listalias $@
+          ;;
+        *)
+          _usage
+          ;;
+    esac
+    ;;
+
+  quota)
+    shift
+    case $1 in
+        set)
+          shift
+          _docker_image setquota $@
+          ;;
+        del)
+          shift
+          _docker_image delquota $@
           ;;
         *)
           _usage

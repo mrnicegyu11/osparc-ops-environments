@@ -139,11 +139,17 @@ service_dir="${repo_basedir}"/services/adminer
 call_make "${service_dir}" up-aws
 
 # -------------------------------- Mail -------------------------------
-echo
-echo -e "\e[1;33mstarting mail server...\e[0m"
 service_dir="${repo_basedir}"/services/mail
+
+if [ -d "${service_dir}/config/" ]
+then
+    echo "Config already created for mail..."
+else
+    echo "Adding configuration for ${SMTP_USERNAME}"
+    ./setup.sh email add ${SMTP_USERNAME} ${SMTP_PASSWORD}
+
+echo -e "\e[1;33mstarting mail server...\e[0m"
 call_make "${service_dir}" up-aws
-#./setup.sh email add support@simcore.io alexamdre
 
 # -------------------------------- GRAYLOG -------------------------------
 echo
