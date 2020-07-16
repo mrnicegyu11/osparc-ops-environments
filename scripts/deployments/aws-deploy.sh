@@ -146,7 +146,8 @@ then
     echo "Config already created for mail..."
 else
     echo "Adding configuration for ${SMTP_USERNAME}"
-    ./setup.sh email add ${SMTP_USERNAME} ${SMTP_PASSWORD}
+    ${service_dir}/setup.sh email add ${SMTP_USERNAME} ${SMTP_PASSWORD}
+fi
 
 echo -e "\e[1;33mstarting mail server...\e[0m"
 call_make "${service_dir}" up-aws
