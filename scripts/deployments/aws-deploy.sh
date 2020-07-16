@@ -147,9 +147,9 @@ then
 else
     echo "Adding configuration for ${SMTP_USERNAME}"
     bash setup.sh email add ${SMTP_USERNAME} ${SMTP_PASSWORD}
-    bash setup.sh email add root ${SMTP_PASSWORD}
-    bash setup.sh email add devops ${SMTP_PASSWORD}
-    bash setup.sh email add code-of-conduct ${SMTP_PASSWORD}
+    bash setup.sh email add root@${MACHINE_FQDN} ${SMTP_PASSWORD}
+    bash setup.sh email add devops@${MACHINE_FQDN} ${SMTP_PASSWORD}
+    bash setup.sh email add code-of-conduct@${MACHINE_FQDN} ${SMTP_PASSWORD}
     bash setup.sh alias add root guidon@speag.swiss
     bash setup.sh alias add support osparcio-support@speag.swiss
     bash setup.sh alias add devops osparcio-devops@speag.swiss
