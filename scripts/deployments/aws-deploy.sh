@@ -139,18 +139,23 @@ service_dir="${repo_basedir}"/services/adminer
 call_make "${service_dir}" up-aws
 
 # -------------------------------- Mail -------------------------------
-service_dir="${repo_basedir}"/services/mail
+pushd "${repo_basedir}"/services/mail;
 
-if [ -d "${service_dir}/config/" ]
+if [ -d "${repo_basedir}/services/mail/config" ]
 then
     echo "Config already created for mail..."
 else
     echo "Adding configuration for ${SMTP_USERNAME}"
-    ${service_dir}/setup.sh email add ${SMTP_USERNAME} ${SMTP_PASSWORD}
+    bash setup.sh email add ${SMTP_USERNAME} ${SMTP_PASSWORD}
+    bash setup.sh alias add root guidon@speag.swiss
+    bash setup.sh alias add support osparcio-support@speag.swiss
+    bash setup.sh alias add devops osparcio-devops@speag.swiss
+    bash setup.sh alias add code-of-conduct neagu@itis.swiss
 fi
 
 echo -e "\e[1;33mstarting mail server...\e[0m"
-call_make "${service_dir}" up-aws
+call_make "${repo_basedir}"/services/mail up-aws
+popd
 
 # -------------------------------- GRAYLOG -------------------------------
 echo
