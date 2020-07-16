@@ -11,7 +11,7 @@ services:
       - '--metrics.prometheus.addServicesLabels=true'
       - '--entryPoints.metrics.address=:8082'
       - '--metrics.prometheus.entryPoint=metrics'
-      - '--entryPoints.http_aws.address=:80'
+      - '--entryPoints.http.address=:80'
       - '--entryPoints.https.address=:443'
       - '--entryPoints.smtp.address=:25'
       - '--providers.docker.endpoint=unix:///var/run/docker.sock'
@@ -22,20 +22,32 @@ services:
       - '--tracing.jaeger.samplingServerURL=http://jaeger:5778/sampling'
       - '--tracing.jaeger.localAgentHostPort=jaeger:6831'   
       - "--providers.docker.constraints=!LabelRegex(`io.simcore.zone`, `*`)"
-      - "--entryPoints.http_aws.forwardedHeaders.insecure"
-
+      - "--entryPoints.https.forwardedHeaders.insecure"
+      - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge=true"
+      - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge.entrypoint=http"
+      - "--certificatesresolvers.lehttpchallenge.acme.email=allexandre@itis.swiss"
+      - "--certificatesresolvers.lehttpchallenge.acme.storage=/letsencrypt/acme.json"
+    # For debug purpose, to avoid being ban by let's encrypt servers
+    #  - "--certificatesresolvers.lehttpchallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+    volumes:
+      - "letsencrypt_certs:/letsencrypt"
     deploy:
+      placement:
+        constraints:
+          - node.labels.traefik==true
       labels:
-        - traefik.http.routers.api.tls=false
+        - traefik.http.routers.api.tls=true
+        - traefik.http.routers.api.tls.certresolver=lehttpchallenge
          #- com.docker.aws.lb.arn=arn:aws:acm:us-east-1:327357531293:certificate/1c87d979-f327-4497-996a-2b70a82e76d7
         - traefik.http.middlewares.whitelist_ips.ipwhitelist.sourcerange=10.0.0.0/16
-        - traefik.http.routers.api.entrypoints=http_aws
+        - traefik.http.routers.api.entrypoints=https
 
   whoami:
     deploy:
       labels:
-        - traefik.http.routers.whoami.tls=false
-        - traefik.http.routers.whoami.entrypoints=http_aws
+        - traefik.http.routers.whoami.tls=true
+        - traefik.http.routers.whoami.entrypoints=https
+        - traefik.http.routers.whoami.tls.certresolver=lehttpchallenge
     networks:
       - public
 

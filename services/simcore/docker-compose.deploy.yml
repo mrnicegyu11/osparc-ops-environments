@@ -126,7 +126,7 @@ services:
       - LOGSPOUT_MULTILINE=true
       - RABBIT_HOST=${PREFIX_STACK_NAME}_rabbit
     deploy:
-      replicas: 8
+      replicas: 16
       update_config:
         parallelism: 2
         order: start-first

@@ -3,5 +3,6 @@ services:
   jaeger:
     deploy:
       labels:
-        - traefik.http.routers.jaeger.tls=false
-        - traefik.http.routers.jaeger.entrypoints=http_aws
+        - traefik.http.routers.jaeger.tls=true
+        - traefik.http.routers.jaeger.tls.certresolver=lehttpchallenge
+        - traefik.http.routers.jaeger.entrypoints=https

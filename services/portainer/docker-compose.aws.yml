@@ -3,5 +3,6 @@ services:
   portainer:
     deploy:
       labels:
-        - traefik.http.routers.portainer.tls=false
-        - traefik.http.routers.portainer.entrypoints=http_aws
+        - traefik.http.routers.portainer.tls=true
+        - traefik.http.routers.portainer.entrypoints=https
+        - traefik.http.routers.portainer.tls.certresolver=lehttpchallenge

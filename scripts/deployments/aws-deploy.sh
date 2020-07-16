@@ -84,7 +84,7 @@ $psed --in-place --expression='s~\s\s\s\s\s\s- SSL_CERT_FILE=/usr/local/share/ca
 for path in ${simcore_env} ${simcore_compose}
 do
     if ! git diff origin/"${current_git_branch}" --quiet --exit-code $path; then 
-        error_exit "${simcore_env} is modified, please commit, push your changes and restart the script";
+        error_exit "${simcore_env} or ${simcore_compose}  is modified, please commit, push your changes and restart the script";
     fi
 done
 popd
