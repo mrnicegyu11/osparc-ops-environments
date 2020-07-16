@@ -8,9 +8,6 @@ SWARM_HOSTS = $(shell docker node ls --format={{.Hostname}} 2>/dev/null)
 TEMP_COMPOSE=.stack.${STACK_NAME}.yaml
 
 
-# External VARIABLES
-include .env
-
 # Makefile including function used by every services
 include ../../scripts/common.Makefile
 
