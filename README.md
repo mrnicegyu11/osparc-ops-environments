@@ -1,85 +1,30 @@
-# oSparc Simcore Operations Development
+# oSparc Simcore Operations Development - Deployed on AWS
+
+[Upstream GitHubosparc-ops](https://github.com/ITISFoundation/osparc-ops)
 
 [![Build Status](https://travis-ci.com/ITISFoundation/osparc-ops.svg?branch=master)](https://travis-ci.com/ITISFoundation/osparc-ops)
 
 Tools for oSPARC deployment and management (not directly part of osparc platform)
 
-## Contents
+## Sim-Core deployed
 
-### services
+| Service   | Description | Endpoint   |
+|:-------------:|:-------------:|:-------------:|
+| latest | [latest release](https://github.com/ITISFoundation/osparc-simcore/releases) | **[https://osparc.io](https://osparc.io)**
 
-Support services used for the deployment of the oSPARC platform:
+## Support services
 
-- [Portainer](services/portainer/): Docker management tool
-- [Traefik](services/traefik/): Reverse-proxy to handle secured entrypoints
-- [Minio](services/minio/): AWS compatible S3 storage
-- [Docker registry](services/registry/): Docker images registry
-- [Graylog](services/graylog): Logs aggregator
-- [Jaeger](services/jaeger): Tracing system
-- [Monitoring](services/monitoring/): Prometheus/Grafana monitoring
-- [Adminer](services/adminer): Database management
-- [Maintenance](services/maintenance/): Notebooks for internal maintenance (in development)
-- [Deployment agent](services/deployment-agent/): SIM-Core auto deploy tool
-
-- [Simcore](services/simcore): Configuration for [osparc-simcore](https://github.com/ITISFoundation/osparc-simcore)
-
-### usage
-
-```console
-git clone https://github.com/ITISFoundation/osparc-ops.git
-cd osparc-ops
-make help
-```
-
-### WSL deployment
-
-#### WSL1
-
-If you are using WSL1, clone the repository in a path accessible by the Windows filesystem (typically in /mnt/c/my_path and not in /home). You need to ensure [Ensure Volume Mounts Work](https://nickjanetakis.com/blog/setting-up-docker-for-windows-and-wsl-to-work-flawlessly) (Section Volume Mounts Work)
-
-#### WSL2
-
-Clone the repository directly into the WSL2 filesystem (in /home for example).
-
-
-#### local deployment
-  ```console
-  make up-local
-  ```
-A self-signed certificate may be generated. The system host file may be modified using the default **osparc.local** fully qualified domain name (FQDN) to point to the local machine.
-
-The services above will be deployed and pre-configured on the following endpoints:
-  - Traefik: [https://monitoring.osparc.local/dashboard/#/](https://monitoring.osparc.local/dashboard/#/)
-  - Portainer: [https://monitoring.osparc.local/portainer/](https://monitoring.osparc.local/portainer/)
-  - Minio: [https://storage.osparc.local/minio/](https://storage.osparc.local/minio/)
-  - Deployment agent: no UI
-  - Graylog: [https://monitoring.osparc.local/graylog/](https://monitoring.osparc.local/graylog/)
-  - Jaeger: [https://monitoring.osparc.local/jaeger/](https://monitoring.osparc.local/jaeger/)
-  - Adminer: [https://monitoring.osparc.local/adminer](https://monitoring.osparc.local/adminer?server=simcore_postgres%3A5432&username=scu&db=simcoredb)
-  - Monitoring: [https://monitoring.osparc.local/grafana/](https://monitoring.osparc.local/grafana/) and Prometheus: [https://monitoring.osparc.local/prometheus/](https://monitoring.osparc.local/prometheus/)
-  - Maintenance: not reversed proxied yet
-  - **Simcore:** **[https://osparc.local](https://osparc.local)**
-
-Default credentials are the following:  
-  user: admin  
-  password: adminadmin
-
-
-To change the default domain name and/or services credentials edit [repo.config](repo.config) file.
-
-#### cluster deployment
-
-Each service may be configured and deployed according to the needs. Please see each service README.md file to gather information.
-
-### virtual_cluster (deprecated)
-
-- Deploy a virtual cluster to your own host.  Suitable as an infrastructure plaform for oSPARC Simcore.
-
-### FAQ
-
-The auto-generated ssl certificates are detected as invalid in my brower ?
-
-You need to do a full cleaning of your installation.
-```console
-make reset-prune
-```
+| Service   | Description | Endpoint   | User   | Password   | -- |
+|:-------------:|:-------------:|:-------------:|:-----:|:---:|:---:|
+| [Adminer](services/adminer) | Database management | **[https://monitoring.osparc.io/adminer](https://monitoring.osparc.io/adminer/?pgsql=osparc-production.c1fhr9qft53p.us-east-1.rds.amazonaws.com:5432&username=postgres_osparc&db=simcoredb&ns=public)** | postgres_osparc | 14Bk3VyP3ZIQNrtlbCBdMZDvTNpJ7k |  PostgresSQL<br>osparc-production.c1fhr9qft53p.us-east-1.rds.amazonaws.com:5432<br>simcoredb
+| [Grafana](services/monitoring) | Metrics display | **[https://monitoring.osparc.io/grafana/](https://monitoring.osparc.io/grafana/)** | admin | wkdjkwd9898wdkjkwjdD |
+| [Graylog](services/graylog) | Logs aggregator | **[https://monitoring.osparc.io/graylog/](https://monitoring.osparc.io/graylog/)** | admin | wkdjkwd9898wdkjkwjdD |
+| [Jaeger](services/jaeger) | Request tracer | **[https://monitoring.osparc.io/jaeger/search](https://monitoring.osparc.io/jaeger/search)** | admin | wkdjkwd9898wdkjkwjdD |
+| [S3] | S3 storage | **[https://aws.amazon.com/s3/](https://aws.amazon.com/s3/)** | your aws IDs | bucket : production-simcore
+| [Portainer](services/portainer/) | Docker management tool | **[https://monitoring.osparc.io/portainer/#/home](https://monitoring.osparc.io/portainer/#/home)** | admin | wkdjkwd9898wdkjkwjdD |
+| [Registry](services/registry) | Docker images registry | **[https://registry.osparc.io/v2/_catalog](https://registry.osparc.io/v2/_catalog)** | admin | wkdjkwd9898wdkjkwjdD |
+| [Prometheus](services/monitoring) | Metrics Monitoring | **[https://monitoring.osparc.io/prometheus](https://monitoring.osparc.io/prometheus)** | admin | wkdjkwd9898wdkjkwjdD |
+| [RabbitMQ UI](https://www.rabbitmq.com/documentation.html) | RabbitMQ management UI | **[https://monitoring.osparc.io/production_rabbit/](https://monitoring.osparc.io/production_rabbit/)** | admin | wkdjkwd9898wdkjkwjdD |
+| [Redis-commander](services/redis-commander) | Redis database management | **[https://monitoring.osparc.io/redis](https://monitoring.osparc.io/redis)** | admin | VTpH2BbJm^}3 |
+| [Traefik](services/traefik/) | Reverse-proxy | **[https://monitoring.osparc.io/dashboard/](https://monitoring.osparc.io/dashboard/)** | admin | wkdjkwd9898wdkjkwjdD |
+| [Deployment agent](services/deployment-agent/) | Auto-deployer
