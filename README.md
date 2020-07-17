@@ -21,7 +21,7 @@ Tools for oSPARC deployment and management (not directly part of osparc platform
 | [Graylog](services/graylog) | Logs aggregator | **[https://monitoring.osparc.io/graylog/](https://monitoring.osparc.io/graylog/)** | admin | wkdjkwd9898wdkjkwjdD |
 | [Jaeger](services/jaeger) | Request tracer | **[https://monitoring.osparc.io/jaeger/search](https://monitoring.osparc.io/jaeger/search)** | admin | wkdjkwd9898wdkjkwjdD |
 | [S3](https://aws.amazon.com/s3/) | S3 storage | **[https://aws.amazon.com/s3/](https://aws.amazon.com/s3/)** | your aws IDs | bucket : production-simcore
-| [Portainer](services/portainer/) | Docker management tool | **[https://monitoring.osparc.io/portainer/#/home](https://monitoring.osparc.io/portainer/#/home)** | admin | adminadmin |
+| [Portainer](services/portainer/) | Docker management tool | **[https://monitoring.osparc.io/portainer/#/home](https://monitoring.osparc.io/portainer/#/home)** | admin | wkdjkwd9898wdkjkwjdD |
 | [Registry](services/registry) | Docker images registry | **[https://registry.osparc.io/v2/_catalog](https://registry.osparc.io/v2/_catalog)** | admin | wkdjkwd9898wdkjkwjdD |
 | [Prometheus](services/monitoring) | Metrics Monitoring | **[https://monitoring.osparc.io/prometheus](https://monitoring.osparc.io/prometheus)** | admin | wkdjkwd9898wdkjkwjdD |
 | [RabbitMQ UI](https://www.rabbitmq.com/documentation.html) | RabbitMQ management UI | **[https://monitoring.osparc.io/production_rabbit/](https://monitoring.osparc.io/production_rabbit/)** | admin | wkdjkwd9898wdkjkwjdD |
