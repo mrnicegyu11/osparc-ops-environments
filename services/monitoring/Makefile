@@ -20,7 +20,7 @@ up-letsencrypt: .init ${TEMP_COMPOSE}-letsencrypt .env  ## Deploys or updates cu
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt ${STACK_NAME}
 
 .PHONY: up-aws
-up-aws: .init ${TEMP_COMPOSE}-aws .env  ## Deploys or updates current stack "$(STACK_NAME)" in AWS
+up-aws: .init .env datasource.yml config.monitoring ${TEMP_COMPOSE}-aws   ## Deploys or updates current stack "$(STACK_NAME)" in AWS
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 .PHONY: ${TEMP_COMPOSE}
@@ -34,3 +34,18 @@ ${TEMP_COMPOSE}-letsencrypt: docker-compose.yml docker-compose.letsencrypt.yml
 .PHONY: ${TEMP_COMPOSE}-aws
 ${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml
 	@docker-compose -f $< -f docker-compose.aws.yml --log-level=ERROR config > $@
+
+
+.PHONY: config.monitoring
+config.monitoring: grafana/template-config.monitoring ../../repo.config
+	@set -o allexport; \
+	source $(realpath $(CURDIR)/../../repo.config); \
+	set +o allexport; \
+	envsubst < $< > grafana/$@
+
+.PHONY: datasource.yml
+datasource.yml: grafana/provisioning/datasources/datasource.yml.template ../../repo.config
+	@set -o allexport; \
+	source $(realpath $(CURDIR)/../../repo.config); \
+	set +o allexport; \
+	envsubst < $< > grafana/provisioning/datasources/$@

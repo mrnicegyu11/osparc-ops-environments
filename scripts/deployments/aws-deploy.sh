@@ -121,8 +121,6 @@ echo -e "\e[1;33mstarting monitoring...\e[0m"
 
 # grafana config
 service_dir="${repo_basedir}"/services/monitoring
-substitute_environs "${service_dir}"/grafana/template-config.monitoring "${service_dir}"/grafana/config.monitoring
-substitute_environs "${service_dir}"/grafana/provisioning/datasources/datasource.yml.template "${service_dir}"/grafana/provisioning/datasources/datasource.yml
 make -C "${service_dir}" up-aws
 
 
