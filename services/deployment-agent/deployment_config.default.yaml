@@ -71,8 +71,8 @@ main:
     # lists the portainer instances to call upon
     - url: http://portainer:9000
       endpoint_id: -1
-      username: ${SERVICES_USER}
-      password: ${SERVICES_PASSWORD}
+      username: ${PORTAINER_USER}
+      password: ${PORTAINER_PASSWORD}
       stack_name: ${SIMCORE_STACK_NAME}
   polling_interval: 15
   notifications:
