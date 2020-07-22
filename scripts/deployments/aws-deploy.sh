@@ -70,11 +70,6 @@ simcore_compose="docker-compose.deploy.yml"
 
 substitute_environs template${simcore_env} ${simcore_env}
 
-# We don't use a auto-generated root certificate for storage
-    "secrets:
-      - source: rootca.crt
-        target: /usr/local/share/ca-certificates/osparc.crt"
-
 
 $psed --in-place --expression='s/\s\s\s\ssecrets:/    #secrets:/' ${simcore_compose}
 $psed --in-place --expression='s/\s\s\s\s\s\s- source: rootca.crt/      #- source: rootca.crt/' ${simcore_compose}
