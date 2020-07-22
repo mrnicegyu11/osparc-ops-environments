@@ -118,3 +118,9 @@ deployment_config.yaml
 
 # vscode
 .vscode/settings.json
+
+# Automatically generated config files
+/services/monitoring/grafana/provisioning/datasources/datasource.yml
+
+# Mail configuration
+/services/mail/config/
