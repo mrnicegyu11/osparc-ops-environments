@@ -5,4 +5,4 @@ services:
       labels:
         - traefik.http.routers.portainer.tls=true
         - traefik.http.routers.portainer.entrypoints=https
-        - traefik.http.routers.portainer.tls.certresolver=lehttpchallenge
+        - traefik.http.routers.portainer.tls.certresolver=myresolver

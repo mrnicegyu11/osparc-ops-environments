@@ -157,7 +157,7 @@ services:
         - traefik.http.middlewares._rabbit_replace_regex.replacepathregex.regex=^/_rabbit/(.*)$$
         - traefik.http.middlewares._rabbit_replace_regex.replacepathregex.replacement=/$${1}
         - traefik.http.routers._rabbit.middlewares=_rabbit_replace_regex@docker, ops_gzip@docker
-        - traefik.http.routers._rabbit.tls.certresolver=lehttpchallenge
+        - traefik.http.routers._rabbit.tls.certresolver=myresolver
       update_config:
         parallelism: 2
         order: start-first
@@ -255,7 +255,7 @@ services:
         - traefik.http.routers._traefik.priority=1
         - traefik.http.routers._traefik.tls=true
         - traefik.http.routers._traefik.middlewares=gzip@docker, _sslheader
-        - traefik.http.routers._traefik.tls.certresolver=lehttpchallenge
+        - traefik.http.routers._traefik.tls.certresolver=myresolver
       update_config:
         parallelism: 2
         order: start-first

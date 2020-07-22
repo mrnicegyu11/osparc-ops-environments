@@ -5,4 +5,4 @@ services:
       labels:
         - traefik.http.routers.redis.tls=true
         - traefik.http.routers.redis.entrypoints=https
-        - traefik.http.routers.redis.tls.certresolver=lehttpchallenge
+        - traefik.http.routers.redis.tls.certresolver=myresolver

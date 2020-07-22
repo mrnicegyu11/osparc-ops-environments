@@ -5,4 +5,4 @@ services:
       labels:
         - traefik.http.routers.graylog.tls=true
         - traefik.http.routers.graylog.entrypoints=https
-        - traefik.http.routers.graylog.tls.certresolver=lehttpchallenge
+        - traefik.http.routers.graylog.tls.certresolver=myresolver
