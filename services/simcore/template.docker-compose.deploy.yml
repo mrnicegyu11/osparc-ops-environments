@@ -13,7 +13,7 @@ services:
     #deploy:
       #labels:
         # NOTE: apiserver does not need sslheader since there is no socket.io
-      #  - traefik.http.routers._api-server.middlewares=_gzip@docker
+      #  - traefik.http.routers.${SWARM_STACK_NAME}_api-server.middlewares=${SWARM_STACK_NAME}_gzip@docker
       #update_config:
         #parallelism: 2
         #order: start-first
@@ -35,16 +35,16 @@ services:
     environment:
       - LOGSPOUT_MULTILINE=true
       - PYTHONTRACEMALLOC=1
-      - DIRECTOR_HOST=_director
-      - STORAGE_HOST=_storage
+      - DIRECTOR_HOST=${PREFIX_STACK_NAME}_director
+      - STORAGE_HOST=${PREFIX_STACK_NAME}_storage
       - DIAGNOSTICS_MAX_AVG_LATENCY=10
     deploy:
       labels:
         # ssl header necessary so that socket.io upgrades correctly from polling to websocket mode. the middleware must be attached to the right connection.
         # NOTE: traefik does not like - in the sslheader middleware, so we override it here
         # NOTE: in deploy mode with SSL they must be set to https!
-        - traefik.http.middlewares._sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
-        - traefik.http.routers._webserver.middlewares= gzip@docker, _sslheader
+        - traefik.http.middlewares.${SWARM_STACK_NAME_NO_HYPHEN}_sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
+        - traefik.http.routers.${SWARM_STACK_NAME}_webserver.middlewares= gzip@docker, ${SWARM_STACK_NAME_NO_HYPHEN}_sslheader
       update_config:
         parallelism: 2
         order: start-first
@@ -62,7 +62,7 @@ services:
 
   # need to pass self-signed certificate in /usr/local/share/ca-certificates and call update-ca-certificates
   storage:
-    test
+    ${SECRET}
     environment:
       # minio sdk uses this env to use self-signed certs
       #- SSL_CERT_FILE=/usr/local/share/ca-certificates/osparc.crt
@@ -70,7 +70,7 @@ services:
     networks:
       - monitored
     extra_hosts:
-      - ":"  
+      - "${STORAGE_DOMAIN}:${MANAGER_ENDPOINT_IP}"  
     deploy:
       update_config:
         parallelism: 2
@@ -93,7 +93,7 @@ services:
         #target: /usr/local/share/ca-certificates/osparc.crt
     environment:
       - LOGSPOUT_MULTILINE=true
-      - SIMCORE_SERVICES_NETWORK_NAME=_interactive_services_subnet
+      - SIMCORE_SERVICES_NETWORK_NAME=${SWARM_STACK_NAME}_interactive_services_subnet
       - REGISTRY_SSL=true
       # needed to pass the self-signed certificate to the spawned services
       #- DIRECTOR_SELF_SIGNED_SSL_FILENAME=/usr/local/share/ca-certificates/osparc.crt
@@ -117,12 +117,12 @@ services:
         max_attempts: 3
         window: 120s
     extra_hosts:
-      - ":" 
+      - "${REGISTRY_DOMAIN}:${MANAGER_ENDPOINT_IP}" 
 
   sidecar:
     environment:
       - LOGSPOUT_MULTILINE=true
-      - RABBIT_HOST=_rabbit
+      - RABBIT_HOST=${PREFIX_STACK_NAME}_rabbit
     deploy:
       replicas: 16
       update_config:
@@ -139,7 +139,7 @@ services:
         max_attempts: 3
         window: 120s
     extra_hosts:
-      - ":" 
+      - "${REGISTRY_DOMAIN}:${MANAGER_ENDPOINT_IP}" 
   rabbit:
     networks:
       - monitored
@@ -149,15 +149,15 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.docker.network=public-network
-        - traefik.http.services._rabbit.loadbalancer.server.port=15672
-        - traefik.http.routers._rabbit.rule=Host(``) && PathPrefix(`/_rabbit`)
-        - traefik.http.routers._rabbit.entrypoints=https
-        - traefik.http.routers._rabbit.tls=true
-        - traefik.http.middlewares._rabbit_replace_regex.replacepathregex.regex=^/_rabbit/(.*)$$
-        - traefik.http.middlewares._rabbit_replace_regex.replacepathregex.replacement=/$${1}
-        - traefik.http.routers._rabbit.middlewares=_rabbit_replace_regex@docker, ops_gzip@docker
-        - traefik.http.routers._rabbit.tls.certresolver=lehttpchallenge
+        - traefik.docker.network=${PUBLIC_NETWORK}
+        - traefik.http.services.${PREFIX_STACK_NAME}_rabbit.loadbalancer.server.port=15672
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.rule=Host(`${MONITORING_DOMAIN}`) && PathPrefix(`/${PREFIX_STACK_NAME}_rabbit`)
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.entrypoints=https
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.tls=true
+        - traefik.http.middlewares.${PREFIX_STACK_NAME}_rabbit_replace_regex.replacepathregex.regex=^/${PREFIX_STACK_NAME}_rabbit/(.*)$$
+        - traefik.http.middlewares.${PREFIX_STACK_NAME}_rabbit_replace_regex.replacepathregex.replacement=/$${1}
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.middlewares=${PREFIX_STACK_NAME}_rabbit_replace_regex@docker, ops_gzip@docker
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.tls.certresolver=lehttpchallenge
       update_config:
         parallelism: 2
         order: start-first
@@ -233,10 +233,10 @@ services:
       - "--entryPoints.traefik_monitor.address=:8080"
       - "--entryPoints.traefik_monitor.forwardedHeaders.insecure"
       - "--providers.docker.endpoint=unix:///var/run/docker.sock"
-      - "--providers.docker.network=_default"
+      - "--providers.docker.network=${SWARM_STACK_NAME}_default"
       - "--providers.docker.swarmMode=true"
       - "--providers.docker.exposedByDefault=false"
-      - "--providers.docker.constraints=Label(`io.simcore.zone`, ``)"
+      - "--providers.docker.constraints=Label(`io.simcore.zone`, `${TRAEFIK_SIMCORE_ZONE}`)"
       - "--tracing=true"
       - "--tracing.jaeger=true"
       - "--tracing.jaeger.samplingServerURL=http://jaeger:5778/sampling"
@@ -248,14 +248,14 @@ services:
       labels:
     # external traefik
         - traefik.enable=true
-        - traefik.docker.network=public-network
-        - traefik.http.services._traefik.loadbalancer.server.port=80
-        - traefik.http.routers._traefik.rule=Host(``) && PathPrefix(`/`)
-        - traefik.http.routers._traefik.entrypoints=https
-        - traefik.http.routers._traefik.priority=1
-        - traefik.http.routers._traefik.tls=true
-        - traefik.http.routers._traefik.middlewares=gzip@docker, _sslheader
-        - traefik.http.routers._traefik.tls.certresolver=lehttpchallenge
+        - traefik.docker.network=${PUBLIC_NETWORK}
+        - traefik.http.services.${SWARM_STACK_NAME}_traefik.loadbalancer.server.port=80
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.rule=Host(`${PUBLISHED_HOST_NAME}`) && PathPrefix(`/`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.entrypoints=https
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.priority=1
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.tls=true
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.middlewares=gzip@docker, ${SWARM_STACK_NAME_NO_HYPHEN}_sslheader
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.tls.certresolver=lehttpchallenge
       update_config:
         parallelism: 2
         order: start-first
@@ -278,15 +278,15 @@ services:
     deploy:
       labels:
         # internal traefik
-        - io.simcore.zone=
+        - io.simcore.zone=${TRAEFIK_SIMCORE_ZONE}
         # traefik UI
         - traefik.enable=true
-        - traefik.http.routers._api.service=api@internal
-        - traefik.http.routers._api.rule=PathPrefix(`/dashboard`) || PathPrefix(`/api`)
-        - traefik.http.routers._api.entrypoints=http
-        - traefik.http.routers._api.priority=2
-        - traefik.http.routers._api.middlewares=_auth@docker, gzip@docker
-        - traefik.http.services._api.loadbalancer.server.port=8080
+        - traefik.http.routers.${SWARM_STACK_NAME}_api.service=api@internal
+        - traefik.http.routers.${SWARM_STACK_NAME}_api.rule=PathPrefix(`/dashboard`) || PathPrefix(`/api`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_api.entrypoints=http
+        - traefik.http.routers.${SWARM_STACK_NAME}_api.priority=2
+        - traefik.http.routers.${SWARM_STACK_NAME}_api.middlewares=${SWARM_STACK_NAME}_auth@docker, gzip@docker
+        - traefik.http.services.${SWARM_STACK_NAME}_api.loadbalancer.server.port=8080
       update_config:
         parallelism: 2
         order: start-first
@@ -307,19 +307,19 @@ services:
     deploy:
       labels:
         # internal traefik
-        - io.simcore.zone=
+        - io.simcore.zone=${TRAEFIK_SIMCORE_ZONE}
         # basic authentication
         # To create user:password pair, it's possible to use this command:
         # docker run --rm --entrypoint htpasswd registry:2 -nb user password
         # admin:adminadmin
-        - traefik.http.middlewares._auth.basicauth.users=admin:$$.4I$.
+        - traefik.http.middlewares.${SWARM_STACK_NAME}_auth.basicauth.users=admin:$$apr1$$aaX0W.4I$$sNk3knnThfi7fHTXQa0Wx.
         # whoami
         - traefik.enable=true
-        - traefik.http.services._whoami.loadbalancer.server.port=80
-        - traefik.http.routers._whoami.rule=hostregexp(`{host:.+}`) && PathPrefix(`/whoami`)
-        - traefik.http.routers._whoami.entrypoints=http
-        - traefik.http.routers._whoami.priority=2
-        - traefik.http.routers._whoami.middlewares=_auth@docker,gzip@docker
+        - traefik.http.services.${SWARM_STACK_NAME}_whoami.loadbalancer.server.port=80
+        - traefik.http.routers.${SWARM_STACK_NAME}_whoami.rule=hostregexp(`{host:.+}`) && PathPrefix(`/whoami`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_whoami.entrypoints=http
+        - traefik.http.routers.${SWARM_STACK_NAME}_whoami.priority=2
+        - traefik.http.routers.${SWARM_STACK_NAME}_whoami.middlewares=${SWARM_STACK_NAME}_auth@docker,gzip@docker
       update_config:
         parallelism: 2
         order: start-first
@@ -337,10 +337,10 @@ services:
 networks:
   public:
     external: true
-    name: 
+    name: ${OPS_PUBLIC_NETWORK}
   monitored:
     external: true
-    name: 
+    name: ${OPS_MONITORED_NETWORK}
   interactive_services_subnet:
     driver: overlay
     attachable: true
@@ -351,7 +351,7 @@ networks:
       driver: default
       config:
         # FIXME: move to base docker-compose.yml
-        - subnet: 
+        - subnet: ${SIMCORE_INTERACTIVE_NETWORK_SUBNET}
 
   computational_services_subnet:
     driver: overlay
@@ -363,7 +363,7 @@ networks:
       driver: default
       config:
         # FIXME: move to base docker-compose.yml
-        - subnet: 
+        - subnet: ${SIMCORE_COMPUTATIONAL_NETWORK_SUBNET}
 
 # self-signed only
 secrets:

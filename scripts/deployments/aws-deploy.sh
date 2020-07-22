@@ -70,11 +70,12 @@ simcore_compose="docker-compose.deploy.yml"
 
 substitute_environs template${simcore_env} ${simcore_env}
 
-# for aws use we need http for the traefik entrypoint in simcore. Https is handled by aws
-$psed --in-place --expression='s/traefik.http.routers.${PREFIX_STACK_NAME}_webserver.entrypoints=.*/traefik.http.routers.${PREFIX_STACK_NAME}_webserver.entrypoints=http/' ${simcore_compose}
-$psed --in-place --expression='s/traefik.http.routers.${PREFIX_STACK_NAME}_webserver.tls=.*/traefik.http.routers.${PREFIX_STACK_NAME}_webserver.tls=false/' ${simcore_compose}
-
 # We don't use a auto-generated root certificate for storage
+    "secrets:
+      - source: rootca.crt
+        target: /usr/local/share/ca-certificates/osparc.crt"
+
+
 $psed --in-place --expression='s/\s\s\s\ssecrets:/    #secrets:/' ${simcore_compose}
 $psed --in-place --expression='s/\s\s\s\s\s\s- source: rootca.crt/      #- source: rootca.crt/' ${simcore_compose}
 $psed --in-place --expression="s~\s\s\s\s\s\s\s\starget: /usr/local/share/ca-certificates/osparc.crt~        #target: /usr/local/share/ca-certificates/osparc.crt~" ${simcore_compose}
