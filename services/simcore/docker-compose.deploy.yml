@@ -44,7 +44,7 @@ services:
         # NOTE: traefik does not like - in the sslheader middleware, so we override it here
         # NOTE: in deploy mode with SSL they must be set to https!
         - traefik.http.middlewares.${SWARM_STACK_NAME_NO_HYPHEN}_sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
-        - traefik.http.routers.${SWARM_STACK_NAME}_webserver.middlewares= gzip@docker, _sslheader
+        - traefik.http.routers.${SWARM_STACK_NAME}_webserver.middlewares= gzip@docker, ${SWARM_STACK_NAME_NO_HYPHEN}_sslheader
       update_config:
         parallelism: 2
         order: start-first
@@ -283,7 +283,7 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_api.rule=PathPrefix(`/dashboard`) || PathPrefix(`/api`)
         - traefik.http.routers.${SWARM_STACK_NAME}_api.entrypoints=http
         - traefik.http.routers.${SWARM_STACK_NAME}_api.priority=2
-        - traefik.http.routers.${SWARM_STACK_NAME}_api.middlewares=_auth@docker, gzip@docker
+        - traefik.http.routers.${SWARM_STACK_NAME}_api.middlewares=${SWARM_STACK_NAME}_auth@docker, gzip@docker
         - traefik.http.services.${SWARM_STACK_NAME}_api.loadbalancer.server.port=8080
       update_config:
         parallelism: 2
@@ -317,7 +317,7 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_whoami.rule=hostregexp(`{host:.+}`) && PathPrefix(`/whoami`)
         - traefik.http.routers.${SWARM_STACK_NAME}_whoami.entrypoints=http
         - traefik.http.routers.${SWARM_STACK_NAME}_whoami.priority=2
-        - traefik.http.routers.${SWARM_STACK_NAME}_whoami.middlewares=_auth@docker,gzip@docker
+        - traefik.http.routers.${SWARM_STACK_NAME}_whoami.middlewares=${SWARM_STACK_NAME}_auth@docker,gzip@docker
       update_config:
         parallelism: 2
         order: start-first
