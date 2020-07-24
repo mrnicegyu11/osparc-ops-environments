@@ -12,7 +12,7 @@ STACK_NAME = $(notdir $(shell pwd))
 SWARM_HOSTS = $(shell docker node ls --format={{.Hostname}} 2>/dev/null)
 TEMP_COMPOSE=docker-compose.deploy.yml
 # Host machine IP
-MACHINE_IP = $(shell source $(realpath $(CURDIR)/../../scripts/portable.sh) && get_this_ip)
+MACHINE_IP = $(shell source $(realpath $(CURDIR)/../../scripts/portable.sh) && get_this_private_ip)
 # TARGETS --------------------------------------------------
 include ../../scripts/common.Makefile
 

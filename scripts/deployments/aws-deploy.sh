@@ -33,20 +33,20 @@ declare psed # fixes shellcheck issue with not finding psed
 
 source "$( dirname "${BASH_SOURCE[0]}" )/../portable.sh"
 
-# Set local ip in repo.config
-machine_ip=$(get_this_ip)
-MANAGER_ENDPOINT_IP=${machine_ip}
-export MANAGER_ENDPOINT_IP
-
 # Paths
 this_script_dir=$(dirname "$0")
 repo_basedir=$(realpath "${this_script_dir}"/../../)
 
+
+# Set local and public ips in repo.config
+MANAGER_PRIVATE_ENDPOINT_IP=$(get_this_private_ip)
+MANAGER_PUBLIC_ENDPOINT_IP=$(get_this_public_ip)
+$psed --in-place "s/MANAGER_PRIVATE_ENDPOINT_IP=.*/MANAGER_PRIVATE_ENDPOINT_IP=${MANAGER_PRIVATE_ENDPOINT_IP}/" "${repo_basedir}"/repo.config
+$psed --in-place "s/MANAGER_PUBLIC_ENDPOINT_IP=.*/MANAGER_PUBLIC_ENDPOINT_IP=${MANAGER_PUBLIC_ENDPOINT_IP}/" "${repo_basedir}"/repo.config
+
 # VCS info on current repo
 current_git_url=$(git config --get remote.origin.url)
 current_git_branch=$(git rev-parse --abbrev-ref HEAD)
-
-machine_ip=$(get_this_ip)
 
 # Loads configurations variables
 # See https://askubuntu.com/questions/743493/best-way-to-read-a-config-file-in-bash
@@ -188,9 +188,9 @@ $psed --in-place "s~S3_SECRET_KEY:.*~S3_SECRET_KEY: ${S3_SECRET_KEY}~" ${agent_c
 $psed --in-place "/- url: .*portainer:9000/{n;s/username:.*/username: ${SERVICES_USER}/}" ${agent_compose_default}
 $psed --in-place "/- url: .*portainer:9000/{n;n;s/password:.*/password: ${SERVICES_PASSWORD}/}" ${agent_compose_default}
 # extra_hosts
-$psed --in-place "s|extra_hosts: \[\]|extra_hosts:\n        - \"${MACHINE_FQDN}:${machine_ip}\n ${MONITORING_DOMAIN}:${machine_ip}\n ${REGISTRY_DOMAIN}:${machine_ip}\n ${API_DOMAIN}:${machine_ip} \"|" ${agent_compose_default}
+$psed --in-place "s|extra_hosts: \[\]|extra_hosts:\n        - \"${MACHINE_FQDN}:${MANAGER_PRIVATE_ENDPOINT_IP}\n ${MONITORING_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}\n ${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}\n ${API_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP} \"|" ${agent_compose_default}
 #Update
-$psed --in-place "/extra_hosts:/{n;s/- .*/- \"${MACHINE_FQDN}:${machine_ip}\n ${MONITORING_DOMAIN}:${machine_ip}\n ${REGISTRY_DOMAIN}:${machine_ip}\n ${API_DOMAIN}:${machine_ip}\"/}" ${agent_compose_default}
+$psed --in-place "/extra_hosts:/{n;s/- .*/- \"${MACHINE_FQDN}:${MANAGER_PRIVATE_ENDPOINT_IP}\n ${MONITORING_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}\n ${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}\n ${API_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}\"/}" ${agent_compose_default}
 
 # We don't use Minio and postgresql with AWS
 $psed --in-place "s~excluded_services:.*~excluded_services: [webclient, minio, postgres]~" ${agent_compose_default}

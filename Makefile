@@ -22,7 +22,7 @@ SHELL := /bin/bash
 MAKE_C := $(MAKE) --no-print-directory --directory
 
 # Host machine IP
-export MACHINE_IP = $(shell source $(realpath $(CURDIR)/scripts/portable.sh) && get_this_ip)
+export MACHINE_IP = $(shell source $(realpath $(CURDIR)/scripts/portable.sh) && get_this_private_ip)
 
 include repo.config
 

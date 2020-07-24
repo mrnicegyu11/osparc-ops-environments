@@ -21,7 +21,7 @@ main:
         - .env-devel
     - id: simcore-ops-repo
       url: https://git.speag.com/oSparc/osparc-ops-environments.git
-      branch: simcore.io
+      branch: osparc.dev
       pull_only_files: true
       username: gitlab+deploy-token-1
       password: "VnKTVs2fi4AGZy17FiDM"
@@ -50,7 +50,7 @@ main:
       export OPS_PUBLIC_NETWORK=${PUBLIC_NETWORK} &&
       export OPS_MONITORED_NETWORK=${MONITORED_NETWORK} &&
       export PREFIX_STACK_NAME=${PREFIX_STACK_NAME} &&
-      export MANAGER_ENDPOINT_IP=${MANAGER_ENDPOINT_IP} &&
+      export MANAGER_PRIVATE_ENDPOINT_IP=${MANAGER_PRIVATE_ENDPOINT_IP} &&
       export REGISTRY_DOMAIN=${REGISTRY_DOMAIN} &&
       export STORAGE_DOMAIN=${STORAGE_DOMAIN} &&
       mv .env .env.platform &&

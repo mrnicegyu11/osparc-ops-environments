@@ -70,7 +70,7 @@ services:
     networks:
       - monitored
     extra_hosts:
-      - "${STORAGE_DOMAIN}:${MANAGER_ENDPOINT_IP}"  
+      - "${STORAGE_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}"  
     deploy:
       update_config:
         parallelism: 2
@@ -117,7 +117,7 @@ services:
         max_attempts: 3
         window: 120s
     extra_hosts:
-      - "${REGISTRY_DOMAIN}:${MANAGER_ENDPOINT_IP}" 
+      - "${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}" 
 
   sidecar:
     environment:
@@ -139,7 +139,7 @@ services:
         max_attempts: 3
         window: 120s
     extra_hosts:
-      - "${REGISTRY_DOMAIN}:${MANAGER_ENDPOINT_IP}" 
+      - "${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}" 
   rabbit:
     networks:
       - monitored
