@@ -248,11 +248,11 @@ services:
         - traefik.enable=true
         - traefik.docker.network=${PUBLIC_NETWORK}
         - traefik.http.services.${SWARM_STACK_NAME}_traefik.loadbalancer.server.port=80
-        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.rule=Host(``) && PathPrefix(`/`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.rule=Host(`${PUBLISHED_HOST_NAME}`) && PathPrefix(`/`)
         - traefik.http.routers.${SWARM_STACK_NAME}_traefik.entrypoints=https
         - traefik.http.routers.${SWARM_STACK_NAME}_traefik.priority=1
         - traefik.http.routers.${SWARM_STACK_NAME}_traefik.tls=true
-        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.middlewares=gzip@docker, _sslheader
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.middlewares=gzip@docker, ${SWARM_STACK_NAME_NO_HYPHEN}_sslheader
         - traefik.http.routers.${SWARM_STACK_NAME}_traefik.tls.certresolver=myresolver
       update_config:
         parallelism: 2
