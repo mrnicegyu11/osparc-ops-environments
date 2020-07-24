@@ -75,7 +75,6 @@ $psed --in-place --expression='s/\s\s\s\s\s\s- source: rootca.crt/      #- sourc
 $psed --in-place --expression="s~\s\s\s\s\s\s\s\starget: /usr/local/share/ca-certificates/osparc.crt~        #target: /usr/local/share/ca-certificates/osparc.crt~" ${simcore_compose}
 $psed --in-place --expression='s~\s\s\s\s\s\s- SSL_CERT_FILE=/usr/local/share/ca-certificates/osparc.crt~      #- SSL_CERT_FILE=/usr/local/share/ca-certificates/osparc.crt~' ${simcore_compose}
 
-substitute_environs template.${simcore_compose} ${simcore_compose}
 
 # check if changes were done, basically if there are changes in the repo
 for path in ${simcore_env} ${simcore_compose}
