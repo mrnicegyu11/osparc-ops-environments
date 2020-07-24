@@ -35,8 +35,8 @@ services:
     environment:
       - LOGSPOUT_MULTILINE=true
       - PYTHONTRACEMALLOC=1
-      - DIRECTOR_HOST=_director
-      - STORAGE_HOST=_storage
+      - DIRECTOR_HOST=dev_director
+      - STORAGE_HOST=dev_storage
       - DIAGNOSTICS_MAX_AVG_LATENCY=10
     deploy:
       labels:
@@ -69,7 +69,7 @@ services:
     networks:
       - monitored
     extra_hosts:
-      - ":"  
+      - "storage.osparc.dev:10.0.2.179"  
     deploy:
       update_config:
         parallelism: 2
@@ -116,12 +116,12 @@ services:
         max_attempts: 3
         window: 120s
     extra_hosts:
-      - ":" 
+      - "registry.osparc.dev:10.0.2.179" 
 
   sidecar:
     environment:
       - LOGSPOUT_MULTILINE=true
-      - RABBIT_HOST=_rabbit
+      - RABBIT_HOST=dev_rabbit
     deploy:
       replicas: 16
       update_config:
@@ -138,7 +138,7 @@ services:
         max_attempts: 3
         window: 120s
     extra_hosts:
-      - ":" 
+      - "registry.osparc.dev:10.0.2.179" 
   rabbit:
     networks:
       - monitored
@@ -148,15 +148,15 @@ services:
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.docker.network=public-network
-        - traefik.http.services._rabbit.loadbalancer.server.port=15672
-        - traefik.http.routers._rabbit.rule=Host(``) && PathPrefix(`/_rabbit`)
-        - traefik.http.routers._rabbit.entrypoints=https
-        - traefik.http.routers._rabbit.tls=true
-        - traefik.http.middlewares._rabbit_replace_regex.replacepathregex.regex=^/_rabbit/(.*)$$
-        - traefik.http.middlewares._rabbit_replace_regex.replacepathregex.replacement=/$${1}
-        - traefik.http.routers._rabbit.middlewares=_rabbit_replace_regex@docker, ops_gzip@docker
-        - traefik.http.routers._rabbit.tls.certresolver=myresolver
+        - traefik.docker.network=
+        - traefik.http.services.dev_rabbit.loadbalancer.server.port=15672
+        - traefik.http.routers.dev_rabbit.rule=Host(`monitoring.osparc.dev`) && PathPrefix(`/dev_rabbit`)
+        - traefik.http.routers.dev_rabbit.entrypoints=https
+        - traefik.http.routers.dev_rabbit.tls=true
+        - traefik.http.middlewares.dev_rabbit_replace_regex.replacepathregex.regex=^/dev_rabbit/(.*)$$
+        - traefik.http.middlewares.dev_rabbit_replace_regex.replacepathregex.replacement=/$${1}
+        - traefik.http.routers.dev_rabbit.middlewares=dev_rabbit_replace_regex@docker, ops_gzip@docker
+        - traefik.http.routers.dev_rabbit.tls.certresolver=lehttpchallenge
       update_config:
         parallelism: 2
         order: start-first
@@ -247,14 +247,14 @@ services:
       labels:
     # external traefik
         - traefik.enable=true
-        - traefik.docker.network=public-network
+        - traefik.docker.network=
         - traefik.http.services._traefik.loadbalancer.server.port=80
         - traefik.http.routers._traefik.rule=Host(``) && PathPrefix(`/`)
         - traefik.http.routers._traefik.entrypoints=https
         - traefik.http.routers._traefik.priority=1
         - traefik.http.routers._traefik.tls=true
         - traefik.http.routers._traefik.middlewares=gzip@docker, _sslheader
-        - traefik.http.routers._traefik.tls.certresolver=myresolver
+        - traefik.http.routers._traefik.tls.certresolver=lehttpchallenge
       update_config:
         parallelism: 2
         order: start-first
