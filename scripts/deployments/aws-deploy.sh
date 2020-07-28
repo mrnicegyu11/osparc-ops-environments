@@ -53,10 +53,6 @@ current_git_branch=$(git rev-parse --abbrev-ref HEAD)
 # shellcheck source=/dev/null
 set -o allexport; source "${repo_basedir}"/repo.config; set +o allexport;
 
-# Mails host and login/password
-
-echo "$SMTP_HOST" | grep -Eo "([^.*.*]+)"
-
 echo
 echo -e "\e[1;33mDeploying osparc AWS-version on ${MACHINE_FQDN}\e[0m"
 
@@ -64,17 +60,9 @@ echo -e "\e[1;33mDeploying osparc AWS-version on ${MACHINE_FQDN}\e[0m"
 # -------------------------------- Simcore -------------------------------
 
 pushd "${repo_basedir}"/services/simcore;
-
-simcore_env=".env"
-simcore_compose="docker-compose.deploy.yml"
-
-substitute_environs template${simcore_env} ${simcore_env}
-
-$psed --in-place --expression='s/\s\s\s\ssecrets:/    #secrets:/' ${simcore_compose}
-$psed --in-place --expression='s/\s\s\s\s\s\s- source: rootca.crt/      #- source: rootca.crt/' ${simcore_compose}
-$psed --in-place --expression="s~\s\s\s\s\s\s\s\starget: /usr/local/share/ca-certificates/osparc.crt~        #target: /usr/local/share/ca-certificates/osparc.crt~" ${simcore_compose}
-$psed --in-place --expression='s~\s\s\s\s\s\s- SSL_CERT_FILE=/usr/local/share/ca-certificates/osparc.crt~      #- SSL_CERT_FILE=/usr/local/share/ca-certificates/osparc.crt~' ${simcore_compose}
-
+make -C "${repo_basedir}"/services/simcore up-aws
+simcore_env=.env
+simcore_compose=docker-compose.deploy.yml
 
 # check if changes were done, basically if there are changes in the repo
 for path in ${simcore_env} ${simcore_compose}

@@ -1,0 +1,369 @@
+# osparc-simcore stack (framework stack)
+# NOTES :
+# LOGSPOUT_MULTILINE is used to tell to Logspout, which is used by GrayLog, to handle multiline support of the logs of the concerned container. Please add with every new osparc-simcore service.
+# See this issue to have more informations : https://github.com/ITISFoundation/osparc-ops/issues/40
+version: "3.7"
+services:
+ # api-server:
+    #networks:
+      #- public
+     # - monitored
+    #environment:
+     # - LOGSPOUT_MULTILINE=true
+    #deploy:
+      #labels:
+        # NOTE: apiserver does not need sslheader since there is no socket.io
+      #  - traefik.http.routers.${SWARM_STACK_NAME}_api-server.middlewares=_gzip@docker
+      #update_config:
+        #parallelism: 2
+        #order: start-first
+        #failure_action: rollback
+       # delay: 10s
+      #rollback_config:
+       # parallelism: 0
+       # order: stop-first
+      #restart_policy:
+      #  condition: any
+     #   delay: 5s
+    #    max_attempts: 3
+   #     window: 120s
+   # extra_hosts: []
+  webserver:
+    networks:
+      - public
+      - monitored
+    environment:
+      - LOGSPOUT_MULTILINE=true
+      - PYTHONTRACEMALLOC=1
+      - DIRECTOR_HOST=${PREFIX_STACK_NAME}_director
+      - STORAGE_HOST=${PREFIX_STACK_NAME}_storage
+      - DIAGNOSTICS_MAX_AVG_LATENCY=10
+    deploy:
+      labels:
+        # ssl header necessary so that socket.io upgrades correctly from polling to websocket mode. the middleware must be attached to the right connection.
+        # NOTE: traefik does not like - in the sslheader middleware, so we override it here
+        # NOTE: in deploy mode with SSL they must be set to https!
+        - traefik.http.middlewares.${SWARM_STACK_NAME_NO_HYPHEN}_sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
+        - traefik.http.routers.${SWARM_STACK_NAME}_webserver.middlewares= gzip@docker, ${SWARM_STACK_NAME_NO_HYPHEN}_sslheader
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    extra_hosts: []
+
+  # need to pass self-signed certificate in /usr/local/share/ca-certificates and call update-ca-certificates
+  storage:
+    environment:
+      # minio sdk uses this env to use self-signed certs
+      #- SSL_CERT_FILE=/usr/local/share/ca-certificates/osparc.crt
+      - LOGSPOUT_MULTILINE=true
+    networks:
+      - monitored
+    extra_hosts:
+      - "${STORAGE_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}"
+    deploy:
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  director:
+    # Certificate necessary for local deploiement only
+    #secrets:
+      #- source: rootca.crt
+        #target: /usr/local/share/ca-certificates/osparc.crt
+    environment:
+      - LOGSPOUT_MULTILINE=true
+      - SIMCORE_SERVICES_NETWORK_NAME=${SWARM_STACK_NAME}_interactive_services_subnet
+      - REGISTRY_SSL=true
+      # needed to pass the self-signed certificate to the spawned services
+      #- DIRECTOR_SELF_SIGNED_SSL_FILENAME=/usr/local/share/ca-certificates/osparc.crt
+      # - DIRECTOR_SELF_SIGNED_SSL_SECRET_ID=some_id
+      #- DIRECTOR_SELF_SIGNED_SSL_SECRET_NAME=rootca.crt
+      #- SSL_CERT_FILE=/usr/local/share/ca-certificates/osparc.crt
+    networks:
+      - monitored
+    deploy:
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    extra_hosts:
+      - "${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}" 
+
+  sidecar:
+    environment:
+      - LOGSPOUT_MULTILINE=true
+      - RABBIT_HOST=${PREFIX_STACK_NAME}_rabbit
+    deploy:
+      replicas: 16
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    extra_hosts:
+      - "${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}"  
+  rabbit:
+    networks:
+      - monitored
+      - public
+    environment:
+      - LOGSPOUT_MULTILINE=true
+    deploy:
+      labels:
+        - traefik.docker.network=${PUBLIC_NETWORK}
+        - traefik.http.services.${PREFIX_STACK_NAME}_rabbit.loadbalancer.server.port=15672
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.rule=Host(`${MONITORING_DOMAIN}`) && PathPrefix(`/${PREFIX_STACK_NAME}_rabbit`)
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.entrypoints=https
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.tls=true
+        - traefik.http.middlewares.${PREFIX_STACK_NAME}_rabbit_replace_regex.replacepathregex.regex=^/${PREFIX_STACK_NAME}_rabbit/(.*)$$
+        - traefik.http.middlewares.${PREFIX_STACK_NAME}_rabbit_replace_regex.replacepathregex.replacement=/$${1}
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.middlewares=${PREFIX_STACK_NAME}_rabbit_replace_regex@docker, ops_gzip@docker
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.tls.certresolver=myresolver
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  redis:
+    networks:
+      - monitored
+    environment:
+      - LOGSPOUT_MULTILINE=true
+    deploy:
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  postgres:
+    networks:
+      - monitored
+    environment:
+      - LOGSPOUT_MULTILINE=true
+    # in clusters one or more nodes are typically defined as THE postgres nodes.
+    #   deploy:
+    #     placement:
+    #       constraints:
+    #         - node.labels.postgres==true
+    deploy:
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  traefik:
+    command:
+      - "--api=true"
+      - "--api.dashboard=true"
+      - "--log.level=debug"
+      - "--accesslog=true"
+      - "--metrics.prometheus=true"
+      - "--metrics.prometheus.addEntryPointsLabels=true"
+      - "--metrics.prometheus.addServicesLabels=true"
+      - "--entryPoints.metrics.address=:8082"
+      - "--metrics.prometheus.entryPoint=metrics"
+      - "--entryPoints.http.address=:80"
+      - "--entryPoints.http.forwardedHeaders.insecure"
+      - "--entryPoints.traefik_monitor.address=:8080"
+      - "--entryPoints.traefik_monitor.forwardedHeaders.insecure"
+      - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+      - "--providers.docker.network=${SWARM_STACK_NAME}_default"
+      - "--providers.docker.swarmMode=true"
+      - "--providers.docker.exposedByDefault=false"
+      - "--providers.docker.constraints=Label(`io.simcore.zone`, `${TRAEFIK_SIMCORE_ZONE}`)"
+      - "--tracing=true"
+      - "--tracing.jaeger=true"
+      - "--tracing.jaeger.samplingServerURL=http://jaeger:5778/sampling"
+      - "--tracing.jaeger.localAgentHostPort=jaeger:6831"
+    networks:
+      - monitored
+      - public
+    deploy:
+      labels:
+    # external traefik
+        - traefik.enable=true
+        - traefik.docker.network=${PUBLIC_NETWORK}
+        - traefik.http.services.${SWARM_STACK_NAME}_traefik.loadbalancer.server.port=80
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.rule=Host(`${PUBLISHED_HOST_NAME}`) && PathPrefix(`/`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.entrypoints=https
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.priority=1
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.tls=true
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.middlewares=gzip@docker, ${SWARM_STACK_NAME_NO_HYPHEN}_sslheader
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik.tls.certresolver=myresolver
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  traefik_api:
+    # NOTE: this is a trick to allow to access the internal traefik REST API
+    # list router like so: curl https://domain/api/http/routers | jq
+    image: busybox:latest
+    command: sleep 900000d
+    deploy:
+      labels:
+        # internal traefik
+        - io.simcore.zone=${TRAEFIK_SIMCORE_ZONE}
+        # traefik UI
+        - traefik.enable=true
+        - traefik.http.routers.${SWARM_STACK_NAME}_api.service=api@internal
+        - traefik.http.routers.${SWARM_STACK_NAME}_api.rule=PathPrefix(`/dashboard`) || PathPrefix(`/api`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_api.entrypoints=http
+        - traefik.http.routers.${SWARM_STACK_NAME}_api.priority=2
+        - traefik.http.routers.${SWARM_STACK_NAME}_api.middlewares=${SWARM_STACK_NAME}_auth@docker, gzip@docker
+        - traefik.http.services.${SWARM_STACK_NAME}_api.loadbalancer.server.port=8080
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+  whoami:
+    image: "containous/whoami"
+    # NOTE: this service allow to better understand how the host gets forwarded inside the simcore stack
+    deploy:
+      labels:
+        # internal traefik
+        - io.simcore.zone=${TRAEFIK_SIMCORE_ZONE}
+        # basic authentication
+        # To create user:password pair, it's possible to use this command:
+        # docker run --rm --entrypoint htpasswd registry:2 -nb user password
+        # admin:adminadmin
+        - traefik.http.middlewares.${SWARM_STACK_NAME}_auth.basicauth.users=admin:$$apr1$$aaX0W.4I$$sNk3knnThfi7fHTXQa0Wx.
+        # whoami
+        - traefik.enable=true
+        - traefik.http.services.${SWARM_STACK_NAME}_whoami.loadbalancer.server.port=80
+        - traefik.http.routers.${SWARM_STACK_NAME}_whoami.rule=hostregexp(`{host:.+}`) && PathPrefix(`/whoami`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_whoami.entrypoints=http
+        - traefik.http.routers.${SWARM_STACK_NAME}_whoami.priority=2
+        - traefik.http.routers.${SWARM_STACK_NAME}_whoami.middlewares=${SWARM_STACK_NAME}_auth@docker,gzip@docker
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
+networks:
+  public:
+    external: true
+    name: ${OPS_PUBLIC_NETWORK}
+  monitored:
+    external: true
+    name: ${OPS_MONITORED_NETWORK}
+  interactive_services_subnet:
+    driver: overlay
+    attachable: true
+    internal: false
+    labels:
+      com.simcore.description: "interactive services network"
+    ipam:
+      driver: default
+      config:
+        # FIXME: move to base docker-compose.yml
+        - subnet: ${SIMCORE_INTERACTIVE_NETWORK_SUBNET}
+
+  computational_services_subnet:
+    driver: overlay
+    attachable: true
+    internal: false
+    labels:
+      com.simcore.description: "computational services network"
+    ipam:
+      driver: default
+      config:
+        # FIXME: move to base docker-compose.yml
+        - subnet: ${SIMCORE_COMPUTATIONAL_NETWORK_SUBNET}
+
+# self-signed only
+secrets:
+  rootca.crt:
+    external: true
