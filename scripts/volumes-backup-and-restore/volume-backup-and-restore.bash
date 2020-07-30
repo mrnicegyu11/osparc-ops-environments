@@ -47,12 +47,11 @@ backup_and_restore_ssh()
             docker volume rm -f ${DEST_VOLUME_NAME}
             echo "Creating a new empty volume"
             docker volume create ${DEST_VOLUME_NAME}
-            echo "Restoring the volume..."
-            ssh $SSH_HOST \
             echo "Macking a backup of ${SOURCE_VOLUME_NAME} in the distant host $SSH_HOST"
+            ssh $SSH_HOST \
             "docker run --rm -v ${SOURCE_VOLUME_NAME}:${SOURCE_FOLDER_NAME} alpine ash -c 'cd ${SOURCE_FOLDER_NAME} ; tar -cf - . '" \
             | \
-            docker run --rm -i -v "${DEST_VOLUME_NAME}":"${DEST_FOLDER_NAME}" alpine ash -c "cd "${DEST_FOLDER_NAME} ; tar -xpvf - "
+            docker run --rm -i -v "${DEST_VOLUME_NAME}":"${DEST_FOLDER_NAME}" alpine ash -c "cd ${DEST_FOLDER_NAME} ; tar -xpvf - "
             echo "Volume restored."
         ;;
         * )
@@ -63,6 +62,6 @@ backup_and_restore_ssh()
 
 }
 
-[ $1 = "backup" ] && backup_manual
-[ $1 = "restore" ] && restore_manual
+[ $1 = "backup" ] && backup
+[ $1 = "restore" ] && restore
 [ $1 = "backup_and_restore_ssh" ] && backup_and_restore_ssh
