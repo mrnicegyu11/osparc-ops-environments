@@ -12,7 +12,7 @@ TEMP_COMPOSE=.stack.${STACK_NAME}.yaml
 include ../../scripts/common.Makefile
 
 .PHONY: up-aws
-up-aws: .env ${TEMP_COMPOSE}  ## Deploys mail stack in aws
+up-aws: .env configure ${TEMP_COMPOSE}  ## Deploys mail stack in aws
 	docker stack deploy --compose-file ${TEMP_COMPOSE} ${STACK_NAME}
 
 # Helpers -------------------------------------------------
@@ -20,3 +20,23 @@ up-aws: .env ${TEMP_COMPOSE}  ## Deploys mail stack in aws
 .PHONY: ${TEMP_COMPOSE}
 ${TEMP_COMPOSE}: docker-compose.yml
 	@docker-compose -f $< --log-level=ERROR config > $@
+
+
+.PHONY : configure
+configure: ## If it does not exist, add the configuration (create mails and alias) to the mail service
+	@if [ -d "config" ] ; then \
+		echo "Config already created for mail..."; \
+	else \
+		set -o allexport; \
+		source $(realpath $(CURDIR)/../../repo.config); \
+		set +o allexport; \
+		echo "Adding configuration for $${SMTP_USERNAME}"; \
+		bash setup.sh email add $${SMTP_USERNAME} $${SMTP_PASSWORD}; \
+		bash setup.sh email add root@$${MACHINE_FQDN} $${SMTP_PASSWORD}; \
+		bash setup.sh email add devops@$${MACHINE_FQDN} $${SMTP_PASSWORD}; \
+		bash setup.sh email add code-of-conduct@$${MACHINE_FQDN} $${SMTP_PASSWORD}; \
+		bash setup.sh alias add root guidon@speag.swiss; \
+		bash setup.sh alias add support osparcio-support@speag.swiss; \
+		bash setup.sh alias add devops osparcio-devops@speag.swiss; \
+		bash setup.sh alias add code-of-conduct neagu@itis.swiss; \
+	fi;

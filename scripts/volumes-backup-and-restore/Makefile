@@ -11,12 +11,16 @@ help:
 	@echo ""
 
 
-.PHONY: backup restore clean
+.PHONY: backup restore clean all_ssh
 backup: ## Backup desired volume
-	./volume-backup-and-restore.bash backup
+	@./volume-backup-and-restore.bash backup
 
 restore: ## Restore desired volume
-	./volume-backup-and-restore.bash restore
+	@./volume-backup-and-restore.bash restore
+
+all_ssh: ## Connect to a distant server in ssh, backup the volume and restore it in the local server
+	@./volume-backup-and-restore.bash backup_and_restore_ssh
  
 clean: ## Remove the backup in /tmp/backup
 	@sudo rm -rf /tmp/backup/*
+

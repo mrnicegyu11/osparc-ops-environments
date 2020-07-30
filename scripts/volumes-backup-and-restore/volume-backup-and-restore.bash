@@ -1,7 +1,6 @@
 #!/bin/bash
 #
-# Deploy the stack within AWS. The script take the FQDN values (FQDN and monitoring FQDN) from the repo.config file and edit each.env files
-#
+# Create and restore docker volumes
 #
 
 set -o errexit
@@ -39,6 +38,36 @@ restore()
     exit 0
 }
 
+backup_and_restore_ssh()
+{
+    read -p "CAUTION ! This script will remove the existing volume if it exists before restoring it. Are you sure ? (y/n)? " answer
+    case ${answer:0:1} in
+        y|Y )
+            echo "Deleting volume ${DEST_VOLUME_NAME}"
+            docker volume rm -f ${DEST_VOLUME_NAME}
+            echo "Creating a new empty volume"
+            docker volume create ${DEST_VOLUME_NAME}
+            echo "Restoring the volume..."
+            ssh $SSH_HOST \
+            echo "Macking a backup of ${SOURCE_VOLUME_NAME} in the distant host $SSH_HOST"
+            "docker run --rm -v ${SOURCE_VOLUME_NAME}:${SOURCE_FOLDER_NAME} alpine ash -c 'cd ${SOURCE_FOLDER_NAME} ; tar -cf - . '" \
+            | \
+            docker run --rm -i -v "${DEST_VOLUME_NAME}":"${DEST_FOLDER_NAME}" alpine ash -c "cd "${DEST_FOLDER_NAME} ; tar -xpvf - "
+            echo "Volume restored."
+        ;;
+        * )
+            echo "Prudence est mère de sureté "
+        ;;
+    esac
+    exit 0
 
-[ $1 = "backup" ] && backup
-[ $1 = "restore" ] && restore
+}
+
+
+ssh -i /ebs/keys/test root@some.ip '/some/command -'"$MY_VAR"
+
+
+
+[ $1 = "backup" ] && backup_manual
+[ $1 = "restore" ] && restore_manual
+[ $1 = "backup_and_restore_ssh" ] && backup_and_restore_ssh
