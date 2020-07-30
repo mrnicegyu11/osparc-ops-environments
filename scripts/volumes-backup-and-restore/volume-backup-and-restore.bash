@@ -63,11 +63,6 @@ backup_and_restore_ssh()
 
 }
 
-
-ssh -i /ebs/keys/test root@some.ip '/some/command -'"$MY_VAR"
-
-
-
 [ $1 = "backup" ] && backup_manual
 [ $1 = "restore" ] && restore_manual
 [ $1 = "backup_and_restore_ssh" ] && backup_and_restore_ssh
