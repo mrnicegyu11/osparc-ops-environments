@@ -25,7 +25,7 @@ function substitute_environs
 
 function call_make
 {
-    make --no-print-directory --directory "${1:-"Missing Directory"}" "${2:-"Missing recipe"}"
+    make --no-print-directory --directory "${1:-"Missing Directory"}" "${@:2:$#}"
 }
 
 # Using osx support functions
@@ -61,9 +61,9 @@ echo -e "\e[1;33mDeploying osparc AWS-version on ${MACHINE_FQDN}\e[0m"
 
 pushd "${repo_basedir}"/services/simcore;
 make -C "${repo_basedir}"/services/simcore up-aws
+
 simcore_env=.env
 simcore_compose=docker-compose.deploy.yml
-
 # check if changes were done, basically if there are changes in the repo
 for path in ${simcore_env} ${simcore_compose}
 do
@@ -78,35 +78,29 @@ echo
 echo -e "\e[1;33mstarting portainer...\e[0m"
 make -C "${repo_basedir}"/services/portainer up-aws
 
-
 # -------------------------------- TRAEFIK -------------------------------
 echo
 echo -e "\e[1;33mstarting traefik...\e[0m"
 # setup configuration
 call_make "${repo_basedir}"/services/traefik up-aws
 
-
 # -------------------------------- REGISTRY -------------------------------
 echo
 echo -e "\e[1;33mstarting registry...\e[0m"
 make -C "${repo_basedir}"/services/registry up-aws
-
 
 # -------------------------------- Redis commander-------------------------------
 echo
 echo -e "\e[1;33mstarting redis commander...\e[0m"
 make -C "${repo_basedir}"/services/redis-commander up-aws
 
-
 # -------------------------------- MONITORING -------------------------------
 
 echo
 echo -e "\e[1;33mstarting monitoring...\e[0m"
-
 # grafana config
 service_dir="${repo_basedir}"/services/monitoring
 make -C "${service_dir}" up-aws
-
 
 # -------------------------------- JAEGER -------------------------------
 echo
@@ -121,66 +115,19 @@ service_dir="${repo_basedir}"/services/adminer
 call_make "${service_dir}" up-aws
 
 # -------------------------------- Mail -------------------------------
-pushd "${repo_basedir}"/services/mail;
-
-if [ -d "${repo_basedir}/services/mail/config" ]
-then
-    echo "Config already created for mail..."
-else
-    echo "Adding configuration for ${SMTP_USERNAME}"
-    bash setup.sh email add ${SMTP_USERNAME} ${SMTP_PASSWORD}
-    bash setup.sh email add root@${MACHINE_FQDN} ${SMTP_PASSWORD}
-    bash setup.sh email add devops@${MACHINE_FQDN} ${SMTP_PASSWORD}
-    bash setup.sh email add code-of-conduct@${MACHINE_FQDN} ${SMTP_PASSWORD}
-    bash setup.sh alias add root guidon@speag.swiss
-    bash setup.sh alias add support osparcio-support@speag.swiss
-    bash setup.sh alias add devops osparcio-devops@speag.swiss
-    bash setup.sh alias add code-of-conduct neagu@itis.swiss
-fi
-
+echo
 echo -e "\e[1;33mstarting mail server...\e[0m"
 call_make "${repo_basedir}"/services/mail up-aws
-popd
 
 # -------------------------------- GRAYLOG -------------------------------
 echo
 echo -e "\e[1;33mstarting graylog...\e[0m"
 service_dir="${repo_basedir}"/services/graylog
-call_make "${service_dir}" up-aws
-call_make "${service_dir}" configure-instance
-
-
+call_make "${service_dir}" up-aws configure-instance
 
 # -------------------------------- DEPlOYMENT-AGENT -------------------------------
 echo
 echo -e "\e[1;33mstarting deployment-agent for simcore...\e[0m"
 pushd "${repo_basedir}"/services/deployment-agent;
-agent_compose_default="deployment_config.default.yaml"
-if [[ $current_git_url == git* ]]; then
-    # it is a ssh style link let's get the organisation name and just replace this cause that conf only accepts https git repos
-    current_organisation=$(echo "$current_git_url" | cut -d":" -f2 | cut -d"/" -f1)
-    $psed --in-place "s|https://github.com/ITISFoundation/osparc-ops.git|https://github.com/$current_organisation/osparc-ops.git|" ${agent_compose_default}
-else
-    $psed --in-place "/- id: simcore-ops-repo/{n;s|url:.*|url: $current_git_url|}" ${agent_compose_default}
-fi
-$psed --in-place "/- id: simcore-ops-repo/{n;n;s|branch:.*|branch: $current_git_branch|}" ${agent_compose_default}
-
-# Add environment variable that will be used by the simcore stack when deployed with the deployment-agent
-YAML_STRING="environment:\n        S3_ENDPOINT: ${S3_ENDPOINT}\n        S3_ACCESS_KEY: ${S3_ACCESS_KEY}\n        S3_SECRET_KEY: ${S3_SECRET_KEY}"
-$psed --in-place "s~environment: {}~$YAML_STRING~" ${agent_compose_default}
-# update in case there is already something in "environment: {}"
-$psed --in-place "s/S3_ENDPOINT:.*/S3_ENDPOINT: ${S3_ENDPOINT}/" ${agent_compose_default}
-$psed --in-place "s~S3_ACCESS_KEY:.*~S3_ACCESS_KEY: ${S3_ACCESS_KEY}~" ${agent_compose_default}
-$psed --in-place "s~S3_SECRET_KEY:.*~S3_SECRET_KEY: ${S3_SECRET_KEY}~" ${agent_compose_default}
-# portainer
-$psed --in-place "/- url: .*portainer:9000/{n;s/username:.*/username: ${SERVICES_USER}/}" ${agent_compose_default}
-$psed --in-place "/- url: .*portainer:9000/{n;n;s/password:.*/password: ${SERVICES_PASSWORD}/}" ${agent_compose_default}
-# extra_hosts
-$psed --in-place "s|extra_hosts: \[\]|extra_hosts:\n        - \"${MACHINE_FQDN}:${MANAGER_PRIVATE_ENDPOINT_IP}\n ${MONITORING_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}\n ${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}\n ${API_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP} \"|" ${agent_compose_default}
-#Update
-$psed --in-place "/extra_hosts:/{n;s/- .*/- \"${MACHINE_FQDN}:${MANAGER_PRIVATE_ENDPOINT_IP}\n ${MONITORING_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}\n ${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}\n ${API_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}\"/}" ${agent_compose_default}
-
-# We don't use Minio and postgresql with AWS
-$psed --in-place "s~excluded_services:.*~excluded_services: [webclient, minio, postgres]~" ${agent_compose_default}
 make down up;
 popd

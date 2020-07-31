@@ -113,31 +113,33 @@ devenv: .venv ## create a python virtual environment with dev tools (e.g. linter
 	@echo "To activate the venv, execute 'source .venv/bin/activate'"
 
 # Helpers -------------------------------------------------
-${DEPLOYMENT_AGENT_CONFIG}:  ${DEPLOYMENT_AGENT_CONFIG_DEFAULT}
+.PHONY: ${DEPLOYMENT_AGENT_CONFIG}
+${DEPLOYMENT_AGENT_CONFIG}:  
 	@set -o allexport; \
+	# Automatically update the branch - link of the repo for the ops - repo in the deployeur config to the current one in the current project. \
+	current_git_url=$$(git config --get remote.origin.url); \
+	current_git_branch=$$(git branch | grep \* | cut -d ' ' -f2); \
+	if [[ $$current_git_url == git* ]]; then \
+	    # it is a ssh style link let's get the organisation name and just replace this cause that conf only accepts https git repos \
+	    current_organisation=$(echo "$$current_git_url" | cut -d":" -f2 | cut -d"/" -f1); \
+	    export OPS_GIT_LINK=https://github.com/$$current_organisation/osparc-ops.git; \
+	else \
+	    export OPS_GIT_LINK=$$current_git_url; \
+	fi; \
+	export OPS_GIT_BRANCH=$$current_git_branch; \
+	# Set the tags
+	if 
 	source $(realpath $(CURDIR)/../../repo.config); \
 	set +o allexport; \
-	envsubst < $< > $@
+	envsubst < ${DEPLOYMENT_AGENT_CONFIG_DEFAULT} > $@
 
 
 docker-compose-configs = $(wildcard docker-compose*.yml)
 
 .PHONY: ${TEMP_COMPOSE}
-
 ${TEMP_COMPOSE}: .env $(docker-compose-configs)
 	@docker-compose --file docker-compose.yml --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE-devel}
 ${TEMP_COMPOSE-devel}: .env $(docker-compose-configs)
 	@docker-compose --file docker-compose.yml --file docker-compose.devel.yaml --log-level=ERROR config > $@
-
-.PHONY: configure
-configure :
-	if [[ $current_git_url == git* ]]; then
-	    # it is a ssh style link let's get the organisation name and just replace this cause that conf only accepts https git repos
-	    current_organisation=$(echo "$current_git_url" | cut -d":" -f2 | cut -d"/" -f1)
-	    $psed --in-place "s|https://github.com/ITISFoundation/osparc-ops.git|https://github.com/$current_organisation/osparc-ops.git|" ${agent_compose_default}
-	else
-	    $psed --in-place "/- id: simcore-ops-repo/{n;s|url:.*|url: $current_git_url|}" ${agent_compose_default}
-	fi;
-	$psed --in-place "/- id: simcore-ops-repo/{n;n;s|branch:.*|branch: $current_git_branch|}" ${agent_compose_default}
