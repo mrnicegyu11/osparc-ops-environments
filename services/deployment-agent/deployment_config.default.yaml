@@ -61,11 +61,8 @@ main:
     excluded_services: [webclient, minio, postgres]
     excluded_volumes: []
     additional_parameters:
-      extra_hosts: {}
-      environment:
-        S3_ENDPOINT: s3.amazonaws.com
-        S3_ACCESS_KEY: AKIAUYOAHQSOXFTWKKMG
-        S3_SECRET_KEY: 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
+      x: {}
+      environment: {}
     services_prefix: ${PREFIX_STACK_NAME}
   portainer:
     # lists the portainer instances to call upon

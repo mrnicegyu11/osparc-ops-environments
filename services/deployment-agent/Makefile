@@ -15,6 +15,11 @@ SWARM_HOSTS = $(shell docker node ls --format={{.Hostname}} 2>/dev/null)
 TEMP_COMPOSE = .stack.${STACK_NAME}.yaml
 TEMP_COMPOSE-devel = .stack.${STACK_NAME}.devel.yml
 DEPLOYMENT_AGENT_CONFIG = deployment_config.yaml
+DEPLOYMENT_AGENT_CONFIG_DEFAULT=deployment_config.default.yaml
+
+# VCS info on current repo
+CURRENT_GIT_URL=$(shell git config --get remote.origin.url)
+CURRENT_GIT_BRANCH=$(shell git rev-parse --abbrev-ref HEAD)
 
 # TARGETS --------------------------------------------------
 include ../../scripts/common.Makefile
@@ -108,7 +113,7 @@ devenv: .venv ## create a python virtual environment with dev tools (e.g. linter
 	@echo "To activate the venv, execute 'source .venv/bin/activate'"
 
 # Helpers -------------------------------------------------
-${DEPLOYMENT_AGENT_CONFIG}:  deployment_config.default.yaml 
+${DEPLOYMENT_AGENT_CONFIG}:  ${DEPLOYMENT_AGENT_CONFIG_DEFAULT}
 	@set -o allexport; \
 	source $(realpath $(CURDIR)/../../repo.config); \
 	set +o allexport; \
@@ -125,3 +130,14 @@ ${TEMP_COMPOSE}: .env $(docker-compose-configs)
 .PHONY: ${TEMP_COMPOSE-devel}
 ${TEMP_COMPOSE-devel}: .env $(docker-compose-configs)
 	@docker-compose --file docker-compose.yml --file docker-compose.devel.yaml --log-level=ERROR config > $@
+
+.PHONY: configure
+configure :
+	if [[ $current_git_url == git* ]]; then
+	    # it is a ssh style link let's get the organisation name and just replace this cause that conf only accepts https git repos
+	    current_organisation=$(echo "$current_git_url" | cut -d":" -f2 | cut -d"/" -f1)
+	    $psed --in-place "s|https://github.com/ITISFoundation/osparc-ops.git|https://github.com/$current_organisation/osparc-ops.git|" ${agent_compose_default}
+	else
+	    $psed --in-place "/- id: simcore-ops-repo/{n;s|url:.*|url: $current_git_url|}" ${agent_compose_default}
+	fi;
+	$psed --in-place "/- id: simcore-ops-repo/{n;n;s|branch:.*|branch: $current_git_branch|}" ${agent_compose_default}
