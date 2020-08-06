@@ -53,6 +53,7 @@ main:
       export MANAGER_PRIVATE_ENDPOINT_IP=${MANAGER_PRIVATE_ENDPOINT_IP} &&
       export REGISTRY_DOMAIN=${REGISTRY_DOMAIN} &&
       export STORAGE_DOMAIN=${STORAGE_DOMAIN} &&
+      export API_DOMAIN=${API_DOMAIN} &&
       mv .env .env.platform &&
       cat .env-devel >> .env.nosub && cat .env.platform >> .env.nosub &&
       envsubst < .env.nosub > .env &&

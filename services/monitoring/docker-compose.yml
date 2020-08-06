@@ -191,6 +191,8 @@ services:
           memory: 64M
 
   postgres-exporter:
+    dns:
+      8.8.8.8
     image: bitnami/postgres-exporter:0.8.0
     ports:
       - "9187"
