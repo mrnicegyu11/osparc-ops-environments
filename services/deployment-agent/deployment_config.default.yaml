@@ -61,7 +61,7 @@ main:
     excluded_services: [${EXCLUDED_SIMCORE_SERVICES}]
     excluded_volumes: []
     additional_parameters:
-      x: {}
+      extra_hosts: {}
       environment: {}
     services_prefix: ${PREFIX_STACK_NAME}
   portainer:

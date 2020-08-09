@@ -41,6 +41,6 @@ ${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml
 .PHONY: .secrets
 .secrets: .env
 	@$(if $(DOCKER_PORTAINER_ADMIN_PASSWORD_SECRET), \
-		, \
+		docker secret rm portainer_admin_password;  set -o allexport; source .env; set +o allexport; echo -n "$${PORTAINER_ADMIN_PWD}" | docker secret create portainer_admin_password -  2>/dev/null;  , \
 		set -o allexport; source .env; set +o allexport; echo -n "$${PORTAINER_ADMIN_PWD}" | docker secret create portainer_admin_password -  2>/dev/null;\
 	)

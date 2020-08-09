@@ -127,8 +127,6 @@ ${DEPLOYMENT_AGENT_CONFIG}:
 	    export OPS_GIT_LINK=$$current_git_url; \
 	fi; \
 	export OPS_GIT_BRANCH=$$current_git_branch; \
-	# Set the tags
-	if 
 	source $(realpath $(CURDIR)/../../repo.config); \
 	set +o allexport; \
 	envsubst < ${DEPLOYMENT_AGENT_CONFIG_DEFAULT} > $@
