@@ -121,6 +121,6 @@ deployment_config.yaml
 
 # Automatically generated config files
 /services/monitoring/grafana/provisioning/datasources/datasource.yml
-
+/services/monitoring/grafana/config.monitoring
 # Mail configuration
 /services/mail/config/
