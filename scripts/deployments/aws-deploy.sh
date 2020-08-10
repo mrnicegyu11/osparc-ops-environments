@@ -73,58 +73,61 @@ do
 done
 popd
 
-# -------------------------------- PORTAINER ------------------------------
-echo
-echo -e "\e[1;33mstarting portainer...\e[0m"
-make -C "${repo_basedir}"/services/portainer up-aws
 
-# -------------------------------- TRAEFIK -------------------------------
-echo
-echo -e "\e[1;33mstarting traefik...\e[0m"
-# setup configuration
-call_make "${repo_basedir}"/services/traefik up-aws
+if [ $1 != "--simcore_only" ]; then
 
-# -------------------------------- REGISTRY -------------------------------
-echo
-echo -e "\e[1;33mstarting registry...\e[0m"
-make -C "${repo_basedir}"/services/registry up-aws
+    # -------------------------------- PORTAINER ------------------------------
+    echo
+    echo -e "\e[1;33mstarting portainer...\e[0m"
+    make -C "${repo_basedir}"/services/portainer up-aws
 
-# -------------------------------- Redis commander-------------------------------
-echo
-echo -e "\e[1;33mstarting redis commander...\e[0m"
-make -C "${repo_basedir}"/services/redis-commander up-aws
+    # -------------------------------- TRAEFIK -------------------------------
+    echo
+    echo -e "\e[1;33mstarting traefik...\e[0m"
+    # setup configuration
+    call_make "${repo_basedir}"/services/traefik up-aws
 
-# -------------------------------- MONITORING -------------------------------
+    # -------------------------------- REGISTRY -------------------------------
+    echo
+    echo -e "\e[1;33mstarting registry...\e[0m"
+    make -C "${repo_basedir}"/services/registry up-aws
 
-echo
-echo -e "\e[1;33mstarting monitoring...\e[0m"
-# grafana config
-service_dir="${repo_basedir}"/services/monitoring
-make -C "${service_dir}" up-aws
+    # -------------------------------- Redis commander-------------------------------
+    echo
+    echo -e "\e[1;33mstarting redis commander...\e[0m"
+    make -C "${repo_basedir}"/services/redis-commander up-aws
 
-# -------------------------------- JAEGER -------------------------------
-echo
-echo -e "\e[1;33mstarting jaeger...\e[0m"
-service_dir="${repo_basedir}"/services/jaeger
-call_make "${service_dir}" up-aws
+    # -------------------------------- MONITORING -------------------------------
 
-# -------------------------------- Adminer -------------------------------
-echo
-echo -e "\e[1;33mstarting adminer...\e[0m"
-service_dir="${repo_basedir}"/services/adminer
-call_make "${service_dir}" up-aws
+    echo
+    echo -e "\e[1;33mstarting monitoring...\e[0m"
+    # grafana config
+    service_dir="${repo_basedir}"/services/monitoring
+    make -C "${service_dir}" up-aws
 
-# -------------------------------- Mail -------------------------------
-echo
-echo -e "\e[1;33mstarting mail server...\e[0m"
-call_make "${repo_basedir}"/services/mail up-aws
+    # -------------------------------- JAEGER -------------------------------
+    echo
+    echo -e "\e[1;33mstarting jaeger...\e[0m"
+    service_dir="${repo_basedir}"/services/jaeger
+    call_make "${service_dir}" up-aws
 
-# -------------------------------- GRAYLOG -------------------------------
-echo
-echo -e "\e[1;33mstarting graylog...\e[0m"
-service_dir="${repo_basedir}"/services/graylog
-call_make "${service_dir}" up-aws configure-instance
+    # -------------------------------- Adminer -------------------------------
+    echo
+    echo -e "\e[1;33mstarting adminer...\e[0m"
+    service_dir="${repo_basedir}"/services/adminer
+    call_make "${service_dir}" up-aws
 
+    # -------------------------------- Mail -------------------------------
+    echo
+    echo -e "\e[1;33mstarting mail server...\e[0m"
+    call_make "${repo_basedir}"/services/mail up-aws
+
+    # -------------------------------- GRAYLOG -------------------------------
+    echo
+    echo -e "\e[1;33mstarting graylog...\e[0m"
+    service_dir="${repo_basedir}"/services/graylog
+    call_make "${service_dir}" up-aws configure-instance
+fi
 # -------------------------------- DEPlOYMENT-AGENT -------------------------------
 echo
 echo -e "\e[1;33mstarting deployment-agent for simcore...\e[0m"

@@ -51,6 +51,10 @@ up-devel: .install-fqdn certificates/domain.crt certificates/domain.key .create-
 	bash scripts/deployments/local-deploy.sh --devel_mode=1
 	@$(MAKE) info-local
 
+.PHONY: up-deployer
+up-deployer:  ## Deploy simcore only
+	./scripts/deployments/aws-deploy.sh --simcore_only
+
 .PHONY: up-aws
 up-aws:
 	./scripts/deployments/aws-deploy.sh
