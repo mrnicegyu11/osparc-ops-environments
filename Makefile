@@ -55,9 +55,10 @@ up-devel: .install-fqdn certificates/domain.crt certificates/domain.key .create-
 up-deployer:  ## Deploy simcore only
 	./scripts/deployments/aws-deploy.sh --simcore_only
 
+# TODO : Generique script, not for aws 
 .PHONY: up-aws
 up-aws:
-	./scripts/deployments/aws-deploy.sh
+	./scripts/deployments/aws-deploy.sh aws
 
 
 .PHONY: down

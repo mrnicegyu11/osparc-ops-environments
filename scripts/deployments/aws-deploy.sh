@@ -53,6 +53,14 @@ current_git_branch=$(git rev-parse --abbrev-ref HEAD)
 # shellcheck source=/dev/null
 set -o allexport; source "${repo_basedir}"/repo.config; set +o allexport;
 
+# Generate WEBSERVER_SESSION_SECRET_KEY if the key is empty in repo.config
+if [[ -z "${WEBSERVER_SESSION_SECRET_KEY}" ]]; then
+    echo "Creation of a new webserver session key..."
+    WEBSERVER_SESSION_SECRET_KEY=$(python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key())")
+    $psed --in-place "s/WEBSERVER_SESSION_SECRET_KEY=.*/WEBSERVER_SESSION_SECRET_KEY=${WEBSERVER_SESSION_SECRET_KEY}/" "${repo_basedir}"/repo.config
+    set -o allexport; source "${repo_basedir}"/repo.config; set +o allexport;
+fi
+
 echo
 echo -e "\e[1;33mDeploying osparc AWS-version on ${MACHINE_FQDN}\e[0m"
 
@@ -116,6 +124,20 @@ if [ $1 != "--simcore_only" ]; then
     echo -e "\e[1;33mstarting adminer...\e[0m"
     service_dir="${repo_basedir}"/services/adminer
     call_make "${service_dir}" up-aws
+
+    # -------------------------------- Minio -------------------------------
+    # In the .env, MINIO_NUM_MINIOS and MINIO_NUM_PARTITIONS need to be set at 1 to work without labelling the nodes with minioX=true
+
+    echo
+    echo -e "\e[1;33mstarting minio...\e[0m"
+    service_dir="${repo_basedir}"/services/minio
+    call_make "${repo_basedir}"/services/minio up
+
+    echo "waiting for minio to run...don't worry..."
+    while [ ! "$(curl -s -o /dev/null -I -w "%{http_code}" --max-time 10 https://"${STORAGE_DOMAIN}"/minio/health/ready)" = 200 ]; do
+        echo "waiting for minio to run..."
+        sleep 5s
+    done
 
     # -------------------------------- Mail -------------------------------
     echo
