@@ -7,7 +7,6 @@ services:
   minio{{ service_id|string }}:
     deploy:
       labels:
-        - traefik.http.routers.minio.rule=Host(`${STORAGE_DOMAIN}`)
         - traefik.http.routers.minio.entrypoints=https
         - traefik.http.routers.minio.tls.certresolver=myresolver
 {% endfor %}
