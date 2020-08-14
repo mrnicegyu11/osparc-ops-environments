@@ -19,6 +19,10 @@ up-local: .init .create_secrets .env ${TEMP_COMPOSE}-local ## Deploys the stack 
 up-aws: .init .env ${TEMP_COMPOSE}-aws ## Deploys the stack aws 
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
+.PHONY: up-dalco
+up-dalco: .init .env ${TEMP_COMPOSE}-dalco ## Deploys the stack on dalco cluster 
+	@docker stack deploy --compose-file ${TEMP_COMPOSE}-dalco ${STACK_NAME}
+
 .PHONY: up-letsencrypt
 up-letsencrypt: .init .env ${TEMP_COMPOSE}-letsencrypt ## Deploys the stack without certificates (self-generated or let's encrypt)
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt ${STACK_NAME}
@@ -45,6 +49,13 @@ ${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml
 	source .env; \
 	set +o allexport; \
 	docker-compose -f $< -f docker-compose.aws.yml --log-level=ERROR config > $@
+
+.PHONY: ${TEMP_COMPOSE}-dalco
+${TEMP_COMPOSE}-dalco: docker-compose.yml docker-compose.dalco.yml
+	@set -o allexport; \
+	source .env; \
+	set +o allexport; \
+	docker-compose -f $< -f docker-compose.dalco.yml --log-level=ERROR config > $@
 
 
 .PHONY: .create_secrets

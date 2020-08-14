@@ -26,6 +26,8 @@ up-local: .env ${TEMP_COMPOSE}-local
 .PHONY: up-aws
 up-aws: .env ${TEMP_COMPOSE}-aws  
 
+.PHONY: up-dalco
+up-aws: .env ${TEMP_COMPOSE}-dalco 
 
 .PHONY: ${TEMP_COMPOSE}-local
 ${TEMP_COMPOSE}-local: install-snap docker-compose.yml docker-compose.deploy.local.yml
@@ -34,6 +36,10 @@ ${TEMP_COMPOSE}-local: install-snap docker-compose.yml docker-compose.deploy.loc
 .PHONY: ${TEMP_COMPOSE}-aws
 ${TEMP_COMPOSE}-aws: install-snap docker-compose.yml
 	@cp docker-compose.yml ${TEMP_COMPOSE}
+
+.PHONY: ${TEMP_COMPOSE}-dalco
+${TEMP_COMPOSE}-dalco: install-snap docker-compose.yml docker-compose.deploy.dalco.yml
+	@yq m $< docker-compose.deploy.dalco.yml > ${TEMP_COMPOSE}		
 
 .PHONY: install-snap
 install-snap:

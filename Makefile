@@ -56,7 +56,7 @@ up-deployer:  ## Deploy simcore only
 	./scripts/deployments/aws-deploy.sh --simcore_only
 
 # TODO : Generique script, not for aws 
-.PHONY: up-aws
+.PHONY: up-aws ## Deploy aws stack
 up-aws:
 	./scripts/deployments/aws-deploy.sh aws
 

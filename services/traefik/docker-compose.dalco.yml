@@ -1,0 +1,67 @@
+version: '3.7'
+services:
+  traefik:
+    command:
+      - '--api=true'
+      - '--api.dashboard=true'
+      - '--log.level=DEBUG'
+      - '--accesslog=true'
+      - '--metrics.prometheus=true'
+      - '--metrics.prometheus.addEntryPointsLabels=true'
+      - '--metrics.prometheus.addServicesLabels=true'
+      - '--entryPoints.metrics.address=:8082'
+      - '--metrics.prometheus.entryPoint=metrics'
+      - '--entryPoints.http.address=:80'
+      - '--entryPoints.https.address=:443'
+      - '--entryPoints.smtp.address=:25'
+      - '--providers.docker.endpoint=unix:///var/run/docker.sock'
+      - '--providers.docker.swarmMode=true'
+      - '--providers.docker.exposedByDefault=false'
+      - '--tracing=true'
+      - '--tracing.jaeger=true'
+      - '--tracing.jaeger.samplingServerURL=http://jaeger:5778/sampling'
+      - '--tracing.jaeger.localAgentHostPort=jaeger:6831'   
+      - "--providers.docker.constraints=!LabelRegex(`io.simcore.zone`, `*`)"
+      - "--entryPoints.https.forwardedHeaders.insecure"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=rfc2136"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=960"
+      - "--certificatesresolvers.myresolver.acme.email=allexandre@itis.swiss"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge=true"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge.entrypoint=http"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.email=allexandre@itis.swiss"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.storage=/letsencrypt/acme.json"
+    # For debug purpose, to avoid being ban by let's encrypt servers
+      - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsdsdsencrypt.org/directory"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.resolvers=172.16.8.15:53"
+    volumes:
+      - "letsencrypt_certs:/letsencrypt"
+    environment:
+      -  RFC2136_TSIG_KEY=${RFC2136_TSIG_KEY}
+      -  RFC2136_TSIG_SECRET=${RFC2136_TSIG_SECRET}
+      -  RFC2136_TSIG_ALGORITHM=${RFC2136_TSIG_ALGORITHM}
+      -  RFC2136_NAMESERVER=${RFC2136_NAMESERVER}
+      -  RFC2136_PROPAGATION_TIMEOUT=${RFC2136_PROPAGATION_TIMEOUT}
+      -  RFC2136_POLLING_INTERVAL=${RFC2136_POLLING_INTERVAL}
+    deploy:
+      placement:
+        constraints:
+          - node.labels.traefik==true
+      labels:
+        - traefik.http.routers.api.tls=true
+        - traefik.http.routers.api.tls.certresolver=myresolver
+         #- com.docker.aws.lb.arn=arn:aws:acm:us-east-1:327357531293:certificate/1c87d979-f327-4497-996a-2b70a82e76d7
+        - traefik.http.middlewares.ops_whitelist_ips.ipwhitelist.sourcerange=195.176.8.0/24, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, ${MANAGER_PUBLIC_ENDPOINT_IP} 
+        - traefik.http.routers.api.entrypoints=https
+
+  whoami:
+    deploy:
+      labels:
+        - traefik.http.routers.whoami.tls=true
+        - traefik.http.routers.whoami.entrypoints=https
+        - traefik.http.routers.whoami.tls.certresolver=myresolver
+    networks:
+      - public
+
+volumes:
+  letsencrypt_certs:

@@ -57,6 +57,8 @@ set -o allexport; source "${repo_basedir}"/repo.config; set +o allexport;
 if [[ -z "${WEBSERVER_SESSION_SECRET_KEY}" ]]; then
     echo "Creation of a new webserver session key..."
     WEBSERVER_SESSION_SECRET_KEY=$(python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key())")
+    # TODO 
+    #$WEBSERVER_SESSION_SECRET_KEY = ${${WEBSERVER_SESSION_SECRET_KEY}//\'/\'} # Espace ' characters
     $psed --in-place "s/WEBSERVER_SESSION_SECRET_KEY=.*/WEBSERVER_SESSION_SECRET_KEY=${WEBSERVER_SESSION_SECRET_KEY}/" "${repo_basedir}"/repo.config
     set -o allexport; source "${repo_basedir}"/repo.config; set +o allexport;
 fi
@@ -68,7 +70,7 @@ echo -e "\e[1;33mDeploying osparc AWS-version on ${MACHINE_FQDN}\e[0m"
 # -------------------------------- Simcore -------------------------------
 
 pushd "${repo_basedir}"/services/simcore;
-make -C "${repo_basedir}"/services/simcore up-aws
+make -C "${repo_basedir}"/services/simcore up-dalco
 
 simcore_env=.env
 simcore_compose=docker-compose.deploy.yml
@@ -93,7 +95,7 @@ if [ $1 != "--simcore_only" ]; then
     echo
     echo -e "\e[1;33mstarting traefik...\e[0m"
     # setup configuration
-    call_make "${repo_basedir}"/services/traefik up-aws
+    call_make "${repo_basedir}"/services/traefik up-dalco
 
     # -------------------------------- REGISTRY -------------------------------
     echo
@@ -131,7 +133,7 @@ if [ $1 != "--simcore_only" ]; then
     echo
     echo -e "\e[1;33mstarting minio...\e[0m"
     service_dir="${repo_basedir}"/services/minio
-    call_make "${repo_basedir}"/services/minio up
+    call_make "${repo_basedir}"/services/minio up-letsencrypt
 
     echo "waiting for minio to run...don't worry..."
     while [ ! "$(curl -s -o /dev/null -I -w "%{http_code}" --max-time 10 https://"${STORAGE_DOMAIN}"/minio/health/ready)" = 200 ]; do

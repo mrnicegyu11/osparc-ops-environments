@@ -1,0 +1,6 @@
+  postgres:
+    environment:
+       deploy:
+         placement:
+           constraints:
+            - node.labels.postgres==true
