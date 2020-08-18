@@ -15,9 +15,13 @@ include ../../scripts/common.Makefile
 up: .init .env ${TEMP_COMPOSE} ## Deploys or updates current stack "$(STACK_NAME)". If MONITORED_NETWORK is not specified, it will create an attachable network
 	@docker stack deploy --compose-file ${TEMP_COMPOSE} $(STACK_NAME)
 
-.PHONY: up-letsencrypt
-up-letsencrypt: .init ${TEMP_COMPOSE}-letsencrypt .env  ## Deploys or updates current stack "$(STACK_NAME)" using let's encrypt
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt ${STACK_NAME}
+.PHONY: up-letsencrypt-http
+up-letsencrypt-http: .init ${TEMP_COMPOSE}-letsencrypt-http .env  ## Deploys or updates current stack "$(STACK_NAME)" using let's encrypt http challenge
+	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-http ${STACK_NAME}
+
+.PHONY: up-letsencrypt-dns
+up-letsencrypt-dns: .init ${TEMP_COMPOSE}-letsencrypt-dns .env  ## Deploys or updates current stack "$(STACK_NAME)" using let's encrypt dns challenge
+	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
 
 .PHONY: up-aws
 up-aws: .init .env datasource.yml config.monitoring ${TEMP_COMPOSE}-aws   ## Deploys or updates current stack "$(STACK_NAME)" in AWS
@@ -27,13 +31,17 @@ up-aws: .init .env datasource.yml config.monitoring ${TEMP_COMPOSE}-aws   ## Dep
 ${TEMP_COMPOSE}: docker-compose.yml
 	@docker-compose -f $< --log-level=ERROR config > $@
 
-.PHONY: ${TEMP_COMPOSE}-letsencrypt
-${TEMP_COMPOSE}-letsencrypt: docker-compose.yml docker-compose.letsencrypt.yml
-	@docker-compose -f $< -f docker-compose.letsencrypt.yml --log-level=ERROR config > $@
+.PHONY: ${TEMP_COMPOSE}-letsencrypt-http
+${TEMP_COMPOSE}-letsencrypt-http: docker-compose.yml docker-compose.letsencrypt.http.yml
+	@docker-compose -f $< -f docker-compose.letsencrypt.http.yml --log-level=ERROR config > $@
+
+.PHONY: ${TEMP_COMPOSE}-letsencrypt-dns
+${TEMP_COMPOSE}-letsencrypt-dns: docker-compose.yml docker-compose.letsencrypt.dns.yml
+	@docker-compose -f $< -f docker-compose.letsencrypt.dns.yml --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE}-aws
-${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml
-	@docker-compose -f $< -f docker-compose.aws.yml --log-level=ERROR config > $@
+${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml docker-compose.letsencrypt.dns.yml
+	@docker-compose -f $< -f docker-compose.aws.yml -f docker-compose.letsencrypt.dns.yml --log-level=ERROR config > $@
 
 
 .PHONY: config.monitoring

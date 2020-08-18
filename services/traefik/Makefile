@@ -23,9 +23,13 @@ up-aws: .init .env ${TEMP_COMPOSE}-aws ## Deploys the stack aws
 up-dalco: .init .env ${TEMP_COMPOSE}-dalco ## Deploys the stack on dalco cluster 
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-dalco ${STACK_NAME}
 
-.PHONY: up-letsencrypt
-up-letsencrypt: .init .env ${TEMP_COMPOSE}-letsencrypt ## Deploys the stack without certificates (self-generated or let's encrypt)
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt ${STACK_NAME}
+.PHONY: up-letsencrypt-http
+up-letsencrypt: .init .env ${TEMP_COMPOSE}-letsencrypt-http ## Deploys the stack with let's encrypt http challenge
+	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-http ${STACK_NAME}
+
+.PHONY: up-letsencrypt-dns
+up-letsencrypt: .init .env ${TEMP_COMPOSE}-letsencrypt-dns ## Deploys the stack with let's encrypt dns challenge
+	@docker stack deploy --compose-file ${TEMP_COMPOSE}-dns ${STACK_NAME}
 
 # Helpers -------------------------------------------------
 
@@ -36,12 +40,19 @@ ${TEMP_COMPOSE}-local: docker-compose.yml docker-compose.local.yml
 	set +o allexport; \
 	docker-compose -f $< -f docker-compose.local.yml --log-level=ERROR config > $@
 
-.PHONY: ${TEMP_COMPOSE}-letsencrypt
-${TEMP_COMPOSE}-letsencrypt: docker-compose.yml docker-compose.letsencrypt.yml
+.PHONY: ${TEMP_COMPOSE}-letsencrypt-http
+${TEMP_COMPOSE}-letsencrypt-http: docker-compose.yml docker-compose.letsencrypt.http.yml
 	@set -o allexport; \
 	source .env; \
 	set +o allexport; \
-	docker-compose -f $< -f docker-compose.letsencrypt.yml --log-level=ERROR config > $@
+	docker-compose -f $< -f docker-compose.letsencrypt.http.yml --log-level=ERROR config > $@
+
+.PHONY: ${TEMP_COMPOSE}-letsencrypt-dns
+${TEMP_COMPOSE}-letsencrypt-dns: docker-compose.yml docker-compose.letsencrypt.dns.yml
+	@set -o allexport; \
+	source .env; \
+	set +o allexport; \
+	docker-compose -f $< -f docker-compose.letsencrypt.dns.yml --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE}-aws
 ${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml

@@ -20,9 +20,16 @@ up: .init .env ${TEMP_COMPOSE} .create-secrets ## Deploys or updates current sta
 	# "in case you created more than 1 replicas, you need to label the nodes accordingly using"
 	# "'docker node update --label-add minioX=true' with X being from 1 to number of replicas."
 
-.PHONY: up-letsencrypt
-up-letsencrypt: .init .env ${TEMP_COMPOSE}-letsencrypt .create-secrets ## Deploys minio stack using let's encrypt
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt ${STACK_NAME}
+.PHONY: up-letsencrypt-http
+up-letsencrypt-http: .init .env ${TEMP_COMPOSE}-letsencrypt-http .create-secrets ## Deploys minio stack using let's encrypt http challenge
+	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-http ${STACK_NAME}
+	# "in case you created more than 1 replicas, you need to label the nodes accordingly using"
+	# "'docker node update --label-add minioX=true' with X being from 1 to number of replicas."
+
+
+.PHONY: up-letsencrypt-dns
+up-letsencrypt-dns: .init .env ${TEMP_COMPOSE}-letsencrypt-dns .create-secrets ## Deploys minio stack using let's encrypt dns challenge
+	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
 	# "in case you created more than 1 replicas, you need to label the nodes accordingly using"
 	# "'docker node update --label-add minioX=true' with X being from 1 to number of replicas."
 
@@ -44,12 +51,20 @@ ${TEMP_COMPOSE}: docker-compose.yaml.j2	.venv
 	@docker-compose -f tmp.yaml --log-level=ERROR config > $@
 	@rm tmp.yaml
 
-.PHONY: ${TEMP_COMPOSE}-letsencrypt
-${TEMP_COMPOSE}-letsencrypt: docker-compose.yaml.j2 docker-compose.letsencrypt.yaml.j2 .venv
+.PHONY: ${TEMP_COMPOSE}-letsencrypt-http
+${TEMP_COMPOSE}-letsencrypt-http: docker-compose.yaml.j2 docker-compose.letsencrypt.http.yaml.j2 .venv
 	$(call jinja, $<, tmp.yaml)
-	$(call jinja, docker-compose.letsencrypt.yaml.j2, tmp-letsencrypt.yaml)
-	@docker-compose -f tmp.yaml -f tmp-letsencrypt.yaml --log-level=ERROR config > $@
-	@rm tmp.yaml tmp-letsencrypt.yaml
+	$(call jinja, docker-compose.letsencrypt.http.yaml.j2, tmp-letsencrypt.http.yaml)
+	@docker-compose -f tmp.yaml -f tmp-letsencrypt.http.yaml --log-level=ERROR config > $@
+	@rm tmp.yaml tmp-letsencrypt.http.yaml
+
+
+.PHONY: ${TEMP_COMPOSE}-letsencrypt-dns
+${TEMP_COMPOSE}-letsencrypt-dns: docker-compose.yaml.j2 docker-compose.letsencrypt.dns.yaml.j2 .venv
+	$(call jinja, $<, tmp.yaml)
+	$(call jinja, docker-compose.letsencrypt.dns.yaml.j2, tmp-letsencrypt.dns.yaml)
+	@docker-compose -f tmp.yaml -f tmp-letsencrypt.dns.yaml --log-level=ERROR config > $@
+	@rm tmp.yaml tmp-letsencrypt.dns.yaml
 
 .create-secrets:
 	@$(if $(DOCKER_MINIO_ACCESS_KEY), \

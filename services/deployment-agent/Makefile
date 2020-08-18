@@ -50,6 +50,10 @@ up: .init ${DEPLOYMENT_AGENT_CONFIG} ${TEMP_COMPOSE} ## Deploys or updates curre
 up-devel: .init ${DEPLOYMENT_AGENT_CONFIG} ${TEMP_COMPOSE-devel} ## Deploys or updates current stack "$(STACK_NAME)" using replicas=X (defaults to 1)
 	@docker stack deploy --compose-file ${TEMP_COMPOSE-devel} $(STACK_NAME)
 
+.PHONY: up-aws
+up-aws: .init ${DEPLOYMENT_AGENT_CONFIG} ${TEMP_COMPOSE}-aws ## Deploys or updates current stack "$(STACK_NAME)" using replicas=X (defaults to 1) on aws
+	@docker stack deploy --compose-file ${TEMP_COMPOSE} $(STACK_NAME)
+
 .PHONY: down
 down: ## Stops and remove stack from swarm
 	-@docker stack rm $(STACK_NAME)
@@ -141,3 +145,7 @@ ${TEMP_COMPOSE}: .env $(docker-compose-configs)
 .PHONY: ${TEMP_COMPOSE-devel}
 ${TEMP_COMPOSE-devel}: .env $(docker-compose-configs)
 	@docker-compose --file docker-compose.yml --file docker-compose.devel.yaml --log-level=ERROR config > $@
+
+.PHONY: ${TEMP_COMPOSE}-aws
+${TEMP_COMPOSE}-aws: .env $(docker-compose-configs)
+	@docker-compose --file docker-compose.yml --file docker-compose-aws.yml --log-level=ERROR config > $@

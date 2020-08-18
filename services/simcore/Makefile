@@ -20,26 +20,37 @@ include ../../scripts/common.Makefile
 configure: .env ${TEMP_COMPOSE}
 
 
-.PHONY: up-local
-up-local: .env ${TEMP_COMPOSE}-local
+.PHONY: compose-local ## Create docker-compose.deploy for local deployment
+compose-local: .env ${TEMP_COMPOSE}-local
 
-.PHONY: up-aws
-up-aws: .env ${TEMP_COMPOSE}-aws  
+.PHONY: compose-letsencrypt-http ## Create docker-compose.deploy for letsencrypt with http challenge deployment
+compose-letsencrypt-http: .env ${TEMP_COMPOSE}-letsencrypt-http  
 
-.PHONY: up-dalco
-up-aws: .env ${TEMP_COMPOSE}-dalco 
+.PHONY: compose-letsencrypt-dns ## Create docker-compose.deploy for letsencrypt with http dns deployment
+compose-letsencrypt-dns: .env ${TEMP_COMPOSE}-letsencrypt-http 
+
+.PHONY: compose-dalco ## Create docker-compose.deploy for Daclo cluster
+up-dalco: .env ${TEMP_COMPOSE}-dalco 
 
 .PHONY: ${TEMP_COMPOSE}-local
 ${TEMP_COMPOSE}-local: install-snap docker-compose.yml docker-compose.deploy.local.yml
-	@yq m $< docker-compose.deploy.local.yml > ${TEMP_COMPOSE}		
+	@yq m $< docker-compose.deploy.local.yml > ${TEMP_COMPOSE}
+
+.PHONY: ${TEMP_COMPOSE}-letsencrypt-http
+${TEMP_COMPOSE}-letsencrypt-http: install-snap docker-compose.yml docker-compose.deploy.letsencrypt.http.yml
+	@yq m $< docker-compose.deploy.letsencrypt.http.yml > ${TEMP_COMPOSE}
+
+.PHONY: ${TEMP_COMPOSE}-letsencrypt-dns
+${TEMP_COMPOSE}-letsencrypt-dns: install-snap docker-compose.yml docker-compose.deploy.letsencrypt.dns.yml
+	@yq m $< docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}	
 
 .PHONY: ${TEMP_COMPOSE}-aws
 ${TEMP_COMPOSE}-aws: install-snap docker-compose.yml
 	@cp docker-compose.yml ${TEMP_COMPOSE}
 
 .PHONY: ${TEMP_COMPOSE}-dalco
-${TEMP_COMPOSE}-dalco: install-snap docker-compose.yml docker-compose.deploy.dalco.yml
-	@yq m $< docker-compose.deploy.dalco.yml > ${TEMP_COMPOSE}		
+${TEMP_COMPOSE}-dalco: install-snap docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml
+	@yq m $< docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}		
 
 .PHONY: install-snap
 install-snap:

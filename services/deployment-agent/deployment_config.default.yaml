@@ -23,8 +23,8 @@ main:
       url: ${OPS_GIT_LINK}
       branch: ${OPS_GIT_BRANCH}
       pull_only_files: true
-      username: gitlab+deploy-token-1
-      password: "VnKTVs2fi4AGZy17FiDM"
+      username: ${GITLAB_LOGIN}
+      password: ${GITLAB_PASSWORD}
       paths:
         - services/simcore/docker-compose.deploy.yml
         - services/simcore/.env

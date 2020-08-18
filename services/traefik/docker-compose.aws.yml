@@ -44,20 +44,12 @@ services:
         constraints:
           - node.labels.traefik==true
       labels:
-        - traefik.http.routers.api.tls=true
         - traefik.http.routers.api.tls.certresolver=myresolver
-         #- com.docker.aws.lb.arn=arn:aws:acm:us-east-1:327357531293:certificate/1c87d979-f327-4497-996a-2b70a82e76d7
         - traefik.http.middlewares.ops_whitelist_ips.ipwhitelist.sourcerange=195.176.8.0/24, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, ${MANAGER_PUBLIC_ENDPOINT_IP} 
-        - traefik.http.routers.api.entrypoints=https
 
   whoami:
-    deploy:
-      labels:
-        - traefik.http.routers.whoami.tls=true
-        - traefik.http.routers.whoami.entrypoints=https
-        - traefik.http.routers.whoami.tls.certresolver=myresolver
-    networks:
-      - public
+    dns:
+      8.8.8.8
 
 volumes:
   letsencrypt_certs:

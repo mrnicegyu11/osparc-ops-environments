@@ -1,17 +1,11 @@
 version: '3.7'
 services:
   prometheus:
-    deploy:
-      labels:
-        - traefik.http.routers.prometheus.tls=true
-        - traefik.http.routers.prometheus.entrypoints=https
-        - traefik.http.routers.prometheus.tls.certresolver=myresolver
-
+    dns: 
+      8.8.8.8
   grafana:
-    deploy:
-      labels:
-        # direct access through port
-        - traefik.http.routers.grafana.tls=true
-        - traefik.http.routers.grafana.entrypoints=https
-        - traefik.http.routers.grafana.tls.certresolver=myresolver
-
+    dns: 
+      8.8.8.8
+  postgres-exporter:
+    dns:
+      8.8.8.8

@@ -68,9 +68,10 @@ echo -e "\e[1;33mDeploying osparc AWS-version on ${MACHINE_FQDN}\e[0m"
 
 
 # -------------------------------- Simcore -------------------------------
-
+echo
+echo -e "Updating if necessary docker-compose-deploy and .env in Sincore..."
 pushd "${repo_basedir}"/services/simcore;
-make -C "${repo_basedir}"/services/simcore up-dalco
+make -C "${repo_basedir}"/services/simcore compose-dalco
 
 simcore_env=.env
 simcore_compose=docker-compose.deploy.yml
@@ -83,13 +84,13 @@ do
 done
 popd
 
-
+# TODO Configure for different stacks and not only dalco
 if [ $1 != "--simcore_only" ]; then
 
     # -------------------------------- PORTAINER ------------------------------
     echo
     echo -e "\e[1;33mstarting portainer...\e[0m"
-    make -C "${repo_basedir}"/services/portainer up-aws
+    make -C "${repo_basedir}"/services/portainer up-letsencrypt-dns
 
     # -------------------------------- TRAEFIK -------------------------------
     echo
@@ -97,15 +98,10 @@ if [ $1 != "--simcore_only" ]; then
     # setup configuration
     call_make "${repo_basedir}"/services/traefik up-dalco
 
-    # -------------------------------- REGISTRY -------------------------------
-    echo
-    echo -e "\e[1;33mstarting registry...\e[0m"
-    make -C "${repo_basedir}"/services/registry up-aws
-
     # -------------------------------- Redis commander-------------------------------
     echo
     echo -e "\e[1;33mstarting redis commander...\e[0m"
-    make -C "${repo_basedir}"/services/redis-commander up-aws
+    make -C "${repo_basedir}"/services/redis-commander up-letsencrypt-dns
 
     # -------------------------------- MONITORING -------------------------------
 
@@ -113,19 +109,19 @@ if [ $1 != "--simcore_only" ]; then
     echo -e "\e[1;33mstarting monitoring...\e[0m"
     # grafana config
     service_dir="${repo_basedir}"/services/monitoring
-    make -C "${service_dir}" up-aws
+    make -C "${service_dir}" up-letsencrypt-dns
 
     # -------------------------------- JAEGER -------------------------------
     echo
     echo -e "\e[1;33mstarting jaeger...\e[0m"
     service_dir="${repo_basedir}"/services/jaeger
-    call_make "${service_dir}" up-aws
+    call_make "${service_dir}" up-letsencrypt-dns
 
     # -------------------------------- Adminer -------------------------------
     echo
     echo -e "\e[1;33mstarting adminer...\e[0m"
     service_dir="${repo_basedir}"/services/adminer
-    call_make "${service_dir}" up-aws
+    call_make "${service_dir}" up-letsencrypt-dns
 
     # -------------------------------- Minio -------------------------------
     # In the .env, MINIO_NUM_MINIOS and MINIO_NUM_PARTITIONS need to be set at 1 to work without labelling the nodes with minioX=true
@@ -133,7 +129,7 @@ if [ $1 != "--simcore_only" ]; then
     echo
     echo -e "\e[1;33mstarting minio...\e[0m"
     service_dir="${repo_basedir}"/services/minio
-    call_make "${repo_basedir}"/services/minio up-letsencrypt
+    call_make "${repo_basedir}"/services/minio up-letsencrypt-dns
 
     echo "waiting for minio to run...don't worry..."
     while [ ! "$(curl -s -o /dev/null -I -w "%{http_code}" --max-time 10 https://"${STORAGE_DOMAIN}"/minio/health/ready)" = 200 ]; do
@@ -144,14 +140,20 @@ if [ $1 != "--simcore_only" ]; then
     # -------------------------------- Mail -------------------------------
     echo
     echo -e "\e[1;33mstarting mail server...\e[0m"
-    call_make "${repo_basedir}"/services/mail up-aws
+    call_make "${repo_basedir}"/services/mail up
 
     # -------------------------------- GRAYLOG -------------------------------
     echo
     echo -e "\e[1;33mstarting graylog...\e[0m"
     service_dir="${repo_basedir}"/services/graylog
-    call_make "${service_dir}" up-aws configure-instance
+    call_make "${service_dir}" up-letsencrypt-dns configure-instance
 fi
+
+# -------------------------------- REGISTRY -------------------------------
+echo
+echo -e "\e[1;33mstarting registry...\e[0m"
+make -C "${repo_basedir}"/services/registry up-letsencrypt-dns
+
 # -------------------------------- DEPlOYMENT-AGENT -------------------------------
 echo
 echo -e "\e[1;33mstarting deployment-agent for simcore...\e[0m"

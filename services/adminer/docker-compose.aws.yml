@@ -1,8 +1,5 @@
 version: '3.7'
 services:
   adminer:
-    deploy:
-      labels:
-        - traefik.http.routers.adminer.tls=true
-        - traefik.http.routers.adminer.tls.certresolver=myresolver
-        - traefik.http.routers.adminer.entrypoints=https
+    dns:
+      8.8.8.8

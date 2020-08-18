@@ -8,5 +8,4 @@ services:
   grafana:
     deploy:
       labels:
-        # direct access through port
         - traefik.http.routers.grafana.tls.certresolver=lehttpchallenge

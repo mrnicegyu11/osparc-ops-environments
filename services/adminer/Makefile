@@ -14,12 +14,16 @@ include ../../scripts/common.Makefile
 up: .init .env ${TEMP_COMPOSE}  ## Deploys adminer stack
 	@docker stack deploy --compose-file ${TEMP_COMPOSE} ${STACK_NAME}
 
-.PHONY: up-letsencrypt
-up-letsencrypt: .init .env ${TEMP_COMPOSE}-letsencrypt  ## Deploys adminer stack using let's encrypt
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt ${STACK_NAME}
+.PHONY: up-letsencrypt-http
+up-letsencrypt-http: .init .env ${TEMP_COMPOSE}-letsencrypt-http  ## Deploys adminer stack using let's encrypt http challenge
+	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-http ${STACK_NAME}
+
+.PHONY: up-letsencrypt-dns
+up-letsencrypt-dns: .init .env ${TEMP_COMPOSE}-letsencrypt-dns  ## Deploys adminer stack using let's encrypt dns challenge
+	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
 
 .PHONY: up-aws
-up-aws: .init .env ${TEMP_COMPOSE}-aws  ## AWS Deployment
+up-aws: .init .env ${TEMP_COMPOSE}-aws  ## Deploys adminer stack using let's encrypt dns challenge
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 # Helpers -------------------------------------------------
@@ -28,10 +32,14 @@ up-aws: .init .env ${TEMP_COMPOSE}-aws  ## AWS Deployment
 ${TEMP_COMPOSE}: docker-compose.yml
 	@docker-compose -f $< --log-level=ERROR config > $@
 
-.PHONY: ${TEMP_COMPOSE}-letsencrypt
-${TEMP_COMPOSE}-letsencrypt: docker-compose.yml docker-compose.letsencrypt.yml
-	@docker-compose -f $< -f docker-compose.letsencrypt.yml --log-level=ERROR config > $@
+.PHONY: ${TEMP_COMPOSE}-letsencrypt-http
+${TEMP_COMPOSE}-letsencrypt-http: docker-compose.yml docker-compose.letsencrypt.http.yml
+	@docker-compose -f $< -f docker-compose.letsencrypt-http.yml --log-level=ERROR config > $@
+
+.PHONY: ${TEMP_COMPOSE}-letsencrypt-dns
+${TEMP_COMPOSE}-letsencrypt-dns: docker-compose.yml docker-compose.letsencrypt.dns.yml
+	@docker-compose -f $< -f docker-compose.letsencrypt.dns.yml --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE}-aws
-${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml
-	@docker-compose -f $< -f docker-compose.aws.yml --log-level=ERROR config > $@
+${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.letsencrypt.dns.yml docker-compose.aws.yml
+	@docker-compose -f $< -f docker-compose.aws.yml -f docker-compose.letsencrypt.dns.yml --log-level=ERROR config > $@

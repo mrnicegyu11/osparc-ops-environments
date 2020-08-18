@@ -1,8 +1,5 @@
 version: '3.7'
 services:
   jaeger:
-    deploy:
-      labels:
-        - traefik.http.routers.jaeger.tls=true
-        - traefik.http.routers.jaeger.tls.certresolver=myresolver
-        - traefik.http.routers.jaeger.entrypoints=https
+    dns: 
+      8.8.8.8

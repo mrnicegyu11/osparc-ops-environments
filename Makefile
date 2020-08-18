@@ -51,11 +51,14 @@ up-devel: .install-fqdn certificates/domain.crt certificates/domain.key .create-
 	bash scripts/deployments/local-deploy.sh --devel_mode=1
 	@$(MAKE) info-local
 
-.PHONY: up-deployer
-up-deployer:  ## Deploy simcore only
+.PHONY: up-simcore
+up-simcore:  ## Deploy simcore only with a registry
 	./scripts/deployments/aws-deploy.sh --simcore_only
 
-# TODO : Generique script, not for aws 
+.PHONY: up-dalco ## Deploy Dalco stack
+up-dalco:
+	./scripts/deployments/aws-deploy.sh dalco
+
 .PHONY: up-aws ## Deploy aws stack
 up-aws:
 	./scripts/deployments/aws-deploy.sh aws

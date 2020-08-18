@@ -1,8 +1,6 @@
 version: "3.7"
 services:
   registry:
-    dns: 
-      8.8.8.8
     image: registry:2.7.1
     command: ["/bin/sh", "/etc/docker/registry/init"]
     environment:
