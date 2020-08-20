@@ -117,6 +117,11 @@ if [ $1 != "--simcore_only" ]; then
     service_dir="${repo_basedir}"/services/jaeger
     call_make "${service_dir}" up-letsencrypt-dns
 
+    # -------------------------------- REGISTRY -------------------------------
+    echo
+    echo -e "\e[1;33mstarting registry...\e[0m"
+    make -C "${repo_basedir}"/services/registry up-letsencrypt-dns
+
     # -------------------------------- Adminer -------------------------------
     echo
     echo -e "\e[1;33mstarting adminer...\e[0m"
@@ -153,8 +158,6 @@ if [ $1 != "--simcore_only" ]; then
     service_dir="${repo_basedir}"/services/graylog
     call_make "${service_dir}" up-letsencrypt-dns configure-instance
 fi
-
-
 
 # -------------------------------- DEPlOYMENT-AGENT -------------------------------
 echo

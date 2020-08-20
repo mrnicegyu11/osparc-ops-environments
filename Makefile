@@ -64,11 +64,16 @@ up-aws:
 	./scripts/deployments/aws-deploy.sh aws
 
 
-.PHONY: down
+.PHONY: down ## Stop all services
 down:
 	@for service in $(SERVICES); do \
 		$(MAKE_C) $$service down; \
 	done
+
+.PHONY: down-simcore
+down-simcore:  ## Stop the simcore service
+	@cd services/deployment-agent; \
+	make down;
 
 .PHONY: leave
 leave: ## leaves the swarm
