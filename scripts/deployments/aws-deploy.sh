@@ -123,6 +123,11 @@ if [ $1 != "--simcore_only" ]; then
     service_dir="${repo_basedir}"/services/adminer
     call_make "${service_dir}" up-letsencrypt-dns
 
+    # -------------------------------- REGISTRY -------------------------------
+    echo
+    echo -e "\e[1;33mstarting registry...\e[0m"
+    make -C "${repo_basedir}"/services/registry up-letsencrypt-dns
+
     # -------------------------------- Minio -------------------------------
     # In the .env, MINIO_NUM_MINIOS and MINIO_NUM_PARTITIONS need to be set at 1 to work without labelling the nodes with minioX=true
 
@@ -149,10 +154,7 @@ if [ $1 != "--simcore_only" ]; then
     call_make "${service_dir}" up-letsencrypt-dns configure-instance
 fi
 
-# -------------------------------- REGISTRY -------------------------------
-echo
-echo -e "\e[1;33mstarting registry...\e[0m"
-make -C "${repo_basedir}"/services/registry up-letsencrypt-dns
+
 
 # -------------------------------- DEPlOYMENT-AGENT -------------------------------
 echo

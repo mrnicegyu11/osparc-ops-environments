@@ -30,30 +30,32 @@ compose-letsencrypt-http: .env ${TEMP_COMPOSE}-letsencrypt-http
 compose-letsencrypt-dns: .env ${TEMP_COMPOSE}-letsencrypt-http 
 
 .PHONY: compose-dalco ## Create docker-compose.deploy for Daclo cluster
-up-dalco: .env ${TEMP_COMPOSE}-dalco 
+compose-dalco: .env ${TEMP_COMPOSE}-dalco 
 
 .PHONY: ${TEMP_COMPOSE}-local
-${TEMP_COMPOSE}-local: install-snap docker-compose.yml docker-compose.deploy.local.yml
-	@yq m $< docker-compose.deploy.local.yml > ${TEMP_COMPOSE}
+${TEMP_COMPOSE}-local: install-yq docker-compose.yml docker-compose.deploy.local.yml
+	@yq m  docker-compose.yml docker-compose.deploy.local.yml > ${TEMP_COMPOSE}
 
 .PHONY: ${TEMP_COMPOSE}-letsencrypt-http
-${TEMP_COMPOSE}-letsencrypt-http: install-snap docker-compose.yml docker-compose.deploy.letsencrypt.http.yml
-	@yq m $< docker-compose.deploy.letsencrypt.http.yml > ${TEMP_COMPOSE}
+${TEMP_COMPOSE}-letsencrypt-http: install-yq docker-compose.yml docker-compose.deploy.letsencrypt.http.yml
+	@yq m  docker-compose.yml docker-compose.deploy.letsencrypt.http.yml > ${TEMP_COMPOSE}
 
 .PHONY: ${TEMP_COMPOSE}-letsencrypt-dns
-${TEMP_COMPOSE}-letsencrypt-dns: install-snap docker-compose.yml docker-compose.deploy.letsencrypt.dns.yml
-	@yq m $< docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}	
+${TEMP_COMPOSE}-letsencrypt-dns: install-yq docker-compose.yml docker-compose.deploy.letsencrypt.dns.yml
+	@yq m  docker-compose.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}	
 
 .PHONY: ${TEMP_COMPOSE}-aws
-${TEMP_COMPOSE}-aws: install-snap docker-compose.yml
+${TEMP_COMPOSE}-aws: install-yq docker-compose.yml
 	@cp docker-compose.yml ${TEMP_COMPOSE}
 
 .PHONY: ${TEMP_COMPOSE}-dalco
-${TEMP_COMPOSE}-dalco: install-snap docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml
-	@yq m $< docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}		
+${TEMP_COMPOSE}-dalco: install-yq docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml
+	@yq merge docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}		
 
-.PHONY: install-snap
-install-snap:
-	@sudo snap list | grep yq > /dev/null 2>&1;\
-	testSnap=$$?;\
-	[ "$$testSnap" -eq 0 ] || sudo snap install yq
+.PHONY: install-yq
+install-yq:
+	@dpkg -s yq > /dev/null 2>&1;\
+	testYqInstalled=$$?;\
+	[ "$$testYqInstalled" -eq 0 ] || ( sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CC86BB64 \
+	&& sudo add-apt-repository -y ppa:rmescandon/yq \
+	&& sudo apt update; sudo apt install -y yq );

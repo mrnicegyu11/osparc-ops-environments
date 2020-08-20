@@ -24,11 +24,11 @@ up-dalco: .init .env ${TEMP_COMPOSE}-dalco ## Deploys the stack on dalco cluster
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-dalco ${STACK_NAME}
 
 .PHONY: up-letsencrypt-http
-up-letsencrypt: .init .env ${TEMP_COMPOSE}-letsencrypt-http ## Deploys the stack with let's encrypt http challenge
+up-letsencrypt-http: .init .env ${TEMP_COMPOSE}-letsencrypt-http ## Deploys the stack with let's encrypt http challenge
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-http ${STACK_NAME}
 
 .PHONY: up-letsencrypt-dns
-up-letsencrypt: .init .env ${TEMP_COMPOSE}-letsencrypt-dns ## Deploys the stack with let's encrypt dns challenge
+up-letsencrypt-dns: .init .env ${TEMP_COMPOSE}-letsencrypt-dns ## Deploys the stack with let's encrypt dns challenge
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-dns ${STACK_NAME}
 
 # Helpers -------------------------------------------------

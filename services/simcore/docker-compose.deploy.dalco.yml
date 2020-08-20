@@ -1,6 +1,6 @@
+services: 
   postgres:
-    environment:
-       deploy:
-        placement:
-          constraints:
-            - node.role==manager
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager

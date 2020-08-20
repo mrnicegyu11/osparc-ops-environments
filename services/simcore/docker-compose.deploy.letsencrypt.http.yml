@@ -1,3 +1,4 @@
+services:
   rabbit:
     deploy:
       labels:

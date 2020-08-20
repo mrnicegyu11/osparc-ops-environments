@@ -5,7 +5,7 @@ services:
       - '--api=true'
       - '--api.dashboard=true'
       - '--log.level=DEBUG'
-      - '--accesslog=true'
+   #   - '--accesslog=true'
       - '--metrics.prometheus=true'
       - '--metrics.prometheus.addEntryPointsLabels=true'
       - '--metrics.prometheus.addServicesLabels=true'
@@ -24,12 +24,12 @@ services:
       - "--providers.docker.constraints=!LabelRegex(`io.simcore.zone`, `*`)"
       - "--entryPoints.https.forwardedHeaders.insecure"
       - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=rfc2136"
-      - "--certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=120"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=3700"
       - "--certificatesresolvers.myresolver.acme.email=allexandre@itis.swiss"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
     # For debug purpose, to avoid being ban by let's encrypt servers
     #  - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      - "--certificatesresolvers.dns.acme.dnschallenge.resolvers=8.8.8.8:53"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.resolvers=8.8.8.8"
     volumes:
       - "letsencrypt_certs:/letsencrypt"
     environment:
