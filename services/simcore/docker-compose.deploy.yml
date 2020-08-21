@@ -160,6 +160,7 @@ services:
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_rabbit_replace_regex.replacepathregex.replacement=/$${1}
         - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.middlewares=${PREFIX_STACK_NAME}_rabbit_replace_regex@docker, ops_gzip@docker
         - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.tls.certresolver=myresolver
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.tls.certresolver=myresolver
       update_config:
         parallelism: 2
         order: start-first
@@ -219,6 +220,7 @@ services:
       placement:
         constraints:
           - node.role==manager
+          - node.role==manager
   traefik:
     networks:
       - monitored
@@ -268,6 +270,8 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls=true
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.middlewares=ops_gzip@docker
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.service=${SWARM_STACK_NAME}_simcore_api
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls.certresolver=myresolver
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.tls.certresolver=myresolver
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls.certresolver=myresolver
       update_config:
         parallelism: 2
