@@ -270,7 +270,6 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls=true
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.middlewares=ops_gzip@docker
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.service=${SWARM_STACK_NAME}_simcore_api
-        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls.certresolver=myresolver
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.tls.certresolver=myresolver
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls.certresolver=myresolver
       update_config:
