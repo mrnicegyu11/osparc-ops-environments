@@ -125,6 +125,7 @@ services:
     environment:
       - LOGSPOUT_MULTILINE=true
       - RABBIT_HOST=${PREFIX_STACK_NAME}_rabbit
+      - TARGET_MPI_NODE_CPU_COUNT=48
     deploy:
       replicas: 16
       update_config:
