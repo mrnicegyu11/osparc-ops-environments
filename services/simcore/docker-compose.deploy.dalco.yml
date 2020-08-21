@@ -1,4 +1,7 @@
-services: 
+services:
+  sidecar:
+    environment:
+      - TARGET_MPI_NODE_CPU_COUNT=48
   postgres:
     deploy:
       placement:
