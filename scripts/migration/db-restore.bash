@@ -10,11 +10,34 @@ set -o pipefail
 IFS=$'\n\t'
 source .env
 
-echo "Droping and recreating the database in the destination host"
-docker run -it --rm \
--v /tmp:/var/pgdata \
-jbergknoff/postgresql-client postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/postgres \
--c "DROP DATABASE simcoredb;" -c "CREATE DATABASE simcoredb;" \
--c "CREATE ROLE grafanareader with LOGIN ENCRYPTED PASSWORD '${POSTGRES_GRAFANA_PASSWORD}';" \
--c "\connect simcoredb" -f "/var/pgdata/mydump.sql"
-rm /tmp/mydump.sql
+
+usage()
+{
+    echo "usage: db-restore.sh [-n --network]"
+    echo "-n --network : Add the network monitored_network to be able to connect to the pgsql service (When the pgsql server is in a swarm)"
+}
+
+network="--network=""bridge"""
+
+for var in "$@"
+do
+    if [ "$var" = "-n" ] || [ "$var" = "--network" ]; then
+        network="--network=""monitored_network"""
+    else
+        usage
+        exit
+    fi
+done
+
+read -p "Are you sure ? You are going to delete the database simcoredb in the host ${POSTGRES_HOST} (y/n)? " yn
+if [ "$yn" = "y" ]; then
+    echo "Droping and recreating the database in the destination host"
+    docker run -it --rm \
+    "$network" \
+    -v /tmp:/var/pgdata \
+    jbergknoff/postgresql-client postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/postgres \
+    -c "DROP DATABASE simcoredb;" -c "CREATE DATABASE simcoredb;" \
+    -c "CREATE ROLE grafanareader with LOGIN ENCRYPTED PASSWORD '${POSTGRES_GRAFANA_PASSWORD}';" \
+    -c "\connect simcoredb" -f "/var/pgdata/mydump.sql"
+    sudo rm /tmp/mydump.sql
+fi
