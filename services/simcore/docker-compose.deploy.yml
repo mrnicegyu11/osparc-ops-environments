@@ -125,7 +125,7 @@ services:
     environment:
       - LOGSPOUT_MULTILINE=true
       - RABBIT_HOST=${PREFIX_STACK_NAME}_rabbit
-      - TARGET_MPI_NODE_CPU_COUNT=48
+      - TARGET_MPI_NODE_CPU_COUNT=${TARGET_MPI_NODE_CPU_COUNT}
     deploy:
       replicas: 16
       update_config:
@@ -218,7 +218,6 @@ services:
         window: 120s
       placement:
         constraints:
-          - node.role==manager
           - node.role==manager
   traefik:
     networks:
