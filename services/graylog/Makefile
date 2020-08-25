@@ -70,6 +70,6 @@ configure-instance: ../../repo.config
 			\"port\":12201\
 		}\
 	}";\
-	curl -u "$$SERVICES_USER":"$$SERVICES_PASSWORD" --header "Content-Type: application/json" \
+	curl -u "$$TRAEFIK_USER":"$$TRAEFIK_PASSWORD" --header "Content-Type: application/json" \
 		--header "X-Requested-By: cli" -X POST \
 		--data "$$json_data" https://"$$MONITORING_DOMAIN"/graylog/api/system/inputs
