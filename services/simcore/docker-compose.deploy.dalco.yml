@@ -2,3 +2,6 @@ services:
   sidecar:
     environment:
       - TARGET_MPI_NODE_CPU_COUNT=${TARGET_MPI_NODE_CPU_COUNT}
+  postgres:
+    labels:
+      - "pgbackup.enable=true"
