@@ -1,0 +1,19 @@
+version: '3.7'
+services:
+  dbbackup:
+    image: justb4/pgbackup:10
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /tank/pg-backup:/backup
+    environment:
+    - PGB_SCHEDULE=0 * * * * # Every hours
+    networks:
+    - monitored
+    deploy:
+      placement:
+        constraints:
+        - node.role==manager
+networks:
+  monitored:
+    name: ${MONITORED_NETWORK}
+    external: true

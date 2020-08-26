@@ -157,6 +157,12 @@ if [ $1 != "--simcore_only" ]; then
     echo -e "\e[1;33mstarting graylog...\e[0m"
     service_dir="${repo_basedir}"/services/graylog
     call_make "${service_dir}" up-letsencrypt-dns configure-instance
+
+    # -------------------------------- BACKUP PG -------------------------------
+    echo
+    echo -e "\e[1;33mstarting PG-backup...\e[0m"
+    service_dir="${repo_basedir}"/services/pg-backup
+    call_make "${service_dir}" up
 fi
 
 # -------------------------------- DEPlOYMENT-AGENT -------------------------------

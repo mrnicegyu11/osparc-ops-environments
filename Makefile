@@ -52,7 +52,7 @@ up-devel: .install-fqdn certificates/domain.crt certificates/domain.key .create-
 	@$(MAKE) info-local
 
 .PHONY: up-simcore
-up-simcore:  ## Deploy simcore only with a registry
+up-simcore:  ## Deploy simcore only
 	./scripts/deployments/aws-deploy.sh --simcore_only
 
 .PHONY: up-dalco ## Deploy Dalco stack
