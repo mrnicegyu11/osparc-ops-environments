@@ -22,6 +22,9 @@ up-letsencrypt-http: .init .env ${TEMP_COMPOSE}-letsencrypt-http  ## Deploys adm
 up-letsencrypt-dns: .init .env ${TEMP_COMPOSE}-letsencrypt-dns  ## Deploys adminer stack using let's encrypt dns challenge
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
 
+.PHONY: up-dalco ## Deploys adminer stack for Dalco Cluster
+up-dalco: up-letsencrypt-dns
+
 .PHONY: up-aws
 up-aws: .init .env ${TEMP_COMPOSE}-aws  ## Deploys adminer stack using let's encrypt dns challenge
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}

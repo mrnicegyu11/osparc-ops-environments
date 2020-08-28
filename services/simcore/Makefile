@@ -32,6 +32,9 @@ compose-letsencrypt-dns: .env ${TEMP_COMPOSE}-letsencrypt-http
 .PHONY: compose-dalco ## Create docker-compose.deploy for Daclo cluster
 compose-dalco: .env ${TEMP_COMPOSE}-dalco 
 
+.PHONY: compose-aws ## Create docker-compose.deploy for AWS
+compose-aws: .env ${TEMP_COMPOSE}-aws
+
 .PHONY: ${TEMP_COMPOSE}-local
 ${TEMP_COMPOSE}-local: install-yq docker-compose.yml docker-compose.deploy.local.yml
 	@yq merge --append  docker-compose.yml docker-compose.deploy.local.yml > ${TEMP_COMPOSE}
@@ -52,7 +55,7 @@ ${TEMP_COMPOSE}-aws: install-yq docker-compose.yml
 ${TEMP_COMPOSE}-dalco: install-yq docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml
 	@yq merge --append docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}		
 
-.PHONY: install-yq
+.PHONY: install-yq ## Instal YQ if not already installed
 install-yq:
 	@dpkg -s yq > /dev/null 2>&1;\
 	testYqInstalled=$$?;\

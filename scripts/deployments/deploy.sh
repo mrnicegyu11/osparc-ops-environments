@@ -64,7 +64,7 @@ if [[ -z "${WEBSERVER_SESSION_SECRET_KEY}" ]]; then
 fi
 
 echo
-echo -e "\e[1;33mDeploying osparc AWS-version on ${MACHINE_FQDN}\e[0m"
+echo -e "\e[1;33mDeploying osparc for $1 cluster on ${MACHINE_FQDN}\e[0m"
 
 
 # -------------------------------- Simcore -------------------------------
@@ -85,23 +85,23 @@ done
 popd
 
 # TODO Configure for different stacks and not only dalco
-if [ $1 != "--simcore_only" ]; then
+if [ $2 != "--simcore_only" ]; then
 
     # -------------------------------- PORTAINER ------------------------------
     echo
     echo -e "\e[1;33mstarting portainer...\e[0m"
-    make -C "${repo_basedir}"/services/portainer up-letsencrypt-dns
+    make -C "${repo_basedir}"/services/portainer up-$1
 
     # -------------------------------- TRAEFIK -------------------------------
     echo
     echo -e "\e[1;33mstarting traefik...\e[0m"
     # setup configuration
-    call_make "${repo_basedir}"/services/traefik up-dalco
+    call_make "${repo_basedir}"/services/traefik up-$1
 
     # -------------------------------- Redis commander-------------------------------
     echo
     echo -e "\e[1;33mstarting redis commander...\e[0m"
-    make -C "${repo_basedir}"/services/redis-commander up-letsencrypt-dns
+    make -C "${repo_basedir}"/services/redis-commander up-$1
 
     # -------------------------------- MONITORING -------------------------------
 
@@ -109,65 +109,69 @@ if [ $1 != "--simcore_only" ]; then
     echo -e "\e[1;33mstarting monitoring...\e[0m"
     # grafana config
     service_dir="${repo_basedir}"/services/monitoring
-    make -C "${service_dir}" up-letsencrypt-dns
+    make -C "${service_dir}" up-$1
 
     # -------------------------------- JAEGER -------------------------------
     echo
     echo -e "\e[1;33mstarting jaeger...\e[0m"
     service_dir="${repo_basedir}"/services/jaeger
-    call_make "${service_dir}" up-letsencrypt-dns
+    call_make "${service_dir}" up-$1
 
     # -------------------------------- REGISTRY -------------------------------
     echo
     echo -e "\e[1;33mstarting registry...\e[0m"
-    make -C "${repo_basedir}"/services/registry up-letsencrypt-dns
+    make -C "${repo_basedir}"/services/registry up-$1
 
     # -------------------------------- Adminer -------------------------------
     echo
     echo -e "\e[1;33mstarting adminer...\e[0m"
     service_dir="${repo_basedir}"/services/adminer
-    call_make "${service_dir}" up-letsencrypt-dns
+    call_make "${service_dir}" up-$1
 
     # -------------------------------- REGISTRY -------------------------------
     echo
     echo -e "\e[1;33mstarting registry...\e[0m"
-    make -C "${repo_basedir}"/services/registry up-letsencrypt-dns
+    make -C "${repo_basedir}"/services/registry up-$1
 
-    # -------------------------------- Minio -------------------------------
-    # In the .env, MINIO_NUM_MINIOS and MINIO_NUM_PARTITIONS need to be set at 1 to work without labelling the nodes with minioX=true
+    if [ $1 = "dalco" ]; then
+        # -------------------------------- Minio -------------------------------
+        # In the .env, MINIO_NUM_MINIOS and MINIO_NUM_PARTITIONS need to be set at 1 to work without labelling the nodes with minioX=true
 
-    echo
-    echo -e "\e[1;33mstarting minio...\e[0m"
-    service_dir="${repo_basedir}"/services/minio
-    call_make "${repo_basedir}"/services/minio up-letsencrypt-dns
+        echo
+        echo -e "\e[1;33mstarting minio...\e[0m"
+        service_dir="${repo_basedir}"/services/minio
+        call_make "${repo_basedir}"/services/minio up-$1
 
-    echo "waiting for minio to run...don't worry..."
-    while [ ! "$(curl -s -o /dev/null -I -w "%{http_code}" --max-time 10 https://"${STORAGE_DOMAIN}"/minio/health/ready)" = 200 ]; do
-        echo "waiting for minio to run..."
-        sleep 5s
-    done
+        echo "waiting for minio to run...don't worry..."
+        while [ ! "$(curl -s -o /dev/null -I -w "%{http_code}" --max-time 10 https://"${STORAGE_DOMAIN}"/minio/health/ready)" = 200 ]; do
+            echo "waiting for minio to run..."
+            sleep 5s
+        done
+
+        # -------------------------------- BACKUP PG -------------------------------
+        echo
+        echo -e "\e[1;33mstarting PG-backup...\e[0m"
+        service_dir="${repo_basedir}"/services/pg-backup
+        call_make "${service_dir}" up-$1
+    fi
+
 
     # -------------------------------- Mail -------------------------------
     echo
     echo -e "\e[1;33mstarting mail server...\e[0m"
-    call_make "${repo_basedir}"/services/mail up
+    call_make "${repo_basedir}"/services/mail up-$1
 
     # -------------------------------- GRAYLOG -------------------------------
     echo
     echo -e "\e[1;33mstarting graylog...\e[0m"
     service_dir="${repo_basedir}"/services/graylog
-    call_make "${service_dir}" up-letsencrypt-dns configure-instance
+    call_make "${service_dir}" up-$1 configure-instance
 
-    # -------------------------------- BACKUP PG -------------------------------
-    echo
-    echo -e "\e[1;33mstarting PG-backup...\e[0m"
-    service_dir="${repo_basedir}"/services/pg-backup
-    call_make "${service_dir}" up
 fi
 
 # -------------------------------- DEPlOYMENT-AGENT -------------------------------
 echo
 echo -e "\e[1;33mstarting deployment-agent for simcore...\e[0m"
 pushd "${repo_basedir}"/services/deployment-agent;
-make down up;
+make down up-$1;
 popd

@@ -50,6 +50,9 @@ up: .init ${DEPLOYMENT_AGENT_CONFIG} ${TEMP_COMPOSE} ## Deploys or updates curre
 up-devel: .init ${DEPLOYMENT_AGENT_CONFIG} ${TEMP_COMPOSE-devel} ## Deploys or updates current stack "$(STACK_NAME)" using replicas=X (defaults to 1)
 	@docker stack deploy --compose-file ${TEMP_COMPOSE-devel} $(STACK_NAME)
 
+.PHONY: up-dalco ## Deploys deploymentagent stack for Dalco Cluster
+up-dalco: up
+
 .PHONY: up-aws
 up-aws: .init ${DEPLOYMENT_AGENT_CONFIG} ${TEMP_COMPOSE}-aws ## Deploys or updates current stack "$(STACK_NAME)" using replicas=X (defaults to 1) on aws
 	@docker stack deploy --compose-file ${TEMP_COMPOSE} $(STACK_NAME)

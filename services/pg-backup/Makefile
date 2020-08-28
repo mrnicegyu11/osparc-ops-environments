@@ -15,6 +15,9 @@ include ../../scripts/common.Makefile
 up: ${TEMP_COMPOSE}  ## Deploys pg-backup stack
 	docker stack deploy --compose-file ${TEMP_COMPOSE} ${STACK_NAME}
 
+.PHONY: up-dalco ## Deploys pg-backup stack for Dalco Cluster
+up-dalco: up
+
 # Helpers -------------------------------------------------
 
 .PHONY: ${TEMP_COMPOSE}

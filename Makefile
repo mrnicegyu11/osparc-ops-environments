@@ -51,17 +51,21 @@ up-devel: .install-fqdn certificates/domain.crt certificates/domain.key .create-
 	bash scripts/deployments/local-deploy.sh --devel_mode=1
 	@$(MAKE) info-local
 
-.PHONY: up-simcore
-up-simcore:  ## Deploy simcore only
-	./scripts/deployments/aws-deploy.sh --simcore_only
+.PHONY: up-simcore-aws
+up-simcore-aws:  ## Deploy simcores stack only on AWS
+	./scripts/deployments/deploy.sh aws --simcore_only
+
+.PHONY: up-simcore-dalco
+up-simcore-dalco:  ## Deploy simcores stack only on Dalco Cluster
+	./scripts/deployments/deploy.sh dalco --simcore_only
 
 .PHONY: up-dalco ## Deploy Dalco stack
 up-dalco:
-	./scripts/deployments/aws-deploy.sh dalco
+	./scripts/deployments/deploy.sh dalco
 
 .PHONY: up-aws ## Deploy aws stack
 up-aws:
-	./scripts/deployments/aws-deploy.sh aws
+	./scripts/deployments/deploy.sh aws
 
 
 .PHONY: down ## Stop all services

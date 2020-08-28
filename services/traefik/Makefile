@@ -15,14 +15,6 @@ include ../../scripts/common.Makefile
 up-local: .init .create_secrets .env ${TEMP_COMPOSE}-local ## Deploys the stack using provided certificates
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-local ${STACK_NAME}
 
-.PHONY: up-aws
-up-aws: .init .env ${TEMP_COMPOSE}-aws ## Deploys the stack aws 
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
-
-.PHONY: up-dalco
-up-dalco: .init .env ${TEMP_COMPOSE}-dalco ## Deploys the stack on dalco cluster 
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-dalco ${STACK_NAME}
-
 .PHONY: up-letsencrypt-http
 up-letsencrypt-http: .init .env ${TEMP_COMPOSE}-letsencrypt-http ## Deploys the stack with let's encrypt http challenge
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-http ${STACK_NAME}
@@ -30,6 +22,14 @@ up-letsencrypt-http: .init .env ${TEMP_COMPOSE}-letsencrypt-http ## Deploys the 
 .PHONY: up-letsencrypt-dns
 up-letsencrypt-dns: .init .env ${TEMP_COMPOSE}-letsencrypt-dns ## Deploys the stack with let's encrypt dns challenge
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-dns ${STACK_NAME}
+
+.PHONY: up-dalco
+up-dalco: .init .env ${TEMP_COMPOSE}-dalco ## Deploys the stack on dalco cluster 
+	@docker stack deploy --compose-file ${TEMP_COMPOSE}-dalco ${STACK_NAME}
+
+.PHONY: up-aws
+up-aws: .init .env ${TEMP_COMPOSE}-aws ## Deploys the stack aws 
+	@docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 # Helpers -------------------------------------------------
 

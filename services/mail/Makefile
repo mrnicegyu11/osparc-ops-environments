@@ -15,6 +15,9 @@ include ../../scripts/common.Makefile
 up: .env configure ${TEMP_COMPOSE}  ## Deploys mail stack
 	docker stack deploy --compose-file ${TEMP_COMPOSE} ${STACK_NAME}
 
+.PHONY: up-dalco ## Deploys mail stack for Dalco Cluster
+up-dalco: up
+
 .PHONY: up-aws
 up-aws: .env configure ${TEMP_COMPOSE}-aws  ## Deploys mail stack in aws
 	docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}

@@ -33,6 +33,9 @@ up-letsencrypt-dns: .init .env ${TEMP_COMPOSE}-letsencrypt-dns .create-secrets #
 	# "in case you created more than 1 replicas, you need to label the nodes accordingly using"
 	# "'docker node update --label-add minioX=true' with X being from 1 to number of replicas."
 
+.PHONY: up-dalco ## Deploys minio stack for Dalco Cluster
+up-dalco: up-letsencrypt-dns
+
 # Helpers -------------------------------------------------
 .PHONY: .create-secrets
 .venv:
