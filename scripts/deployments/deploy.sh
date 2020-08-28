@@ -89,7 +89,7 @@ if [ $# -le 1 ] || [ $2 != "--simcore_only" ]; then
     # -------------------------------- PORTAINER ------------------------------
     echo
     echo -e "\e[1;33mstarting portainer...\e[0m"
-    make -C "${repo_basedir}"/services/portainer up-$1
+    make -C "${repo_basedir}"/services/portainer up-$1 configure-registry
 
     # -------------------------------- TRAEFIK -------------------------------
     echo

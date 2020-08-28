@@ -27,9 +27,24 @@ up-letsencrypt-dns: .init .env .secrets ${TEMP_COMPOSE}-letsencrypt-dns ## Deplo
 .PHONY: up-dalco ## Deploys portainer stack for Dalco Cluster
 up-dalco: up-letsencrypt-dns
 
-.PHONY: up-aws
+.PHONY: up-aws ## Deploys portainer stack for AWS
 up-aws: .init .env .secrets ${TEMP_COMPOSE}-aws  ## Deploys portainer stack in aws
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
+
+.PHONY: configure-registry ## Add if necessary dockerhub registry configuration to portainer.
+configure-registry:
+	@set -o allexport; source ../../repo.config; set +o allexport; \
+	while [ "$$(curl -s -o /dev/null -I -w "%{http_code}" --max-time 10  -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://"$$MONITORING_DOMAIN"/portainer/#/auth)" = 404 ]; do\
+		echo "waiting for portainer to run...";\
+		sleep 5s;\
+	done;\
+	echo "Updating docker-hub config";\
+	authentificationToken=$$(curl -o /dev/null -X POST "https://"$$MONITORING_DOMAIN"/portainer/api/auth" -H  "Content-Type: application/json" -d "{  \"Username\": \"admin\",  \"Password\": \"dev\"}"); \
+	authentificationToken=$$(echo "$$authentificationToken" | jq --raw-output '.jwt'); \
+	update_hub=$$(curl -o /dev/null -X PUT "https://"$$MONITORING_DOMAIN"/portainer/api/dockerhub" -H  "accept: application/json" -H \
+	"Authorization: Bearer $${authentificationToken}" -H  "Content-Type: application/json" \
+	-d "{  \"Authentication\": true,  \"Username\": \"$$DOCKER_HUB_LOGIN\",  \"Password\": \"$$DOCKER_HUB_PASSWORD\"}"); \
+
 
 # Helpers -------------------------------------------------
 

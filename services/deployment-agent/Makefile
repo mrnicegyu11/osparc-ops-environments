@@ -14,6 +14,7 @@ endif
 SWARM_HOSTS = $(shell docker node ls --format={{.Hostname}} 2>/dev/null)
 TEMP_COMPOSE = .stack.${STACK_NAME}.yaml
 TEMP_COMPOSE-devel = .stack.${STACK_NAME}.devel.yml
+TEMP_COMPOSE-aws = .stack.${STACK_NAME}.aws.yml
 DEPLOYMENT_AGENT_CONFIG = deployment_config.yaml
 DEPLOYMENT_AGENT_CONFIG_DEFAULT=deployment_config.default.yaml
 
@@ -54,8 +55,8 @@ up-devel: .init ${DEPLOYMENT_AGENT_CONFIG} ${TEMP_COMPOSE-devel} ## Deploys or u
 up-dalco: up
 
 .PHONY: up-aws
-up-aws: .init ${DEPLOYMENT_AGENT_CONFIG} ${TEMP_COMPOSE}-aws ## Deploys or updates current stack "$(STACK_NAME)" using replicas=X (defaults to 1) on aws
-	@docker stack deploy --compose-file ${TEMP_COMPOSE} $(STACK_NAME)
+up-aws: .init ${DEPLOYMENT_AGENT_CONFIG} ${TEMP_COMPOSE-aws} ## Deploys or updates current stack "$(STACK_NAME)" using replicas=X (defaults to 1) on aws
+	@docker stack deploy --compose-file ${TEMP_COMPOSE-aws} $(STACK_NAME)
 
 .PHONY: down
 down: ## Stops and remove stack from swarm
@@ -149,6 +150,6 @@ ${TEMP_COMPOSE}: .env $(docker-compose-configs)
 ${TEMP_COMPOSE-devel}: .env $(docker-compose-configs)
 	@docker-compose --file docker-compose.yml --file docker-compose.devel.yaml --log-level=ERROR config > $@
 
-.PHONY: ${TEMP_COMPOSE}-aws
-${TEMP_COMPOSE}-aws: .env $(docker-compose-configs)
+.PHONY: ${TEMP_COMPOSE-aws}
+${TEMP_COMPOSE-aws}: .env $(docker-compose-configs)
 	@docker-compose --file docker-compose.yml --file docker-compose-aws.yml --log-level=ERROR config > $@
