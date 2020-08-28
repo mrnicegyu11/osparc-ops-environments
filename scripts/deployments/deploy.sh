@@ -84,8 +84,7 @@ do
 done
 popd
 
-# TODO Configure for different stacks and not only dalco
-if [ $2 != "--simcore_only" ]; then
+if [ $# -le 1 ] || [ $2 != "--simcore_only" ]; then
 
     # -------------------------------- PORTAINER ------------------------------
     echo

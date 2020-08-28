@@ -23,6 +23,9 @@ up-letsencrypt-http: .init ${TEMP_COMPOSE}-letsencrypt-http .env  ## Deploys or 
 up-letsencrypt-dns: .init ${TEMP_COMPOSE}-letsencrypt-dns .env  ## Deploys or updates current stack "$(STACK_NAME)" using let's encrypt dns challenge
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
 
+.PHONY: up-dalco ## Deploys monitoring stack for Dalco Cluster
+up-dalco: up-letsencrypt-dns
+
 .PHONY: up-aws
 up-aws: .init .env datasource.yml config.monitoring ${TEMP_COMPOSE}-aws   ## Deploys or updates current stack "$(STACK_NAME)" in AWS
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
