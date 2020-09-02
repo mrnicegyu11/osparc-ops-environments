@@ -76,9 +76,9 @@ main:
   polling_interval: 15
   notifications:
     - service: mattermost
-      url: http://mattermost.com
-      message: "[A new staging version of oSparc has been deployed !!!](the_url_to_go_for/)"
-      enabled: false
-      channel_id: dfsfdsfsf
-      personal_token: some_token
-      header_unique_name: master
+      url: https://mattermost.speag.com
+      message: ":panda_face: New [SIM-Core](https://github.com/ITISFoundation/osparc-simcore) on [Prod Dalco](https://osparc.speag.com) :panda_face:"
+      enabled: true
+      channel_id: 9wj54k8k9tdxffu86jo69za8sc
+      personal_token: ygtxeyabrpfc3bw9obizsm7pky
+      header_unique_name: prod-dalco
