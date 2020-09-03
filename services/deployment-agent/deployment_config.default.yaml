@@ -73,7 +73,7 @@ main:
       username: ${PORTAINER_USER}
       password: ${PORTAINER_PASSWORD}
       stack_name: ${SIMCORE_STACK_NAME}
-  polling_interval: 15
+  polling_interval: 60
   notifications:
     - service: mattermost
       url: https://mattermost.speag.com
