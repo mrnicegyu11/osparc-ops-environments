@@ -16,24 +16,24 @@ MACHINE_IP = $(shell source $(realpath $(CURDIR)/../../scripts/portable.sh) && g
 # TARGETS --------------------------------------------------
 include ../../scripts/common.Makefile
 
-.PHONY: configure # Update the configuration from the template and repo.config file
-configure: .env ${TEMP_COMPOSE}
+.PHONY: configure 
+configure: .env ${TEMP_COMPOSE} ## Update the configuration from the template and repo.config file
 
 
-.PHONY: compose-local ## Create docker-compose.deploy for local deployment
-compose-local: .env ${TEMP_COMPOSE}-local
+.PHONY: compose-local 
+compose-local: .env ${TEMP_COMPOSE}-local ## Create docker-compose.deploy for local deployment
 
-.PHONY: compose-letsencrypt-http ## Create docker-compose.deploy for letsencrypt with http challenge deployment
-compose-letsencrypt-http: .env ${TEMP_COMPOSE}-letsencrypt-http  
+.PHONY: compose-letsencrypt-http 
+compose-letsencrypt-http: .env ${TEMP_COMPOSE}-letsencrypt-http ## Create docker-compose.deploy for letsencrypt with http challenge deployment
 
-.PHONY: compose-letsencrypt-dns ## Create docker-compose.deploy for letsencrypt with http dns deployment
-compose-letsencrypt-dns: .env ${TEMP_COMPOSE}-letsencrypt-http 
+.PHONY: compose-letsencrypt-dns 
+compose-letsencrypt-dns: .env ${TEMP_COMPOSE}-letsencrypt-http ## Create docker-compose.deploy for letsencrypt with http dns deployment
 
-.PHONY: compose-dalco ## Create docker-compose.deploy for Daclo cluster
-compose-dalco: .env ${TEMP_COMPOSE}-dalco 
+.PHONY: compose-dalco 
+compose-dalco: .env ${TEMP_COMPOSE}-dalco ## Create docker-compose.deploy for Daclo cluster
 
-.PHONY: compose-aws ## Create docker-compose.deploy for AWS
-compose-aws: .env ${TEMP_COMPOSE}-aws
+.PHONY: compose-aws 
+compose-aws: .env ${TEMP_COMPOSE}-aws ## Create docker-compose.deploy for AWS
 
 .PHONY: ${TEMP_COMPOSE}-local
 ${TEMP_COMPOSE}-local: install-yq docker-compose.yml docker-compose.deploy.local.yml
@@ -55,8 +55,8 @@ ${TEMP_COMPOSE}-aws: install-yq docker-compose.yml
 ${TEMP_COMPOSE}-dalco: install-yq docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml
 	@yq merge --append docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}		
 
-.PHONY: install-yq ## Instal YQ if not already installed
-install-yq:
+.PHONY: install-yq 
+install-yq: ## Install YQ if not already installed
 	@dpkg -s yq > /dev/null 2>&1;\
 	testYqInstalled=$$?;\
 	[ "$$testYqInstalled" -eq 0 ] || ( sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CC86BB64 \

@@ -150,6 +150,7 @@ services:
       - LOGSPOUT_MULTILINE=true
     deploy:
       labels:
+        - traefik.enable=true
         - traefik.docker.network=${PUBLIC_NETWORK}
         - traefik.http.services.${PREFIX_STACK_NAME}_rabbit.loadbalancer.server.port=15672
         - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.rule=Host(`${MONITORING_DOMAIN}`) && PathPrefix(`/${PREFIX_STACK_NAME}_rabbit`)
