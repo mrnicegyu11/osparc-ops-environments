@@ -228,7 +228,7 @@ services:
     command:
       - "--api=true"
       - "--api.dashboard=true"
-      - "--log.level=DEBUG"
+      - "--log.level=WARNING"
       - "--accesslog=true"
       - "--metrics.prometheus=true"
       - "--metrics.prometheus.addEntryPointsLabels=true"
