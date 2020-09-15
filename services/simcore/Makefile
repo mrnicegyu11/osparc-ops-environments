@@ -15,7 +15,7 @@ TEMP_COMPOSE=docker-compose.deploy.yml
 MACHINE_FQDNS_TRAEFIK=$(shell set -o allexport; \
 	source $(realpath $(CURDIR)/../../repo.config); \
 	if [ -z "$${MACHINE_FQDNS}" ]; then \
-		MACHINE_FQDNS_TRAEFIK=$$MACHINE_FQDN; \
+		MACHINE_FQDNS_TRAEFIK="Host(\`$$MACHINE_FQDN\`)"; \
 	else \
 		IFS=', ' read -r -a hosts <<< "$${MACHINE_FQDNS}"; \
 		MACHINE_FQDNS_TRAEFIK="Host(\`$$MACHINE_FQDN\`)"; \
