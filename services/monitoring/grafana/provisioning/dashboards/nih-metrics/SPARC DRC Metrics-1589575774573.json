@@ -16,7 +16,7 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1591600584733,
+  "iteration": 1592165235022,
   "links": [],
   "panels": [
     {
@@ -382,13 +382,13 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (endpoint)  (rate(http_requests_total{endpoint=~\"/v0/me\", http_status=~\"2[0-9]+\", app_name=~\".+webserver\", deployment=\"$deployment\"}[$__range]))*$__range_ms/1000",
+          "expr": "sum by (endpoint)  (rate(http_requests_total{endpoint=~\"/v0/me\", http_status=~\"2[0-9]+\", app_name=~\".+webserver\", deployment=\"$deployment\"}[30d]))*60*60*24*30",
           "format": "time_series",
           "instant": false,
-          "interval": "",
+          "interval": "1d",
           "intervalFactor": 1,
           "legendFormat": "endpoint: {{endpoint}}",
-          "refId": "A"
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -478,8 +478,8 @@
         "alignAsTable": true,
         "avg": true,
         "current": true,
-        "hideEmpty": false,
-        "hideZero": false,
+        "hideEmpty": true,
+        "hideZero": true,
         "max": false,
         "min": false,
         "rightSide": true,
@@ -503,6 +503,7 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
+          "$$hashKey": "object:372",
           "alias": ""
         }
       ],
@@ -511,17 +512,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(simcore_simcore_service_webserver_services_started_total:sum_by_service_key_service_tag{deployment=\"$deployment\"}[$__range])*$__range_ms/1000",
-          "instant": false,
-          "interval": "",
+          "expr": "topk(10, rate({__name__=~\"simcore_simcore_service_(director|webserver)_services_started_total:sum_by_service_key_service_tag\", deployment=\"$deployment\"}[30d])*60*60*24*30)",
+          "interval": "12h",
           "legendFormat": "{{service_key}}:{{service_tag}}",
-          "refId": "A"
-        },
-        {
-          "expr": "rate(simcore_simcore_service_director_services_started_total:sum_by_service_key_service_tag{deployment=\"$deployment\"}[$__range])*$__range_ms/1000",
-          "interval": "",
-          "legendFormat": "{{service_key}}:{{service_tag}}",
-          "refId": "B"
+          "refId": "C"
         }
       ],
       "thresholds": [],
@@ -534,6 +528,7 @@
         "sort": 0,
         "value_type": "individual"
       },
+      "transformations": [],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -544,6 +539,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:354",
           "format": "short",
           "label": null,
           "logBase": 10,
@@ -552,6 +548,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:355",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -631,14 +628,14 @@
       "targets": [
         {
           "expr": "sum(node_filesystem_size_bytes{mountpoint=\"/\"} - node_filesystem_avail_bytes{mountpoint=\"/\"})",
-          "interval": "1h",
+          "interval": "1d",
           "intervalFactor": 1,
           "legendFormat": "data usage",
           "refId": "B"
         },
         {
           "expr": "-sum(delta(node_filesystem_avail_bytes{mountpoint=\"/\"}[$__range]))",
-          "interval": "1h",
+          "interval": "1d",
           "intervalFactor": 1,
           "legendFormat": "variation of usage",
           "refId": "A"
@@ -741,7 +738,7 @@
           "format": "time_series",
           "hide": false,
           "instant": false,
-          "interval": "1h",
+          "interval": "1d",
           "intervalFactor": 1,
           "legendFormat": "increase of cpu hours over time range",
           "refId": "A"
@@ -878,5 +875,5 @@
   "timezone": "browser",
   "title": "SPARC DRC Metrics",
   "uid": "j3-z2TRMz",
-  "version": 12
+  "version": 13
 }

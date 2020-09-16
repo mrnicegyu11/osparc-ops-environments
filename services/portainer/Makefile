@@ -34,7 +34,7 @@ up-aws: .init .env .secrets ${TEMP_COMPOSE}-aws  ## Deploys portainer stack in a
 .PHONY: configure-registry ## Add if necessary dockerhub registry configuration to portainer.
 configure-registry:
 	@set -o allexport; source ../../repo.config; set +o allexport; \
-	while [ "$$(curl -s -o /dev/null -I -w "%{http_code}" --max-time 10  -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://"$$MONITORING_DOMAIN"/portainer/#/auth)" = 404 ]; do\
+	while [ "$$(curl -s -o /dev/null -I -w "%{http_code}" --max-time 10  -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://"$$MONITORING_DOMAIN"/portainer/#/auth)" != 200 ]; do\
 		echo "waiting for portainer to run...";\
 		sleep 5s;\
 	done;\
