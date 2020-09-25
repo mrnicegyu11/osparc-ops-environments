@@ -14,7 +14,7 @@ main:
       url: https://github.com/ITISFoundation/osparc-simcore.git
       branch: ${SIMCORE_BRANCH}
       pull_only_files: false # if true will only pull the files define in paths
-      tags: ^staging_.+
+      tags: ^v[0-9]+.[0-9]+.[0-9]+$
       paths:
         # lists the files where to look for changes in the repo
         - services/docker-compose.yml
@@ -77,8 +77,9 @@ main:
   notifications:
     - service: mattermost
       url: https://mattermost.speag.com
-      message: ":panda_face: :panda_face: New [SIM-Core](https://github.com/ITISFoundation/osparc-simcore) on [Staging AWS](https://staging.osparc.io) :panda_face: :panda_face: "
+      message: ":panda_face: New [SIM-Core](https://github.com/ITISFoundation/osparc-simcore) on [Prod AWS](https://osparc.io) :panda_face: "
       enabled: true
       channel_id: 9wj54k8k9tdxffu86jo69za8sc
       personal_token: ygtxeyabrpfc3bw9obizsm7pky
-      header_unique_name: staging-AWS
+      header_unique_name: prod-AWS
+
