@@ -18,3 +18,8 @@ groups:
     rules:
       - record: simcore_simcore_service_director_services_started_total:sum_by_service_key_service_tag
         expr: sum by (service_key, service_tag, deployment)(simcore_simcore_service_director_services_started_total)
+
+  - name: node_cpu_seconds_total-nonidle-sum_over_nodes
+    rules:
+      - record: node_cpu_seconds_total:nonidle_sum_over_nodes
+        expr: sum(node_cpu_seconds_total{mode!="idle"})
