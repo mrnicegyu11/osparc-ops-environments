@@ -23,8 +23,8 @@ up-letsencrypt-http: .init .env config.prometheus datasource.yml ${TEMP_COMPOSE}
 up-letsencrypt-dns: .init .env config.prometheus  datasource.yml ${TEMP_COMPOSE}-letsencrypt-dns   ## Deploys or updates current stack "$(STACK_NAME)" using let's encrypt dns challenge
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
 
-.PHONY: up-dalco ## Deploys monitoring stack for Dalco Cluster
-up-dalco: .init .env datasource.dalco.yml config.prometheus.minio ${TEMP_COMPOSE}-dalco
+.PHONY: up-dalco
+up-dalco: .init .env datasource.dalco.yml config.prometheus.minio ${TEMP_COMPOSE}-dalco ## Deploys monitoring stack for Dalco Cluster
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-dalco ${STACK_NAME}
 
 .PHONY: up-aws
