@@ -16,8 +16,29 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1591597772539,
-  "links": [],
+  "iteration": 1592166543406,
+  "links": [
+    {
+      "$$hashKey": "object:183",
+      "icon": "external link",
+      "tags": [],
+      "targetBlank": true,
+      "title": "production postgres",
+      "tooltip": "Open adminer",
+      "type": "link",
+      "url": "https://monitoring.osparc.io/adminer/?pgsql=production_postgres&username=scu&db=simcoredb&ns=public"
+    },
+    {
+      "$$hashKey": "object:244",
+      "icon": "external link",
+      "tags": [],
+      "targetBlank": true,
+      "title": "staging postgres",
+      "tooltip": "Open Adminer",
+      "type": "link",
+      "url": "https://monitoring.osparc.io/adminer/?pgsql=staging_postgres&username=scu&db=simcoredb&ns=public"
+    }
+  ],
   "panels": [
     {
       "collapsed": false,
@@ -328,20 +349,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (endpoint)  (rate(http_requests_total{endpoint=~\"/v0/me\", http_status=~\"2[0-9]+\", app_name=~\".+webserver\", deployment=\"$deployment\"}[$__range]))*$__range_ms/1000",
-          "format": "time_series",
-          "instant": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "endpoint: {{endpoint}}",
-          "refId": "A"
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Login rate",
+          "expr": "sum by (endpoint)  (rate(http_requests_total{endpoint=~\"/v0/me\", http_status=~\"2[0-9]+\", app_name=~\".+webserver\", deployment=\"$deployment\"}[12h]))*60*60*24",
+            "format": "time_series",
+            "instant": false,
+            "interval": "1h",
+            "intervalFactor": 1,
+            "legendFormat": "endpoint: {{endpoint}}",
+            "refId": "B"
+          }
+        ],
+        "thresholds": [],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Login rate by day",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -1355,18 +1376,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate(simcore_simcore_service_webserver_services_started_total:sum_by_service_key_service_tag{deployment=\"$deployment\"}[$__range])*$__range_ms/1000",
+          "expr": "rate({__name__=~\"simcore_simcore_service_(director|webserver)_services_started_total:sum_by_service_key_service_tag\", deployment=\"$deployment\"}[$__range])*$__range_ms/1000",
           "instant": false,
           "interval": "",
           "legendFormat": "{{service_key}}:{{service_tag}}",
           "refId": "B"
-        },
-        {
-          "expr": "rate(simcore_simcore_service_director_services_started_total:sum_by_service_key_service_tag{deployment=\"$deployment\"}[$__range])*$__range_ms/1000",
-          "instant": false,
-          "interval": "",
-          "legendFormat": "{{service_key}}:{{service_tag}}",
-          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -1990,7 +2004,7 @@
     ]
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -2020,5 +2034,5 @@
   "timezone": "browser",
   "title": "Metrics",
   "uid": "X_99jTHWk",
-  "version": 15
+  "version": 18
 }

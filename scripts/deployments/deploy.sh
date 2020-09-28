@@ -86,29 +86,23 @@ popd
 
 if [ $# -le 1 ] || [ $2 != "--simcore_only" ]; then
 
-    # -------------------------------- PORTAINER ------------------------------
-    echo
-    echo -e "\e[1;33mstarting portainer...\e[0m"
-    make -C "${repo_basedir}"/services/portainer up-$1 configure-registry
 
     # -------------------------------- TRAEFIK -------------------------------
     echo
     echo -e "\e[1;33mstarting traefik...\e[0m"
     # setup configuration
     call_make "${repo_basedir}"/services/traefik up-$1
+    
+    # -------------------------------- PORTAINER ------------------------------
+    echo
+    echo -e "\e[1;33mstarting portainer...\e[0m"
+    make -C "${repo_basedir}"/services/portainer up-$1 configure-registry
+
 
     # -------------------------------- Redis commander-------------------------------
     echo
     echo -e "\e[1;33mstarting redis commander...\e[0m"
     make -C "${repo_basedir}"/services/redis-commander up-$1
-
-    # -------------------------------- MONITORING -------------------------------
-
-    echo
-    echo -e "\e[1;33mstarting monitoring...\e[0m"
-    # grafana config
-    service_dir="${repo_basedir}"/services/monitoring
-    make -C "${service_dir}" up-$1
 
     # -------------------------------- JAEGER -------------------------------
     echo
@@ -147,6 +141,20 @@ if [ $# -le 1 ] || [ $2 != "--simcore_only" ]; then
             sleep 5s
         done
 
+        # Ask for minio to give a JWT Token if the key is empty in repo.config
+        # This key is used to allow prometheus to access Minio's metrics
+
+        if [[ -z "${MINIO_PROMETHEUS_TOKEN}" ]]; then
+            echo "Asking minio for JWT key..."
+            MINIO_PROMETHEUS_TOKEN=$(docker node ls | cut -c 31-49 | grep -v HOSTNAME | sed '2q;d' | xargs -I"SERVER" sh -c "ssh SERVER 'bash -s' < /deployment/production/osparc-ops-environments/scripts/minio_prometheus_token.bash")
+            MINIO_PROMETHEUS_TOKEN=$(echo "$MINIO_PROMETHEUS_TOKEN" | sed '4q;d')
+            IFS=' ' 
+            read -ra token <<< "$MINIO_PROMETHEUS_TOKEN"
+            MINIO_PROMETHEUS_TOKEN=${token[1]}
+            $psed --in-place "s/MINIO_PROMETHEUS_TOKEN=.*/MINIO_PROMETHEUS_TOKEN=${MINIO_PROMETHEUS_TOKEN}/" "${repo_basedir}"/repo.config
+            set -o allexport; source "${repo_basedir}"/repo.config; set +o allexport;
+        fi
+
         # -------------------------------- BACKUP PG -------------------------------
         echo
         echo -e "\e[1;33mstarting PG-backup...\e[0m"
@@ -159,6 +167,14 @@ if [ $# -le 1 ] || [ $2 != "--simcore_only" ]; then
     echo
     echo -e "\e[1;33mstarting mail server...\e[0m"
     call_make "${repo_basedir}"/services/mail up-$1
+
+    # -------------------------------- MONITORING -------------------------------
+
+    echo
+    echo -e "\e[1;33mstarting monitoring...\e[0m"
+    # grafana config
+    service_dir="${repo_basedir}"/services/monitoring
+    make -C "${service_dir}" up-$1
 
     # -------------------------------- GRAYLOG -------------------------------
     echo

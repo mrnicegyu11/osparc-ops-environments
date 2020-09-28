@@ -38,6 +38,7 @@ if [ "$yn" = "y" ]; then
     jbergknoff/postgresql-client postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:5432/postgres \
     -c "DROP DATABASE simcoredb;" -c "CREATE DATABASE simcoredb;" \
     -c "CREATE ROLE grafanareader with LOGIN ENCRYPTED PASSWORD '${POSTGRES_GRAFANA_PASSWORD}';" \
+    -c "GRANT SELECT ON ALL TABLES IN SCHEMA public TO grafanareader;" \
     -c "\connect simcoredb" -f "/var/pgdata/mydump.sql"
     sudo rm /tmp/mydump.sql
 fi

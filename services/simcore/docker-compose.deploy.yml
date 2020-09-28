@@ -151,6 +151,7 @@ services:
       - LOGSPOUT_MULTILINE=true
     deploy:
       labels:
+        - traefik.enable=true
         - traefik.docker.network=${PUBLIC_NETWORK}
         - traefik.http.services.${PREFIX_STACK_NAME}_rabbit.loadbalancer.server.port=15672
         - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.rule=Host(`${MONITORING_DOMAIN}`) && PathPrefix(`/${PREFIX_STACK_NAME}_rabbit`)
@@ -228,7 +229,7 @@ services:
     command:
       - "--api=true"
       - "--api.dashboard=true"
-      - "--log.level=DEBUG"
+      - "--log.level=WARNING"
       - "--accesslog=true"
       - "--metrics.prometheus=true"
       - "--metrics.prometheus.addEntryPointsLabels=true"
@@ -257,7 +258,7 @@ services:
         - traefik.docker.network=${PUBLIC_NETWORK}
         - traefik.http.services.${SWARM_STACK_NAME}_simcore_http.loadbalancer.server.port=80
         - traefik.http.services.${SWARM_STACK_NAME}_simcore_api.loadbalancer.server.port=10081
-        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.rule=Host(`${PUBLISHED_HOST_NAME}`) && PathPrefix(`/`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.rule=${MACHINE_FQDNS} && PathPrefix(`/`)
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.entrypoints=https
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.priority=1
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.tls=true
