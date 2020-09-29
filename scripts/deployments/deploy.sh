@@ -71,7 +71,7 @@ echo -e "\e[1;33mDeploying osparc for $1 cluster on ${MACHINE_FQDN}\e[0m"
 echo
 echo -e "Updating if necessary docker-compose-deploy and .env in Sincore..."
 pushd "${repo_basedir}"/services/simcore;
-make -C "${repo_basedir}"/services/simcore compose-dalco
+make -C "${repo_basedir}"/services/simcore compose-$1
 
 simcore_env=.env
 simcore_compose=docker-compose.deploy.yml

@@ -28,7 +28,7 @@ restore()
             echo "Creating a new empty volume"
             docker volume create ${DEST_VOLUME_NAME}
             echo "Restoring the volume..."
-            docker run --rm -v /tmp/backup/:/backup -v ${DEST_VOLUME_NAME}:${DEST_FOLDER_NAME} ubuntu bash -c "cd ${DEST_FOLDER_NAME} && tar xvf /backup/${SOURCE_VOLUME_NAME}.tar --strip 1"
+            docker run --rm -v /tmp/backup/:/backup -v ${DEST_VOLUME_NAME}:${DEST_FOLDER_NAME} ubuntu bash -c "cd ${DEST_FOLDER_NAME} && tar xvf /backup/${SOURCE_VOLUME_NAME}.tar --strip 1 && cd .. && chmod -R 777 ${DEST_FOLDER_NAME}"
             echo "Volume restored."
         ;;
         * )
@@ -51,7 +51,7 @@ backup_and_restore_ssh()
             ssh $SSH_HOST \
             "docker run --rm -v ${SOURCE_VOLUME_NAME}:${SOURCE_FOLDER_NAME} alpine ash -c 'cd ${SOURCE_FOLDER_NAME} ; tar -cf - . '" \
             | \
-            docker run --rm -i -v "${DEST_VOLUME_NAME}":"${DEST_FOLDER_NAME}" alpine ash -c "cd ${DEST_FOLDER_NAME} ; tar -xpvf - "
+            docker run --rm -i -v "${DEST_VOLUME_NAME}":"${DEST_FOLDER_NAME}" alpine ash -c "cd ${DEST_FOLDER_NAME} ; tar -xpvf - ; "
             echo "Volume restored."
         ;;
         * )
