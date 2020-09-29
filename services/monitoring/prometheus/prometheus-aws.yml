@@ -51,12 +51,12 @@ scrape_configs:
         type: "A"
         port: 8082
       - names:
-          - "staging-redis-exporter"
-          - "production-redis-exporter"
+          - "redis-exporter"
+          - "redis-exporter"
         type: "A"
         port: 9121
       - names:
-          - "staging-postgres-exporter"
-          - "production-postgres-exporter"
+          - "postgres-exporter"
+          - "postgres-exporter"
         type: "A"
         port: 9187
