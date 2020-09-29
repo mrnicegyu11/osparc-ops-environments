@@ -16,7 +16,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1592166543406,
+  "id": 2,
+  "iteration": 1601411384371,
   "links": [
     {
       "$$hashKey": "object:183",
@@ -26,7 +27,7 @@
       "title": "production postgres",
       "tooltip": "Open adminer",
       "type": "link",
-      "url": "https://monitoring.osparc.io/adminer/?pgsql=production_postgres&username=scu&db=simcoredb&ns=public"
+      "url": "https://monitoring.osparc.speag.com/adminer/?pgsql=production_postgres:5432&username=postgres&db=simcoredb&ns=public"
     },
     {
       "$$hashKey": "object:244",
@@ -36,7 +37,7 @@
       "title": "staging postgres",
       "tooltip": "Open Adminer",
       "type": "link",
-      "url": "https://monitoring.osparc.io/adminer/?pgsql=staging_postgres&username=scu&db=simcoredb&ns=public"
+      "url": "https://monitoring.osparc.speag.com/adminer/?pgsql=staging_postgres:5432&username=postgres&db=simcoredb&ns=public"
     }
   ],
   "panels": [
@@ -350,19 +351,19 @@
       "targets": [
         {
           "expr": "sum by (endpoint)  (rate(http_requests_total{endpoint=~\"/v0/me\", http_status=~\"2[0-9]+\", app_name=~\".+webserver\", deployment=\"$deployment\"}[12h]))*60*60*24",
-            "format": "time_series",
-            "instant": false,
-            "interval": "1h",
-            "intervalFactor": 1,
-            "legendFormat": "endpoint: {{endpoint}}",
-            "refId": "B"
-          }
-        ],
-        "thresholds": [],
-        "timeFrom": null,
-        "timeRegions": [],
-        "timeShift": null,
-        "title": "Login rate by day",
+          "format": "time_series",
+          "instant": false,
+          "interval": "1h",
+          "intervalFactor": 1,
+          "legendFormat": "endpoint: {{endpoint}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Login rate by day",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -451,9 +452,9 @@
           "refId": "A"
         },
         {
-          "expr": "sum(redis_key_size{deployment=\"$deployment\"}) by ()",
+          "expr": "count(redis_key_size{key=~\".+:resources\", deployment=\"$deployment\"})",
           "interval": "",
-          "legendFormat": "Resources per client",
+          "legendFormat": "Resources used",
           "refId": "B"
         }
       ],
@@ -1596,13 +1597,6 @@
           "intervalFactor": 1,
           "legendFormat": "data usage",
           "refId": "B"
-        },
-        {
-          "expr": "-sum(delta(node_filesystem_avail_bytes{mountpoint=\"/\"}[$__range]))",
-          "interval": "1h",
-          "intervalFactor": 1,
-          "legendFormat": "variation",
-          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -1846,60 +1840,60 @@
           {
             "matcher": {
               "id": "byName",
-              "options": "osparc1"
+              "options": "OsparcDalco1"
             },
             "properties": [
               {
                 "id": "max",
-                "value": 374
+                "value": 196
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "osparc2"
+              "options": "OsparcDalco2"
             },
             "properties": [
               {
                 "id": "max",
-                "value": 374
+                "value": 196
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "osparc3"
+              "options": "OsparcDalco3"
             },
             "properties": [
               {
                 "id": "max",
-                "value": 374
+                "value": 196
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "osparc4"
+              "options": "OsparcDalco4"
             },
             "properties": [
               {
                 "id": "max",
-                "value": 625
+                "value": 196
               }
             ]
           },
           {
             "matcher": {
               "id": "byName",
-              "options": "osparc5"
+              "options": "OsparcDalco5"
             },
             "properties": [
               {
                 "id": "max",
-                "value": 311
+                "value": 196
               }
             ]
           }
@@ -2004,7 +1998,7 @@
     ]
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-7d",
     "to": "now"
   },
   "timepicker": {
@@ -2034,5 +2028,5 @@
   "timezone": "browser",
   "title": "Metrics",
   "uid": "X_99jTHWk",
-  "version": 18
+  "version": 9
 }
