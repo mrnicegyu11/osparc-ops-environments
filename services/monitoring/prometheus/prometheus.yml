@@ -8,12 +8,14 @@ global:
   # external systems (federation, remote storage, Alertmanager).
   external_labels:
     monitor: "sim-core-monitor"
+
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
   - "alert.rules"
   - "prometheus.rules.yml"
   # - "first.rules"
   # - "second.rules"
+
 # alert
 alerting:
   alertmanagers:
@@ -21,32 +23,37 @@ alerting:
       static_configs:
         - targets:
             - "alertmanager:9093"
+
 # A scrape configuration containing exactly one endpoint to scrape:
 # Here it's Prometheus itself.
 scrape_configs:
-  - job_name: "prometheus"
-    # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
 
+  - job_name: "prometheus"
     static_configs:
       - targets: ["localhost:9090"]
+
   - job_name: "cadvisor"
     dns_sd_configs:
       - names:
           - "tasks.cadvisor"
         type: "A"
         port: 8080
+
   - job_name: "node-exporter"
     dns_sd_configs:
       - names:
           - "tasks.node-exporter"
         type: "A"
         port: 9100
+
   - job_name: "nvidia-exporter"
     dns_sd_configs:
       - names:
           - "tasks.nvidia-exporter"
         type: "A"
         port: 9445
+
   # monitor docker engine (https://docs.docker.com/config/thirdparty/prometheus/)
   - job_name: "dockerd-exporter"
     dns_sd_configs:
@@ -54,6 +61,7 @@ scrape_configs:
           - "tasks.dockerd-exporter"
         type: "A"
         port: 9323
+
   # SIMCORE -------------------------------------------------------------------
   - job_name: "simcore"
     relabel_configs:
@@ -101,25 +109,18 @@ scrape_configs:
           - "production-postgres-exporter"
         type: "A"
         port: 9187
+
   - job_name: "traefik"
     static_configs:
       - targets: ["traefik:8082"]
+
   - job_name: "registry"
     static_configs:
       - targets: ["registry:5001"]
+
   - job_name: "jaeger"
     dns_sd_configs:
       - names:
           - "tasks.jaeger"
         type: "A"
         port: 14269
-  # to generate the token use the following
-  # docker run -v /etc/ssl/certs:/etc/ssl/certs:ro --network host \
-  #   -e MC_HOST_local="https://12345678:12345678@osparc.local:10000" \
-  #   minio/mc admin prometheus generate local
-  - job_name: minio-job
-    bearer_token: eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3NTMyNjI2OTYsImlzcyI6InByb21ldGhldXMiLCJzdWIiOiJnZmhmZ2g3NjVnanR5anRqIn0.w5_o5Sm0NjAMeb7pSDg8iHFQvJTNSsM0iw5cNqoSxVhPxkAcK_MQAKOZ-xKIy799JULGsLALaQzBzMSbMvhpRA
-    metrics_path: /minio/prometheus/metrics
-    scheme: https
-    static_configs:
-      - targets: ['storage.osparc.speag.com']
