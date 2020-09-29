@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1601411384371,
+  "iteration": 1601412911365,
   "links": [
     {
       "$$hashKey": "object:183",
@@ -1198,6 +1198,7 @@
           "expr": "sum by (endpoint) (http_requests_total{endpoint=~\"/study/.+\", app_name=~\".*webserver\", deployment=\"$deployment\"})",
           "format": "time_series",
           "hide": false,
+          "instant": false,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{endpoint}}",
@@ -1243,6 +1244,8 @@
         "min": false,
         "rightSide": true,
         "show": true,
+        "sort": "current",
+        "sortDesc": true,
         "total": false,
         "values": true
       },
@@ -1489,14 +1492,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(increase(node_cpu_seconds_total{mode!=\"idle\"}[$__range]))/60/60",
+          "expr": "sum(node_cpu_seconds_total{mode!=\"idle\"})/60/60",
           "format": "time_series",
           "hide": false,
           "instant": false,
           "interval": "1h",
           "intervalFactor": 1,
-          "legendFormat": "increase of cpu hours over time range",
-          "refId": "A"
+          "legendFormat": "cpu hours over time range",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -1690,7 +1693,7 @@
       "targets": [
         {
           "expr": "100 - (avg(irate(node_cpu_seconds_total{job=\"node-exporter\",mode=\"idle\"}[$__range]) * on(instance) group_left(node_name) node_meta{}) by (node_name)  * 100)",
-          "interval": "",
+          "interval": "1h",
           "legendFormat": "{{node_name}}",
           "refId": "A"
         }
@@ -1787,7 +1790,7 @@
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
-            "mean"
+            "last"
           ],
           "values": false
         },
@@ -1796,7 +1799,8 @@
       "pluginVersion": "7.0.0",
       "targets": [
         {
-          "expr": "1 - sum(node_filesystem_avail_bytes{mountpoint=\"/\"}/node_filesystem_size_bytes{mountpoint=\"/\"} * on(instance) group_left(node_name) node_meta{}) by (node_name)",
+          "expr": "sort_desc(1 - sum(node_filesystem_avail_bytes{mountpoint=\"/\"}/node_filesystem_size_bytes{mountpoint=\"/\"} * on(instance) group_left(node_name) node_meta{}) by (node_name))",
+          "instant": true,
           "interval": "",
           "legendFormat": "{{node_name}}",
           "refId": "B"
@@ -1910,7 +1914,7 @@
       "links": [],
       "maxDataPoints": 1,
       "options": {
-        "displayMode": "gradient",
+        "displayMode": "lcd",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -1923,7 +1927,9 @@
       "pluginVersion": "7.0.0",
       "targets": [
         {
-          "expr": "sum(node_filesystem_avail_bytes{mountpoint=\"/\"} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name)",
+          "expr": "sort(sum(node_filesystem_avail_bytes{mountpoint=\"/\"} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name))",
+          "format": "time_series",
+          "instant": true,
           "interval": "",
           "legendFormat": "{{node_name}}",
           "refId": "B"
@@ -1931,6 +1937,7 @@
         {
           "expr": "sum(node_filesystem_size_bytes{mountpoint=\"/\"} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name)",
           "hide": true,
+          "instant": false,
           "interval": "",
           "legendFormat": "{{node_name}}_total",
           "refId": "A"
@@ -1939,6 +1946,7 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "Available disk space [current]",
+      "transformations": [],
       "type": "bargauge"
     }
   ],
@@ -1998,7 +2006,7 @@
     ]
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {
@@ -2028,5 +2036,5 @@
   "timezone": "browser",
   "title": "Metrics",
   "uid": "X_99jTHWk",
-  "version": 9
+  "version": 11
 }
