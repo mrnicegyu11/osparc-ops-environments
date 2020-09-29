@@ -54,7 +54,6 @@ compose-dalco: .env-simcore ${TEMP_COMPOSE}-dalco ## Create docker-compose.deplo
 .PHONY: compose-aws 
 compose-aws: .env-simcore ${TEMP_COMPOSE}-aws ## Create docker-compose.deploy for AWS
 
-_yq = docker run --rm -i -v ${PWD}:/workdir mikefarah/yq yq
 
 .PHONY: ${TEMP_COMPOSE}-local
 ${TEMP_COMPOSE}-local: docker-compose.yml docker-compose.deploy.local.yml

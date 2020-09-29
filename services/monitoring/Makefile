@@ -65,7 +65,7 @@ config.prometheus.minio: ../../repo.config
 	@set -o allexport; \
 	source $(realpath $(CURDIR)/../../repo.config); \
 	set +o allexport; \
-	yq merge --append prometheus/prometheus-base.yml prometheus/prometheus-dalco.yml > prometheus/prometheus.yml; \
+	@$(_yq) merge --append prometheus/prometheus-base.yml prometheus/prometheus-dalco.yml > prometheus/prometheus.yml; \
 	envsubst < prometheus/prometheus.yml > prometheus/prometheus.temp.yml; \
 	mv prometheus/prometheus.temp.yml prometheus/prometheus.yml
 
@@ -74,7 +74,7 @@ config.prometheus.aws: ../../repo.config
 	@set -o allexport; \
 	source $(realpath $(CURDIR)/../../repo.config); \
 	set +o allexport; \
-	yq merge --append prometheus/prometheus-base.yml prometheus/prometheus-aws.yml > prometheus/prometheus.yml; \
+	@$(_yq) merge --append prometheus/prometheus-base.yml prometheus/prometheus-aws.yml > prometheus/prometheus.yml; \
 	envsubst < prometheus/prometheus.yml > prometheus/prometheus.temp.yml; \
 	mv prometheus/prometheus.temp.yml prometheus/prometheus.yml
 
@@ -88,7 +88,7 @@ datasource.aws.yml: grafana/provisioning/datasources/datasource.yml.template gra
 	@set -o allexport; \
 	source $(realpath $(CURDIR)/../../repo.config); \
 	set +o allexport; \
-	yq merge --append $< grafana/provisioning/datasources/datasource.aws.yml.template > grafana/provisioning/datasources/datasource.yml; \
+	@$(_yq) merge --append $< grafana/provisioning/datasources/datasource.aws.yml.template > grafana/provisioning/datasources/datasource.yml; \
 	envsubst < grafana/provisioning/datasources/datasource.yml > grafana/provisioning/datasources/temp.datasource.yml; \
 	mv  grafana/provisioning/datasources/temp.datasource.yml grafana/provisioning/datasources/datasource.yml
 
@@ -97,6 +97,6 @@ datasource.dalco.yml: grafana/provisioning/datasources/datasource.yml.template g
 	@set -o allexport; \
 	source $(realpath $(CURDIR)/../../repo.config); \
 	set +o allexport; \
-	yq merge --append $< grafana/provisioning/datasources/datasource.dalco.yml.template > grafana/provisioning/datasources/datasource.yml; \
+	@$(_yq) merge --append $< grafana/provisioning/datasources/datasource.dalco.yml.template > grafana/provisioning/datasources/datasource.yml; \
 	envsubst < grafana/provisioning/datasources/datasource.yml > grafana/provisioning/datasources/temp.datasource.yml; \
 	mv  grafana/provisioning/datasources/temp.datasource.yml grafana/provisioning/datasources/datasource.yml
