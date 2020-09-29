@@ -28,7 +28,7 @@ up-dalco: .init .env datasource.dalco.yml config.prometheus.minio ${TEMP_COMPOSE
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-dalco ${STACK_NAME}
 
 .PHONY: up-aws
-up-aws: .init .env datasource.aws.yml config.monitoring config.prometheus ${TEMP_COMPOSE}-aws   ## Deploys or updates current stack "$(STACK_NAME)" in AWS
+up-aws: .init .env datasource.aws.yml config.monitoring config.prometheus.aws ${TEMP_COMPOSE}-aws   ## Deploys or updates current stack "$(STACK_NAME)" in AWS
 	@docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 
@@ -66,6 +66,15 @@ config.prometheus.minio: ../../repo.config
 	source $(realpath $(CURDIR)/../../repo.config); \
 	set +o allexport; \
 	yq merge --append prometheus/prometheus-base.yml prometheus/prometheus-dalco.yml > prometheus/prometheus.yml; \
+	envsubst < prometheus/prometheus.yml > prometheus/prometheus.temp.yml; \
+	mv prometheus/prometheus.temp.yml prometheus/prometheus.yml
+
+.PHONY: config.prometheus.aws
+config.prometheus.minio: ../../repo.config
+	@set -o allexport; \
+	source $(realpath $(CURDIR)/../../repo.config); \
+	set +o allexport; \
+	yq merge --append prometheus/prometheus-base.yml prometheus/prometheus-aws.yml > prometheus/prometheus.yml; \
 	envsubst < prometheus/prometheus.yml > prometheus/prometheus.temp.yml; \
 	mv prometheus/prometheus.temp.yml prometheus/prometheus.yml
 
