@@ -54,33 +54,27 @@ compose-dalco: .env-simcore ${TEMP_COMPOSE}-dalco ## Create docker-compose.deplo
 .PHONY: compose-aws 
 compose-aws: .env-simcore ${TEMP_COMPOSE}-aws ## Create docker-compose.deploy for AWS
 
+_yq = docker run --rm -i -v ${PWD}:/workdir mikefarah/yq yq
+
 .PHONY: ${TEMP_COMPOSE}-local
-${TEMP_COMPOSE}-local: install-yq  docker-compose.yml docker-compose.deploy.local.yml
-	@yq merge --append  docker-compose.yml docker-compose.deploy.local.yml > ${TEMP_COMPOSE}
+${TEMP_COMPOSE}-local: docker-compose.yml docker-compose.deploy.local.yml
+	@$(_yq) merge --append  docker-compose.yml docker-compose.deploy.local.yml > ${TEMP_COMPOSE}
 
 .PHONY: ${TEMP_COMPOSE}-letsencrypt-http
-${TEMP_COMPOSE}-letsencrypt-http: install-yq docker-compose.yml docker-compose.deploy.letsencrypt.http.yml
-	@yq merge --append  docker-compose.yml docker-compose.deploy.letsencrypt.http.yml > ${TEMP_COMPOSE}
+${TEMP_COMPOSE}-letsencrypt-http: docker-compose.yml docker-compose.deploy.letsencrypt.http.yml
+	@$(_yq) merge --append  docker-compose.yml docker-compose.deploy.letsencrypt.http.yml > ${TEMP_COMPOSE}
 
 .PHONY: ${TEMP_COMPOSE}-letsencrypt-dns
-${TEMP_COMPOSE}-letsencrypt-dns: install-yq docker-compose.yml docker-compose.deploy.letsencrypt.dns.yml
-	@yq merge --append  docker-compose.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}	
+${TEMP_COMPOSE}-letsencrypt-dns: docker-compose.yml docker-compose.deploy.letsencrypt.dns.yml
+	@$(_yq) merge --append  docker-compose.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}	
 
 .PHONY: ${TEMP_COMPOSE}-aws
-${TEMP_COMPOSE}-aws: install-yq docker-compose.yml
+${TEMP_COMPOSE}-aws: docker-compose.yml
 	@cp docker-compose.yml ${TEMP_COMPOSE}
 
 .PHONY: ${TEMP_COMPOSE}-dalco
-${TEMP_COMPOSE}-dalco: install-yq docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml
-	@yq merge --append docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}
-
-.PHONY: install-yq 
-install-yq: ## Install YQ if not already installed
-	@dpkg -s yq > /dev/null 2>&1;\
-	testYqInstalled=$$?;\
-	[ "$$testYqInstalled" -eq 0 ] || ( sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CC86BB64 \
-	&& sudo add-apt-repository -y ppa:rmescandon/yq \
-	&& sudo apt update; sudo apt install -y yq );
+${TEMP_COMPOSE}-dalco: docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml
+	@$(_yq) merge --append docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}
 
 .PHONY: .env-simcore
 .env-simcore: template.env ../../repo.config
