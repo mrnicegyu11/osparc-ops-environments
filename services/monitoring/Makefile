@@ -70,7 +70,7 @@ config.prometheus.minio: ../../repo.config
 	mv prometheus/prometheus.temp.yml prometheus/prometheus.yml
 
 .PHONY: config.prometheus.aws
-config.prometheus.minio: ../../repo.config
+config.prometheus.aws: ../../repo.config
 	@set -o allexport; \
 	source $(realpath $(CURDIR)/../../repo.config); \
 	set +o allexport; \
