@@ -3,6 +3,10 @@ services:
   prometheus:
     dns: 
       8.8.8.8
+    deploy:
+      placement:
+        constraints:
+        - node.labels.traefik==true
   grafana:
     dns: 
       8.8.8.8

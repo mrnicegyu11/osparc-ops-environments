@@ -1,17 +1,3 @@
-# Minio config
-scrape_configs:
-  
-    # to generate the token use the following
-    # docker run -v /etc/ssl/certs:/etc/ssl/certs:ro --network host \
-    #   -e MC_HOST_local="https://12345678:12345678@osparc.local:10000" \
-    #   minio/mc admin prometheus generate local
- - job_name: minio-job
-   bearer_token: ${MINIO_PROMETHEUS_TOKEN}
-   metrics_path: /minio/prometheus/metrics
-   scheme: https
-   static_configs:
-   - targets: ['storage.osparc.speag.com']
-
 scrape_configs:
   # SIMCORE -------------------------------------------------------------------
   - job_name: "simcore"
@@ -51,12 +37,12 @@ scrape_configs:
         type: "A"
         port: 8082
       - names:
-          - "staging-redis-exporter"
-          - "production-redis-exporter"
+          - "redis-exporter"
+          - "redis-exporter"
         type: "A"
         port: 9121
       - names:
-          - "staging-postgres-exporter"
-          - "production-postgres-exporter"
+          - "postgres-exporter"
+          - "postgres-exporter"
         type: "A"
         port: 9187
