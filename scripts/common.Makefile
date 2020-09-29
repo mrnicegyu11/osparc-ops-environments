@@ -19,6 +19,7 @@ MONITORED_NETWORK := $(monitored_network)
 endif
 export MONITORED_NETWORK
 
+_yq = docker run --rm -i -v ${PWD}:/workdir mikefarah/yq:3.3.4 yq
 
 .PHONY: help
 # thanks to https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
