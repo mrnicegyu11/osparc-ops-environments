@@ -124,3 +124,4 @@ deployment_config.yaml
 /services/monitoring/grafana/config.monitoring
 # Mail configuration
 /services/mail/config/
+services/monitoring/prometheus/prometheus.yml
