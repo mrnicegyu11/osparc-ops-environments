@@ -78,8 +78,8 @@ services:
     networks:
       - internal
     environment:
-      # Replace 172.18.0.1 with the docker_gwbridge address ip -o addr show docker_gwbridge TO AUTMOATIZE
-      - DOCKER_GWBRIDGE_IP=172.19.0.1
+      # Replace 172.18.0.1 with the docker_gwbridge address ip -o addr show docker_gwbridge TODO
+      - DOCKER_GWBRIDGE_IP=172.18.0.1
     configs:
       - source: dockerd_config
         target: /etc/caddy/Caddyfile
