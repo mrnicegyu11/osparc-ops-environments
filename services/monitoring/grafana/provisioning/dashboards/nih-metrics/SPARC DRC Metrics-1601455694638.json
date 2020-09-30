@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 17,
-  "iteration": 1601455139355,
+  "iteration": 1601455618580,
   "links": [],
   "panels": [
     {
@@ -508,9 +508,9 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "topk(10, rate({__name__=~\"simcore_simcore_service_(director|webserver)_services_started_total:sum_by_service_key_service_tag\", deployment=\"$deployment\"}[30d])*60*60*24*30)",
+          "expr": "label_replace(topk(10, rate({__name__=~\"simcore_simcore_service_(director|webserver)_services_started_total:sum_by_service_key_service_tag\", deployment=\"$deployment\"}[30d])*60*60*24*30), \"service_name\", \"$3\", \"service_key\", \"simcore/services/(dynamic|comp)/([a-zA-Z0-9]*/)?(.*)\")",
           "interval": "12h",
-          "legendFormat": "{{service_key}}:{{service_tag}}",
+          "legendFormat": "{{service_name}}:{{service_tag}}",
           "refId": "C"
         }
       ],
@@ -888,5 +888,5 @@
   "timezone": "browser",
   "title": "SPARC DRC Metrics",
   "uid": "j3-z2TRMz",
-  "version": 9
+  "version": 10
 }
