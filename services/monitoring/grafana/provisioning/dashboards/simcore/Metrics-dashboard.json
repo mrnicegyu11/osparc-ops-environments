@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1601412911365,
+  "iteration": 1601447571527,
   "links": [
     {
       "$$hashKey": "object:183",
@@ -312,8 +312,8 @@
         },
         "overrides": []
       },
-      "fill": 0,
-      "fillGradient": 0,
+      "fill": 1,
+      "fillGradient": 1,
       "gridPos": {
         "h": 11,
         "w": 6,
@@ -341,7 +341,7 @@
       },
       "percentage": false,
       "pluginVersion": "6.7.3",
-      "pointradius": 2,
+      "pointradius": 3,
       "points": false,
       "renderer": "flot",
       "seriesOverrides": [],
@@ -350,7 +350,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (endpoint)  (rate(http_requests_total{endpoint=~\"/v0/me\", http_status=~\"2[0-9]+\", app_name=~\".+webserver\", deployment=\"$deployment\"}[12h]))*60*60*24",
+          "expr": "sum by (endpoint)  (rate(http_requests_total{endpoint=~\"/v0/me\", http_status=~\"2[0-9]+\", app_name=~\".+webserver\", deployment=\"$deployment\"}[24h]))*60*60*24",
           "format": "time_series",
           "instant": false,
           "interval": "1h",
@@ -586,6 +586,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:146",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -594,6 +595,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:147",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -606,609 +608,6 @@
         "align": false,
         "alignLevel": null
       }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$Postgresql",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 7,
-        "x": 0,
-        "y": 12
-      },
-      "hiddenSeries": false,
-      "id": 34,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": true,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 3,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "format": "time_series",
-          "group": [
-            {
-              "params": [
-                "$__interval",
-                "none"
-              ],
-              "type": "time"
-            }
-          ],
-          "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  $__timeGroupAlias(created_at,$__interval),\n  sum(count(id)) OVER (ORDER BY $__timeGroup(created_at,$__interval)) AS \"id\"\nFROM users\nWHERE\n  $__timeFilter(created_at) AND\n  role = 'GUEST' AND\n  created_ip NOT LIKE '195.176.8.%'\nGROUP BY 1\nORDER BY 1",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "id"
-                ],
-                "type": "column"
-              },
-              {
-                "params": [
-                  "count"
-                ],
-                "type": "aggregate"
-              },
-              {
-                "params": [
-                  "sum"
-                ],
-                "type": "window"
-              },
-              {
-                "params": [
-                  "id"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "table": "users",
-          "timeColumn": "created_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            },
-            {
-              "datatype": "userrole",
-              "name": "",
-              "params": [
-                "role",
-                "=",
-                "'GUEST'"
-              ],
-              "type": "expression"
-            },
-            {
-              "datatype": "varchar",
-              "name": "",
-              "params": [
-                "created_ip",
-                "NOT LIKE",
-                "'195.176.8.%'"
-              ],
-              "type": "expression"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Total number of anonymous users who are redirected to oSPARC from the SPARC Portal",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$Postgresql",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 9,
-        "x": 7,
-        "y": 12
-      },
-      "hiddenSeries": false,
-      "id": 41,
-      "legend": {
-        "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "max": true,
-        "min": true,
-        "rightSide": false,
-        "show": true,
-        "sideWidth": null,
-        "total": true,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 3,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "format": "time_series",
-          "group": [
-            {
-              "params": [
-                "$__interval",
-                "none"
-              ],
-              "type": "time"
-            }
-          ],
-          "metricColumn": "none",
-          "rawQuery": false,
-          "rawSql": "SELECT\n  $__timeGroupAlias(created_at,$__interval),\n  sum(count(id)) OVER (ORDER BY $__timeGroup(created_at,$__interval)) AS \"id\"\nFROM users\nWHERE\n  $__timeFilter(created_at) AND\n  role = 'GUEST' AND\n  created_ip LIKE '195.176.8.%'\nGROUP BY 1\nORDER BY 1",
-          "refId": "A",
-          "select": [
-            [
-              {
-                "params": [
-                  "id"
-                ],
-                "type": "column"
-              },
-              {
-                "params": [
-                  "count"
-                ],
-                "type": "aggregate"
-              },
-              {
-                "params": [
-                  "sum"
-                ],
-                "type": "window"
-              },
-              {
-                "params": [
-                  "id"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "table": "users",
-          "timeColumn": "created_at",
-          "timeColumnType": "timestamp",
-          "where": [
-            {
-              "name": "$__timeFilter",
-              "params": [],
-              "type": "macro"
-            },
-            {
-              "datatype": "userrole",
-              "name": "",
-              "params": [
-                "role",
-                "=",
-                "'GUEST'"
-              ],
-              "type": "expression"
-            },
-            {
-              "datatype": "varchar",
-              "name": "",
-              "params": [
-                "created_ip",
-                "LIKE",
-                "'195.176.8.%'"
-              ],
-              "type": "expression"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Total number of anonymous users who are redirected to oSPARC from Z43",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "Prometheus",
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "custom": {},
-          "mappings": [],
-          "max": 100,
-          "min": 0,
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "index": 0,
-                "value": null
-              },
-              {
-                "color": "red",
-                "index": 1,
-                "value": 80
-              }
-            ]
-          }
-        },
-        "overrides": [
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/05e9404a-acb4-11e9-bf0f-02420aff77ac"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] Small Enteric Neural Network Simulator"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/0d475cde-acb5-11e9-a8d6-02420aff77ac"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] 2D Plot"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/0da37066-acb3-11e9-a6c7-02420aff77ac"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] opencor-py model"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/110ada80-acb5-11e9-95b2-02420aff77ac"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] 3D Visualization"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/14a20508-acb5-11e9-b1ff-02420aff77ac"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] Anatomical Model Viewer\t"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/47d0b766-af53-11e9-a62b-02420aff7e72"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] Rabbit cardiac models"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/c7264592-af54-11e9-8346-02420aff7e72"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] Human cardiac models"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/fc9038ca-acb3-11e9-9aea-02420aff77ac"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] SPARC Nerve Activity Predictor (SNAP)"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/804e859a-a0e6-11ea-978b-02420a0002ec"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "Kember Cardiac Model"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/224cd23a-5316-11ea-a71c-02420a00029d"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] Mattward"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/405f8a40-5316-11ea-bd69-02420a00029d"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] Bornstein"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/51b292f0-5315-11ea-a74f-02420a00029d"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] 2D plot"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/6ddd972e-5315-11ea-9941-02420a00029d"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] Opencor"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/8533ff8c-5315-11ea-9952-02420a00029d"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] 3D EM"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/a1d38250-5316-11ea-928a-02420a00029d"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] CC Rabbit"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/d8f1e374-5316-11ea-8684-02420a00029d"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] CC Human"
-              }
-            ]
-          },
-          {
-            "matcher": {
-              "id": "byName",
-              "options": "/study/f6f82c08-5315-11ea-8b10-02420a00029d"
-            },
-            "properties": [
-              {
-                "id": "displayName",
-                "value": "[ISAN] 3D Anatomical"
-              }
-            ]
-          }
-        ]
-      },
-      "gridPos": {
-        "h": 9,
-        "w": 8,
-        "x": 16,
-        "y": 12
-      },
-      "id": 10,
-      "links": [],
-      "options": {
-        "displayMode": "gradient",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "last"
-          ],
-          "values": false
-        },
-        "showUnfilled": true
-      },
-      "pluginVersion": "7.0.0",
-      "targets": [
-        {
-          "expr": "sum by (endpoint) (http_requests_total{endpoint=~\"/study/.+\", app_name=~\".*webserver\", deployment=\"$deployment\"})",
-          "format": "time_series",
-          "hide": false,
-          "instant": false,
-          "interval": "",
-          "intervalFactor": 1,
-          "legendFormat": "{{endpoint}}",
-          "refId": "A"
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Hits per published study [current]",
-      "type": "bargauge"
     },
     {
       "aliasColors": {},
@@ -1230,7 +629,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 21
+        "y": 12
       },
       "hiddenSeries": false,
       "id": 18,
@@ -1298,6 +697,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:269",
           "format": "short",
           "label": null,
           "logBase": 10,
@@ -1306,6 +706,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:270",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1339,7 +740,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 21
+        "y": 12
       },
       "hiddenSeries": false,
       "id": 40,
@@ -1380,11 +781,26 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate({__name__=~\"simcore_simcore_service_(director|webserver)_services_started_total:sum_by_service_key_service_tag\", deployment=\"$deployment\"}[$__range])*$__range_ms/1000",
+          "expr": "label_replace(rate({__name__=~\"simcore_simcore_service_(director|webserver)_services_started_total:sum_by_service_key_service_tag\", deployment=\"$deployment\"}[$__range])*$__range_ms/1000, \"service_name\", \"$3\", \"service_key\", \"simcore/services/(dynamic|comp)/([a-zA-Z0-9]*/)?(.*)\")",
+          "hide": false,
           "instant": false,
           "interval": "",
-          "legendFormat": "{{service_key}}:{{service_tag}}",
+          "legendFormat": "{{service_name}}:{{service_tag}}",
           "refId": "B"
+        },
+        {
+          "expr": "label_replace(increase({__name__=~\"simcore_simcore_service_(director|webserver)_services_started_total:sum_by_service_key_service_tag\", deployment=\"production\"}[10m]), \"service_name\", \"$3\", \"service_key\", \"simcore/services/(dynamic|comp)/([a-zA-Z0-9]*/)?(.*)\")",
+          "hide": true,
+          "interval": "",
+          "legendFormat": "{{service_name}}:{{service_tag}}",
+          "refId": "A"
+        },
+        {
+          "expr": "(label_replace(increase({__name__=~\"simcore_simcore_service_(director|webserver)_services_started_total:sum_by_service_key_service_tag\", deployment=\"production\"}[$__range]), \"service_name\", \"$3\", \"service_key\", \"simcore/services/(dynamic|comp)/([a-zA-Z0-9]*/)?(.*)\"))",
+          "hide": true,
+          "interval": "",
+          "legendFormat": "{{service_name}}:{{service_tag}}",
+          "refId": "C"
         }
       ],
       "thresholds": [],
@@ -1407,6 +823,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:317",
           "format": "short",
           "label": null,
           "logBase": 10,
@@ -1415,6 +832,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:318",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -1435,7 +853,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 22
       },
       "id": 32,
       "panels": [],
@@ -1460,7 +878,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 32
+        "y": 23
       },
       "hiddenSeries": false,
       "id": 27,
@@ -1486,7 +904,13 @@
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:1030",
+          "alias": "increase cpu hours",
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -1494,12 +918,32 @@
         {
           "expr": "sum(node_cpu_seconds_total{mode!=\"idle\"})/60/60",
           "format": "time_series",
-          "hide": false,
+          "hide": true,
           "instant": false,
           "interval": "1h",
           "intervalFactor": 1,
           "legendFormat": "cpu hours over time range",
           "refId": "B"
+        },
+        {
+          "expr": "node_cpu_seconds_total:nonidle_sum_over_nodes/3600",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 1,
+          "legendFormat": "total cpu hours",
+          "refId": "A"
+        },
+        {
+          "expr": "increase(node_cpu_seconds_total:nonidle_sum_over_nodes[1h])/3600",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "10m",
+          "intervalFactor": 1,
+          "legendFormat": "increase cpu hours",
+          "refId": "C"
         }
       ],
       "thresholds": [],
@@ -1537,7 +981,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": false
+          "show": true
         }
       ],
       "yaxis": {
@@ -1563,7 +1007,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 32
+        "y": 23
       },
       "hiddenSeries": false,
       "id": 28,
@@ -1622,6 +1066,7 @@
       },
       "yaxes": [
         {
+          "$$hashKey": "object:943",
           "format": "bytes",
           "label": "",
           "logBase": 1,
@@ -1630,6 +1075,7 @@
           "show": true
         },
         {
+          "$$hashKey": "object:944",
           "format": "short",
           "label": "",
           "logBase": 1,
@@ -1661,7 +1107,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 40
+        "y": 31
       },
       "hiddenSeries": false,
       "id": 25,
@@ -1782,7 +1228,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 40
+        "y": 31
       },
       "id": 22,
       "options": {
@@ -1907,7 +1353,7 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 40
+        "y": 31
       },
       "id": 23,
       "interval": null,
@@ -2006,7 +1452,7 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-24h",
     "to": "now"
   },
   "timepicker": {
@@ -2036,5 +1482,5 @@
   "timezone": "browser",
   "title": "Metrics",
   "uid": "X_99jTHWk",
-  "version": 11
+  "version": 14
 }
