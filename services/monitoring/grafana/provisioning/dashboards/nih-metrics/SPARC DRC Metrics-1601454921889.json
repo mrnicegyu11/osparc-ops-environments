@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 17,
-  "iteration": 1601295353303,
+  "iteration": 1601454642123,
   "links": [],
   "panels": [
     {
@@ -731,23 +731,23 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(increase(node_cpu_seconds_total{mode!=\"idle\"}[$__range]))/60/60",
+          "expr": "node_cpu_seconds_total:nonidle_sum_over_nodes/3600",
           "format": "time_series",
           "hide": true,
           "instant": false,
           "interval": "1d",
           "intervalFactor": 1,
-          "legendFormat": "increase of cpu hours over time range",
+          "legendFormat": "total cpu hours",
           "refId": "A"
         },
         {
-          "expr": "sum(node_cpu_seconds_total{mode!=\"idle\"})/60/60",
+          "expr": "increase(node_cpu_seconds_total:nonidle_sum_over_nodes[1h])/3600",
           "format": "time_series",
           "hide": false,
           "instant": false,
-          "interval": "2h",
+          "interval": "10m",
           "intervalFactor": 1,
-          "legendFormat": "CPU consumption [cpu-hours]",
+          "legendFormat": "increase cpu hours",
           "refId": "B"
         }
       ],
@@ -882,5 +882,5 @@
   "timezone": "browser",
   "title": "SPARC DRC Metrics",
   "uid": "j3-z2TRMz",
-  "version": 6
+  "version": 8
 }
