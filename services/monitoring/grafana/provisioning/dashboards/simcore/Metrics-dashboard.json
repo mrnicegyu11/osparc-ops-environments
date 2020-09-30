@@ -16,7 +16,8 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "iteration": 1592166543406,
+  "id": 2,
+  "iteration": 1601448292798,
   "links": [
     {
       "$$hashKey": "object:183",
@@ -349,20 +350,20 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum by (endpoint)  (rate(http_requests_total{endpoint=~\"/v0/me\", http_status=~\"2[0-9]+\", app_name=~\".+webserver\", deployment=\"$deployment\"}[12h]))*60*60*24",
-            "format": "time_series",
-            "instant": false,
-            "interval": "1h",
-            "intervalFactor": 1,
-            "legendFormat": "endpoint: {{endpoint}}",
-            "refId": "B"
-          }
-        ],
-        "thresholds": [],
-        "timeFrom": null,
-        "timeRegions": [],
-        "timeShift": null,
-        "title": "Login rate by day",
+          "expr": "sum by (endpoint)  (rate(http_requests_total{endpoint=~\"/v0/me\", http_status=~\"2[0-9]+\", app_name=~\".+webserver\", deployment=\"$deployment\"}[24h]))*60*60*24",
+          "format": "time_series",
+          "instant": false,
+          "interval": "1h",
+          "intervalFactor": 1,
+          "legendFormat": "endpoint: {{endpoint}}",
+          "refId": "B"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Login rate by day",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -445,15 +446,15 @@
       "pluginVersion": "7.0.0",
       "targets": [
         {
-          "expr": "count(redis_key_value{key=~\".+:alive\", deployment=\"$deployment\"})",
+          "expr": "count(redis_key_value{key=~\".+:alive\", deployment=\"redis\"})",
           "interval": "",
           "legendFormat": "Connected clients",
           "refId": "A"
         },
         {
-          "expr": "sum(redis_key_size{deployment=\"$deployment\"}) by ()",
+          "expr": "count(redis_key_size{key=~\".+:resources\", deployment=\"redis\"})",
           "interval": "",
-          "legendFormat": "Resources per client",
+          "legendFormat": "Resources used",
           "refId": "B"
         }
       ],
@@ -946,8 +947,8 @@
             "mode": "thresholds"
           },
           "custom": {},
+          "decimals": 0,
           "mappings": [],
-          "max": 100,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -1169,6 +1170,18 @@
                 "value": "[ISAN] 3D Anatomical"
               }
             ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "/study/13b9ed12-e7aa-11ea-9b21-02420a0b001d"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Neurofauna Rat"
+              }
+            ]
           }
         ]
       },
@@ -1181,32 +1194,33 @@
       "id": 10,
       "links": [],
       "options": {
-        "displayMode": "gradient",
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
-            "last"
+            "lastNotNull"
           ],
           "values": false
-        },
-        "showUnfilled": true
+        }
       },
       "pluginVersion": "7.0.0",
       "targets": [
         {
-          "expr": "sum by (endpoint) (http_requests_total{endpoint=~\"/study/.+\", app_name=~\".*webserver\", deployment=\"$deployment\"})",
+          "expr": "(increase(http_requests_total{endpoint=~\"/study/.+\", app_name=~\".*webserver\", deployment=\"production\"}[$__range]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
           "intervalFactor": 1,
           "legendFormat": "{{endpoint}}",
-          "refId": "A"
+          "refId": "B"
         }
       ],
       "timeFrom": null,
       "timeShift": null,
       "title": "Hits per published study [current]",
-      "type": "bargauge"
+      "type": "stat"
     },
     {
       "aliasColors": {},
@@ -1242,6 +1256,8 @@
         "min": false,
         "rightSide": true,
         "show": true,
+        "sort": "current",
+        "sortDesc": true,
         "total": false,
         "values": true
       },
@@ -1376,10 +1392,10 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "rate({__name__=~\"simcore_simcore_service_(director|webserver)_services_started_total:sum_by_service_key_service_tag\", deployment=\"$deployment\"}[$__range])*$__range_ms/1000",
+          "expr": "label_replace(rate({__name__=~\"simcore_simcore_service_(director|webserver)_services_started_total:sum_by_service_key_service_tag\", deployment=\"$deployment\"}[$__range])*$__range_ms/1000, \"service_name\", \"$3\", \"service_key\", \"simcore/services/(dynamic|comp)/([a-zA-Z0-9]*/)?(.*)\")",
           "instant": false,
           "interval": "",
-          "legendFormat": "{{service_key}}:{{service_tag}}",
+          "legendFormat": "{{service_name}}:{{service_tag}}",
           "refId": "B"
         }
       ],
@@ -1482,20 +1498,32 @@
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:419",
+          "alias": "increase cpu hours",
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(increase(node_cpu_seconds_total{mode!=\"idle\"}[$__range]))/60/60",
+          "expr": "node_cpu_seconds_total:nonidle_sum_over_nodes/3600",
           "format": "time_series",
           "hide": false,
           "instant": false,
-          "interval": "1h",
+          "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "increase of cpu hours over time range",
+          "legendFormat": "total cpu hours",
           "refId": "A"
+        },
+        {
+          "expr": "increase(node_cpu_seconds_total:nonidle_sum_over_nodes[1h])/3600",
+          "interval": "10m",
+          "legendFormat": "increase cpu hours",
+          "refId": "B"
         }
       ],
       "thresholds": [],
@@ -1533,7 +1561,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": false
+          "show": true
         }
       ],
       "yaxis": {
@@ -1596,13 +1624,6 @@
           "intervalFactor": 1,
           "legendFormat": "data usage",
           "refId": "B"
-        },
-        {
-          "expr": "-sum(delta(node_filesystem_avail_bytes{mountpoint=\"/\"}[$__range]))",
-          "interval": "1h",
-          "intervalFactor": 1,
-          "legendFormat": "variation",
-          "refId": "A"
         }
       ],
       "thresholds": [],
@@ -1802,7 +1823,8 @@
       "pluginVersion": "7.0.0",
       "targets": [
         {
-          "expr": "1 - sum(node_filesystem_avail_bytes{mountpoint=\"/\"}/node_filesystem_size_bytes{mountpoint=\"/\"} * on(instance) group_left(node_name) node_meta{}) by (node_name)",
+          "expr": "sort_desc(1 - sum(node_filesystem_avail_bytes{mountpoint=\"/\"}/node_filesystem_size_bytes{mountpoint=\"/\"} * on(instance) group_left(node_name) node_meta{}) by (node_name))",
+          "instant": true,
           "interval": "",
           "legendFormat": "{{node_name}}",
           "refId": "B"
@@ -1929,7 +1951,8 @@
       "pluginVersion": "7.0.0",
       "targets": [
         {
-          "expr": "sum(node_filesystem_avail_bytes{mountpoint=\"/\"} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name)",
+          "expr": "sort(sum(node_filesystem_avail_bytes{mountpoint=\"/\"} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name))",
+          "instant": true,
           "interval": "",
           "legendFormat": "{{node_name}}",
           "refId": "B"
@@ -2034,5 +2057,5 @@
   "timezone": "browser",
   "title": "Metrics",
   "uid": "X_99jTHWk",
-  "version": 18
+  "version": 6
 }
