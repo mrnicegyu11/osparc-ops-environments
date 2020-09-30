@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 17,
-  "iteration": 1601454642123,
+  "iteration": 1601455139355,
   "links": [],
   "panels": [
     {
@@ -725,7 +725,13 @@
       "pointradius": 2,
       "points": true,
       "renderer": "flot",
-      "seriesOverrides": [],
+      "seriesOverrides": [
+        {
+          "$$hashKey": "object:145",
+          "alias": "increase cpu hours",
+          "yaxis": 2
+        }
+      ],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -733,7 +739,7 @@
         {
           "expr": "node_cpu_seconds_total:nonidle_sum_over_nodes/3600",
           "format": "time_series",
-          "hide": true,
+          "hide": false,
           "instant": false,
           "interval": "1d",
           "intervalFactor": 1,
@@ -882,5 +888,5 @@
   "timezone": "browser",
   "title": "SPARC DRC Metrics",
   "uid": "j3-z2TRMz",
-  "version": 8
+  "version": 9
 }
