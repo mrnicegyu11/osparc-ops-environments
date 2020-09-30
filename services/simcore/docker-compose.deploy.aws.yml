@@ -1,0 +1,5 @@
+services:
+  sidecar:
+    deploy:
+      placement:
+        constraints: [node.role == worker]
