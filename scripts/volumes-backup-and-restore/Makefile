@@ -11,12 +11,15 @@ help:
 	@echo ""
 
 
-.PHONY: backup restore clean all_ssh
-backup: ## Backup desired volume
+.PHONY: backup restore clean all_ssh transfer
+backup: ## Backup volumes specified in the env file
 	@./volume-backup-and-restore.bash backup
 
-restore: ## Restore desired volume
+restore: ## Restore volumes specified in the env fike
 	@./volume-backup-and-restore.bash restore
+
+transfer: ## Transfer volumes saved in /tmp/backup to another host
+	@./volume-backup-and-restore.bash transfer
 
 all_ssh: ## Connect to a distant server in ssh, backup the volume and restore it in the local server
 	@./volume-backup-and-restore.bash backup_and_restore_ssh

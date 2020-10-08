@@ -21,6 +21,7 @@ usage()
 rm=false
 create=false
 cp=false
+docker build --tag minio_custom:0.1 .
 
 for var in "$@"
 do
@@ -36,31 +37,52 @@ do
     fi
 done
 
-base_docker_run="docker run \
-        -v /etc/ssl/certs:/etc/ssl/certs:ro \
-        --network host \
-        --env MC_HOST_old=""https://${S3_OLD_ACCESS_KEY}:${S3_OLD_SECRET_KEY}@${S3_OLD_ENDPOINT}"" \
-        --env MC_HOST_new=""https://${S3_ACCESS_KEY}:${S3_SECRET_KEY}@${S3_ENDPOINT}"" \
-        minio_custom:0.1"
-
 if [ "$rm" = true ]; then
-    read -p "Are you sure ? You are going to delete ${S3_ENDPOINT} / ${S3_BUCKET_DATA} (y/n)? " yn
-    if [ "$yn" = "y" ]; then
-        echo "Deleting bucket from  ${S3_ENDPOINT} / ${S3_BUCKET_DATA}"
-        "$base_docker_run" rb --force new/${S3_BUCKET_DATA}
-    fi
+    IFS=', ' read -r -a dest_buckets <<< "${S3_DEST_BUCKETS}"
+	for element in "${dest_buckets[@]}" 
+	do
+        read -p "Are you sure ? You are going to delete ${S3_DEST_ENDPOINT} / ${element} (y/n)? " yn
+        if [ "$yn" = "y" ]; then
+            echo "Deleting bucket  ${S3_DEST_ENDPOINT} / ${element}"
+            docker run \
+            -v /etc/ssl/certs:/etc/ssl/certs:ro \
+            --network host \
+            --env MC_HOST_old="https://${S3_ORIGIN_ACCESS_KEY}:${S3_ORIGIN_SECRET_KEY}@${S3_ORIGIN_ENDPOINT}" \
+            --env MC_HOST_new="https://${S3_DEST_ACCESS_KEY}:${S3_DEST_SECRET_KEY}@${S3_DEST_ENDPOINT}" \
+            minio_custom:0.1 rb --force new/${element}
+        fi
+	done
 fi
 
 if [ "$create" = true ]; then
-    echo "Creating  ${S3_ENDPOINT} / ${S3_BUCKET_DATA} bucket"
-    docker build --tag minio_custom:0.1 .
-    "$base_docker_run" mb new/${S3_BUCKET_DATA}
+    IFS=', ' read -r -a dest_buckets <<< "${S3_DEST_BUCKETS}"
+	for element in "${dest_buckets[@]}" 
+	do
+        echo "Creating  ${S3_DEST_ENDPOINT} / ${element} bucket"
+        docker run \
+            -v /etc/ssl/certs:/etc/ssl/certs:ro \
+            --network host \
+            --env MC_HOST_old="https://${S3_ORIGIN_ACCESS_KEY}:${S3_ORIGIN_SECRET_KEY}@${S3_ORIGIN_ENDPOINT}" \
+            --env MC_HOST_new="https://${S3_DEST_ACCESS_KEY}:${S3_DEST_SECRET_KEY}@${S3_DEST_ENDPOINT}" \
+            minio_custom:0.1 mb new/${element}
+    done
 fi
 
 
 if [ "$cp" = true ]; then
-    echo "migrating data from ${S3_OLD_ENDPOINT} / ${S3_OLD_BUCKET_DATA} to ${S3_ENDPOINT} / ${S3_BUCKET_DATA}"
-    docker build --tag minio_custom:0.1 .
-    "$base_docker_run" cp --recursive  old/${S3_OLD_BUCKET_DATA}/ new/${S3_BUCKET_DATA} || true
+    IFS=', ' read -r -a old_buckets <<< "${S3_ORIGIN_BUCKETS}"
+    IFS=', ' read -r -a new_buckets <<< "${S3_DEST_BUCKETS}"
+    count=0
+	for element in "${old_buckets[@]}" 
+	do
+        echo "migrating data from ${S3_ORIGIN_ENDPOINT} / ${element} to ${S3_DEST_ENDPOINT} / ${new_buckets[$count]}"
+        docker run \
+            -v /etc/ssl/certs:/etc/ssl/certs:ro \
+            --network host \
+            --env MC_HOST_old="https://${S3_ORIGIN_ACCESS_KEY}:${S3_ORIGIN_SECRET_KEY}@${S3_ORIGIN_ENDPOINT}" \
+            --env MC_HOST_new="https://${S3_DEST_ACCESS_KEY}:${S3_DEST_SECRET_KEY}@${S3_DEST_ENDPOINT}" \
+            minio_custom:0.1 cp --recursive  old/${element}/ new/${new_buckets[$count]} || true
+        count=$((count+1))
+    done
 fi
 
