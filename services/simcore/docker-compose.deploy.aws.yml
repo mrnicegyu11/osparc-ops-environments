@@ -5,13 +5,13 @@ services:
         constraints:
           - node.labels.sidecar!=true
           - node.role == worker
-  webserver:
+  catalog:
     deploy:
       placement:
         constraints:
           - node.labels.sidecar!=true
           - node.role == worker
-  storage:
+  migration:
     deploy:
       placement:
         constraints:
@@ -35,18 +35,30 @@ services:
         constraints:
           - node.labels.sidecar==true
           - node.role == worker
-  traefik:
-    deploy:
-      placement:
-        constraints:
-          - node.labels.traefik==true
-  whoami:
+  storage:
     deploy:
       placement:
         constraints:
           - node.labels.sidecar!=true
           - node.role == worker
+  traefik:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.traefik==true
   traefik_api:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  webserver:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  whoami:
     deploy:
       placement:
         constraints:
