@@ -29,6 +29,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
     extra_hosts: []
   webserver:
     networks:
@@ -58,6 +62,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
     extra_hosts: []
   # need to pass self-signed certificate in /usr/local/share/ca-certificates and call update-ca-certificates
   storage:
@@ -89,6 +97,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
   director:
     # Certificate necessary for local deploiement only
     #secrets:
@@ -127,6 +139,11 @@ services:
       - RABBIT_HOST=${PREFIX_STACK_NAME}_rabbit
       - TARGET_MPI_NODE_CPU_COUNT=${TARGET_MPI_NODE_CPU_COUNT}
     deploy:
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.sidecar==true
+          - node.role == worker
       replicas: 16
       update_config:
         parallelism: 2
@@ -141,9 +158,6 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-      placement:
-        constraints:
-          - node.role == worker
     extra_hosts:
       - "${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}"
   rabbit:
@@ -177,6 +191,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
   redis:
     networks:
       - monitored
@@ -196,6 +214,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
   postgres:
     networks:
       - monitored
@@ -286,6 +308,9 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      placement:
+        constraints:
+          - node.labels.traefik==true
   traefik_api:
     # NOTE: this is a trick to allow to access the internal traefik REST API
     # list router like so: curl https://domain/api/http/routers | jq
@@ -318,6 +343,10 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
   whoami:
     image: "containous/whoami"
     networks:
@@ -352,6 +381,22 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  catalog:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  migration:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
 networks:
   public:
     external: true
