@@ -127,6 +127,9 @@ services:
       - RABBIT_HOST=${PREFIX_STACK_NAME}_rabbit
       - TARGET_MPI_NODE_CPU_COUNT=${TARGET_MPI_NODE_CPU_COUNT}
     deploy:
+      placement:
+        constraints:
+          - node.role == worker
       replicas: 16
       update_config:
         parallelism: 2
