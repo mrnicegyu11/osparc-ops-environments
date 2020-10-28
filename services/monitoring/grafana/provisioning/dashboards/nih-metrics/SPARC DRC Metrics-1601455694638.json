@@ -623,14 +623,14 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(node_filesystem_size_bytes{mountpoint=\"/\"} - node_filesystem_avail_bytes{mountpoint=\"/\"})",
+          "expr": "sum(node_filesystem_size_bytes{mountpoint=~\"/.*\", device!~'rootfs'} - node_filesystem_avail_bytes{mountpoint=~\"/.*\", device!~'rootfs'})",
           "interval": "1d",
           "intervalFactor": 1,
           "legendFormat": "data usage",
           "refId": "B"
         },
         {
-          "expr": "-sum(delta(node_filesystem_avail_bytes{mountpoint=\"/\"}[$__range]))",
+          "expr": "-sum(delta(node_filesystem_avail_bytes{mountpoint=~\"/.*\", device!~'rootfs'}[$__range]))",
           "hide": true,
           "interval": "1d",
           "intervalFactor": 1,

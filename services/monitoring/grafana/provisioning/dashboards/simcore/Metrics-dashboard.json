@@ -1039,7 +1039,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(node_filesystem_size_bytes{mountpoint=\"/\"} - node_filesystem_avail_bytes{mountpoint=\"/\"})",
+          "expr": "sum(node_filesystem_size_bytes{mountpoint=~\"/.*\", device!~'rootfs'} - node_filesystem_avail_bytes{mountpoint=~\"/.*\", device!~'rootfs'})",
           "interval": "1h",
           "intervalFactor": 1,
           "legendFormat": "data usage",
@@ -1245,7 +1245,7 @@
       "pluginVersion": "7.0.0",
       "targets": [
         {
-          "expr": "sort_desc(1 - sum(node_filesystem_avail_bytes{mountpoint=\"/\"}/node_filesystem_size_bytes{mountpoint=\"/\"} * on(instance) group_left(node_name) node_meta{}) by (node_name))",
+          "expr": "sort_desc(1 - sum(node_filesystem_avail_bytes{mountpoint=~\"/.*\", device!~'rootfs'}/node_filesystem_size_bytes{mountpoint=~\"/.*\", device!~'rootfs'} * on(instance) group_left(node_name) node_meta{}) by (node_name))",
           "instant": true,
           "interval": "",
           "legendFormat": "{{node_name}}",
@@ -1373,7 +1373,7 @@
       "pluginVersion": "7.0.0",
       "targets": [
         {
-          "expr": "sort(sum(node_filesystem_avail_bytes{mountpoint=\"/\"} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name))",
+          "expr": "sort(sum(node_filesystem_avail_bytes{mountpoint=~\"/.*\", device!~'rootfs'} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name))",
           "format": "time_series",
           "instant": true,
           "interval": "",
@@ -1381,7 +1381,7 @@
           "refId": "B"
         },
         {
-          "expr": "sum(node_filesystem_size_bytes{mountpoint=\"/\"} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name)",
+          "expr": "sum(node_filesystem_size_bytes{mountpoint=~\"/.*\", device!~'rootfs'} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name)",
           "hide": true,
           "instant": false,
           "interval": "",
