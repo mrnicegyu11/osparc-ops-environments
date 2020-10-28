@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1601448292798,
+  "iteration": 1603884766649,
   "links": [
     {
       "$$hashKey": "object:183",
@@ -1208,7 +1208,7 @@
       "pluginVersion": "7.0.0",
       "targets": [
         {
-          "expr": "(increase(http_requests_total{endpoint=~\"/study/.+\", app_name=~\".*webserver\", deployment=\"production\"}[$__range]))",
+          "expr": "sum by (endpoint) (increase(http_requests_total{endpoint=~\"/study/.+\", app_name=~\".*webserver\", deployment=\"production\"}[$__range]))",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -1619,7 +1619,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "expr": "sum(node_filesystem_size_bytes{mountpoint=\"/\"} - node_filesystem_avail_bytes{mountpoint=\"/\"})",
+          "expr": "sum(node_filesystem_size_bytes{mountpoint=~\"/.*\", device!~'rootfs'} - node_filesystem_avail_bytes{mountpoint=~\"/.*\", device!~'rootfs'})",
           "interval": "1h",
           "intervalFactor": 1,
           "legendFormat": "data usage",
@@ -2057,5 +2057,5 @@
   "timezone": "browser",
   "title": "Metrics",
   "uid": "X_99jTHWk",
-  "version": 6
+  "version": 10
 }
