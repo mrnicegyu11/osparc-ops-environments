@@ -1823,7 +1823,7 @@
       "pluginVersion": "7.0.0",
       "targets": [
         {
-          "expr": "sort_desc(1 - sum(node_filesystem_avail_bytes{mountpoint=~\"/.*\", device!~'rootfs'}/node_filesystem_size_bytes{mountpoint=~\"/.*\", device!~'rootfs'} * on(instance) group_left(node_name) node_meta{}) by (node_name))",
+          "expr": "sort_desc(1 - sum(node_filesystem_avail_bytes{mountpoint=~\"/\", device!~'rootfs'}/node_filesystem_size_bytes{mountpoint=~\"/\", device!~'rootfs'} * on(instance) group_left(node_name) node_meta{}) by (node_name))",
           "instant": true,
           "interval": "",
           "legendFormat": "{{node_name}}",
@@ -1951,14 +1951,14 @@
       "pluginVersion": "7.0.0",
       "targets": [
         {
-          "expr": "sort(sum(node_filesystem_avail_bytes{mountpoint=~\"/.*\", device!~'rootfs'} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name))",
+          "expr": "sort(sum(node_filesystem_avail_bytes{mountpoint=~\"/\", device!~'rootfs'} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name))",
           "instant": true,
           "interval": "",
           "legendFormat": "{{node_name}}",
           "refId": "B"
         },
         {
-          "expr": "sum(node_filesystem_size_bytes{mountpoint=~\"/.*\", device!~'rootfs'} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name)",
+          "expr": "sum(node_filesystem_size_bytes{mountpoint=~\"/\", device!~'rootfs'} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name)",
           "hide": true,
           "interval": "",
           "legendFormat": "{{node_name}}_total",
