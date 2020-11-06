@@ -9,7 +9,7 @@ services:
       - monitored
       - public
     environment:
-      REDIS_HOSTS: redis
+      REDIS_HOSTS: ${PREFIX_STACK_NAME}_redis
       URL_PREFIX: /redis
     deploy:
       labels:
