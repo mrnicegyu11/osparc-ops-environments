@@ -66,7 +66,7 @@ services:
         - traefik.http.routers.prometheus.middlewares=ops_whitelist_ips@docker, ops_auth@docker, ops_gzip@docker, prometheus_stripprefixregex
       resources:
         limits:
-          memory: 2048M
+          memory: 4096M
         reservations:
           memory: 64M
 
