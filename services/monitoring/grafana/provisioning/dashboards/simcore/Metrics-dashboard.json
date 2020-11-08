@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 2,
-  "iteration": 1603884766649,
+  "iteration": 1604522818894,
   "links": [
     {
       "$$hashKey": "object:183",
@@ -1275,6 +1275,7 @@
       "renderer": "flot",
       "seriesOverrides": [
         {
+          "$$hashKey": "object:669",
           "alias": ""
         }
       ],
@@ -1441,13 +1442,119 @@
       }
     },
     {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 2,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 22
+      },
+      "hiddenSeries": false,
+      "id": 42,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": false,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "sort": "avg",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "null",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "sum(label_replace(irate(container_cpu_usage_seconds_total{container_label_com_docker_swarm_node_id=~\"$node_id\", id=~\"/docker/.*\", container_label_com_docker_swarm_service_name=~\"$deployment-.*simcore.*\"}[1m]), \"service_name\", \"$1\", \"container_label_com_docker_swarm_service_name\", \".*_(.*)\")) by (service_name) * 100",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "intervalFactor": 2,
+          "legendFormat": "{{service_name}}",
+          "refId": "C",
+          "step": 2
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "CPU usage by Service",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
       "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 31
+        "y": 29
       },
       "id": 32,
       "panels": [],
@@ -1472,7 +1579,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 32
+        "y": 30
       },
       "hiddenSeries": false,
       "id": 27,
@@ -1587,7 +1694,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 32
+        "y": 30
       },
       "hiddenSeries": false,
       "id": 28,
@@ -1685,7 +1792,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 40
+        "y": 38
       },
       "hiddenSeries": false,
       "id": 25,
@@ -1806,7 +1913,7 @@
         "h": 8,
         "w": 6,
         "x": 12,
-        "y": 40
+        "y": 38
       },
       "id": 22,
       "options": {
@@ -1931,7 +2038,7 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 40
+        "y": 38
       },
       "id": 23,
       "interval": null,
@@ -2023,11 +2130,62 @@
         "regex": "/^($deployment).*/i",
         "skipUrlSync": false,
         "type": "datasource"
+      },
+      {
+        "allValue": ".+",
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "datasource": "Prometheus",
+        "definition": "node_meta",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Swarm node",
+        "multi": false,
+        "name": "node_id",
+        "options": [],
+        "query": "node_meta",
+        "refresh": 1,
+        "regex": "/node_id=\"([^\"]+)\"/",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "label_values({node_id=\"$tag\"},node_name)",
+        "tags": [
+          {
+            "selected": false,
+            "text": "osparc-dalco-02"
+          },
+          {
+            "selected": false,
+            "text": "osparc-dalco-01"
+          },
+          {
+            "selected": false,
+            "text": "osparc-dalco-03"
+          },
+          {
+            "selected": false,
+            "text": "osparc-dalco-06"
+          },
+          {
+            "selected": false,
+            "text": "osparc-dalco-05"
+          },
+          {
+            "selected": false,
+            "text": "osparc-dalco-04"
+          }
+        ],
+        "tagsQuery": "label_values(node_meta, node_name)",
+        "type": "query",
+        "useTags": true
       }
     ]
   },
   "time": {
-    "from": "now-24h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
@@ -2057,5 +2215,5 @@
   "timezone": "browser",
   "title": "Metrics",
   "uid": "X_99jTHWk",
-  "version": 10
+  "version": 17
 }
