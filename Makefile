@@ -52,24 +52,24 @@ up-devel: .install-fqdn certificates/domain.crt certificates/domain.key .create-
 	@$(MAKE) info-local
 
 .PHONY: up-simcore-aws
-up-simcore-aws:  ## Deploy simcores stack only on AWS
+up-simcore-aws:  ## Deploy simcores stack only, on AWS
 	./scripts/deployments/deploy.sh aws --simcore_only
 
 .PHONY: up-simcore-dalco
-up-simcore-dalco:  ## Deploy simcores stack only on Dalco Cluster
+up-simcore-dalco:  ## Deploy simcores stack only, on Dalco Cluster
 	./scripts/deployments/deploy.sh dalco --simcore_only
 
-.PHONY: up-dalco ## Deploy Dalco stack
-up-dalco:
+.PHONY: up-dalco 
+up-dalco: ## Deploy ops and simcore stacks on the Dalco Cluster
 	./scripts/deployments/deploy.sh dalco
 
-.PHONY: up-aws ## Deploy aws stack
-up-aws:
+.PHONY: up-aws 
+up-aws: ## Deploy opt and simcore stacks on the AWS Cluster
 	./scripts/deployments/deploy.sh aws
 
 
-.PHONY: down ## Stop all services
-down:
+.PHONY: down 
+down: ## Stop all services
 	@for service in $(SERVICES); do \
 		$(MAKE_C) $$service down; \
 	done
