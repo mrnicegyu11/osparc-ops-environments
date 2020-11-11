@@ -1,0 +1,6 @@
+version: '3.7'
+services:
+  redis-commander:
+    environment:
+      REDIS_HOSTS: production_redis, staging_redis
+      URL_PREFIX: /redis
