@@ -16,20 +16,20 @@ include ../../scripts/common.Makefile
 
 .PHONY: up
 up: .init .env ${TEMP_COMPOSE} .create-secrets ## Deploys or updates current stack "$(STACK_NAME)" using replicas=X (defaults to 1)
-	@docker stack deploy --compose-file ${TEMP_COMPOSE} $(STACK_NAME)
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE} $(STACK_NAME)
 	# "in case you created more than 1 replicas, you need to label the nodes accordingly using"
 	# "'docker node update --label-add minioX=true' with X being from 1 to number of replicas."
 
 .PHONY: up-letsencrypt-http
 up-letsencrypt-http: .init .env ${TEMP_COMPOSE}-letsencrypt-http .create-secrets ## Deploys minio stack using let's encrypt http challenge
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-http ${STACK_NAME}
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-letsencrypt-http ${STACK_NAME}
 	# "in case you created more than 1 replicas, you need to label the nodes accordingly using"
 	# "'docker node update --label-add minioX=true' with X being from 1 to number of replicas."
 
 
 .PHONY: up-letsencrypt-dns
 up-letsencrypt-dns: .init .env ${TEMP_COMPOSE}-letsencrypt-dns .create-secrets ## Deploys minio stack using let's encrypt dns challenge
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
 	# "in case you created more than 1 replicas, you need to label the nodes accordingly using"
 	# "'docker node update --label-add minioX=true' with X being from 1 to number of replicas."
 
