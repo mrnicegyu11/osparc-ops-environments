@@ -53,7 +53,7 @@ restore()
         echo "Creating a new empty volume"
         docker volume create ${element}
         echo "Restoring the volume..."
-        docker run --rm -v /backup/:/backup -v ${element}:${folders[$count]} ubuntu bash -c "cd ${folders[$count]} && tar xvf /backup/${element}.tar --strip 1 && cd .. && chmod -R 777 ${folders[$count]}"
+        docker run --rm -v /backup/:/backup -v ${element}:${folders[$count]} ubuntu bash -c "cd ${folders[$count]} && tar xvf /backup/${element}.tar && cd .. && chmod -R 777 ${folders[$count]}"
         echo "Volume restored."
     done
     exit 0
