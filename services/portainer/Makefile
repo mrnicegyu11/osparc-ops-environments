@@ -14,22 +14,22 @@ include ../../scripts/common.Makefile
 
 .PHONY: up
 up: .init .env .secrets ${TEMP_COMPOSE}  ## Deploys portainer stack
-	@docker stack deploy --compose-file ${TEMP_COMPOSE} ${STACK_NAME}
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE} ${STACK_NAME}
 
 .PHONY: up-letsencrypt-http
 up-letsencrypt-http: .init .env .secrets ${TEMP_COMPOSE}-letsencrypt-http  ## Deploys portainer stack using let's encrypt http challenge
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-http ${STACK_NAME}
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-letsencrypt-http ${STACK_NAME}
 
 .PHONY: up-letsencrypt-dns
 up-letsencrypt-dns: .init .env .secrets ${TEMP_COMPOSE}-letsencrypt-dns ## Deploys portainer stack using let's encrypt dns challenge
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
 
 .PHONY: up-dalco ## Deploys portainer stack for Dalco Cluster
 up-dalco: up-letsencrypt-dns
 
 .PHONY: up-aws ## Deploys portainer stack for AWS
 up-aws: .init .env .secrets ${TEMP_COMPOSE}-aws  ## Deploys portainer stack in aws
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 .PHONY: configure-registry ## Add if necessary dockerhub registry configuration to portainer.
 configure-registry:

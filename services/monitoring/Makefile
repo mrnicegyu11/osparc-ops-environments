@@ -13,23 +13,23 @@ include ../../scripts/common.Makefile
 
 .PHONY: up
 up: .init .env config.prometheus  datasource.yml ${TEMP_COMPOSE} ## Deploys or updates current stack "$(STACK_NAME)". If MONITORED_NETWORK is not specified, it will create an attachable network
-	@docker stack deploy --compose-file ${TEMP_COMPOSE} $(STACK_NAME)
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE} $(STACK_NAME)
 
 .PHONY: up-letsencrypt-http
 up-letsencrypt-http: .init .env config.prometheus datasource.yml ${TEMP_COMPOSE}-letsencrypt-http   ## Deploys or updates current stack "$(STACK_NAME)" using let's encrypt http challenge
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-http ${STACK_NAME}
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-letsencrypt-http ${STACK_NAME}
 
 .PHONY: up-letsencrypt-dns
 up-letsencrypt-dns: .init .env config.prometheus  datasource.yml ${TEMP_COMPOSE}-letsencrypt-dns   ## Deploys or updates current stack "$(STACK_NAME)" using let's encrypt dns challenge
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
 
 .PHONY: up-dalco
 up-dalco: .init .env datasource.dalco.yml config.prometheus.minio ${TEMP_COMPOSE}-dalco ## Deploys monitoring stack for Dalco Cluster
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-dalco ${STACK_NAME}
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-dalco ${STACK_NAME}
 
 .PHONY: up-aws
 up-aws: .init .env datasource.aws.yml config.monitoring config.prometheus.aws ${TEMP_COMPOSE}-aws   ## Deploys or updates current stack "$(STACK_NAME)" in AWS
-	@docker stack deploy --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 
 .PHONY: ${TEMP_COMPOSE}
