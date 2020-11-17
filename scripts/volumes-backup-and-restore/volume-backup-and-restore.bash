@@ -12,29 +12,49 @@ source .env
 
 backup()
 {
-    echo "Macking a backup of ${SOURCE_VOLUME_NAME}"
-    docker run --rm  -v /tmp/backup/:/backup -v ${SOURCE_VOLUME_NAME}:${SOURCE_FOLDER_NAME} ubuntu tar cvf /backup/${SOURCE_VOLUME_NAME}.tar ${SOURCE_FOLDER_NAME}
-    echo "Backup available : /tmp/backup/${SOURCE_VOLUME_NAME}.tar"
+    IFS=', ' read -r -a volumes <<< "${SOURCE_VOLUMES_NAME}"
+    IFS=', ' read -r -a folders <<< "${SOURCE_FOLDERS_NAME}"
+	count=0
+	for element in "${volumes[@]}" 
+	do 
+        echo "Macking a backup of ${element}:${folders[$count]}"
+        docker run --rm  -v /backup/:/backup -v ${element}:${folders[$count]} ubuntu bash -c "cd ${folders[$count]} && tar cvf /backup/${element}.tar *"
+        echo "Backup available : /backup/${element}.tar"
+	    count=$((count+1))
+	done
+    exit 0
+}
+
+transfer()
+{
+    sudo apt install sshpass;
+    for entry in /backup/*
+    do
+        echo "Sending $entry to ${SSH_HOST}"
+        if [ -z "$SSH_KEY_FILE" ]
+        then
+            sshpass -p $SSH_PWD scp $entry ${SSH_USER}@${SSH_HOST}:/backup
+        else
+            scp -i $SSH_KEY_FILE $entry ${SSH_USER}@${SSH_HOST}:/backup
+        fi
+    done
     exit 0
 }
 
 restore()
 {
-    read -p "CAUTION ! This script will remove the existing volume if it exists before restoring it. Are you sure ? (y/n)? " answer
-    case ${answer:0:1} in
-        y|Y )
-            echo "Deleting volume ${DEST_VOLUME_NAME}"
-            docker volume rm -f ${DEST_VOLUME_NAME}
-            echo "Creating a new empty volume"
-            docker volume create ${DEST_VOLUME_NAME}
-            echo "Restoring the volume..."
-            docker run --rm -v /tmp/backup/:/backup -v ${DEST_VOLUME_NAME}:${DEST_FOLDER_NAME} ubuntu bash -c "cd ${DEST_FOLDER_NAME} && tar xvf /backup/${SOURCE_VOLUME_NAME}.tar --strip 1 && cd .. && chmod -R 777 ${DEST_FOLDER_NAME}"
-            echo "Volume restored."
-        ;;
-        * )
-            echo "Prudence est mère de sureté "
-        ;;
-    esac
+    IFS=', ' read -r -a volumes <<< "${DEST_VOLUMES_NAME}"
+	count=0
+	for element in "${volumes[@]}"
+    do
+        echo "Deleting volume ${element}"
+        docker volume rm -f ${element}
+        echo "Creating a new empty volume"
+        docker volume create ${element}
+        echo "Restoring the volume..."
+        docker run --rm -v /backup/:/backup -v ${element}:${DEST_FOLDER_NAME} ubuntu bash -c "cd ${DEST_FOLDER_NAME} && tar xvf /backup/${SOURCE_VOLUME_NAME}.tar --strip 1"
+        echo "Volume restored."
+    done
     exit 0
 }
 
@@ -64,4 +84,5 @@ backup_and_restore_ssh()
 
 [ $1 = "backup" ] && backup
 [ $1 = "restore" ] && restore
+[ $1 = "transfer" ] && transfer
 [ $1 = "backup_and_restore_ssh" ] && backup_and_restore_ssh
