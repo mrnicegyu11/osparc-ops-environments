@@ -44,6 +44,7 @@ transfer()
 restore()
 {
     IFS=', ' read -r -a volumes <<< "${DEST_VOLUMES_NAME}"
+    IFS=', ' read -r -a folders <<< "${DEST_FOLDERS_NAME}"
 	count=0
 	for element in "${volumes[@]}"
     do
@@ -52,7 +53,7 @@ restore()
         echo "Creating a new empty volume"
         docker volume create ${element}
         echo "Restoring the volume..."
-        docker run --rm -v /backup/:/backup -v ${element}:${DEST_FOLDER_NAME} ubuntu bash -c "cd ${DEST_FOLDER_NAME} && tar xvf /backup/${SOURCE_VOLUME_NAME}.tar --strip 1"
+        docker run --rm -v /backup/:/backup -v ${element}:${folders[$count]} ubuntu bash -c "cd ${folders[$count]} && tar xvf /backup/${element}.tar --strip 1 && cd .. && chmod -R 777 ${folders[$count]}"
         echo "Volume restored."
     done
     exit 0

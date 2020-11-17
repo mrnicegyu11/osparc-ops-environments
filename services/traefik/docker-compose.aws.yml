@@ -23,14 +23,14 @@ services:
       - '--tracing.jaeger.localAgentHostPort=jaeger:6831'   
       - "--providers.docker.constraints=!LabelRegex(`io.simcore.zone`, `*`)"
       - "--entryPoints.https.forwardedHeaders.insecure"
-    #  - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=route53"
-    #  - "--certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=0"
-    #  - "--certificatesresolvers.myresolver.acme.email=allexandre@itis.swiss"
-    #  - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
-      - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge=true"
-      - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge.entrypoint=http"
-      - "--certificatesresolvers.lehttpchallenge.acme.email=allexandre@itis.swiss"
-      - "--certificatesresolvers.lehttpchallenge.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=route53"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=0"
+      - "--certificatesresolvers.myresolver.acme.email=allexandre@itis.swiss"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge=true"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge.entrypoint=http"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.email=allexandre@itis.swiss"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.storage=/letsencrypt/acme.json"
     # For debug purpose, to avoid being ban by let's encrypt servers
     #  - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
     volumes:
@@ -44,7 +44,7 @@ services:
         constraints:
           - node.labels.traefik==true
       labels:
-        - traefik.http.routers.api.tls.certresolver=lehttpchallenge
+        - traefik.http.routers.api.tls.certresolver=myresolver
         - traefik.http.middlewares.ops_whitelist_ips.ipwhitelist.sourcerange=195.176.8.0/24, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, ${MANAGER_PUBLIC_ENDPOINT_IP} 
 
   whoami:
