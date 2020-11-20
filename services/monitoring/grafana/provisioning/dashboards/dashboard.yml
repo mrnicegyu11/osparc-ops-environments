@@ -37,3 +37,12 @@ providers:
     allowUiUpdates: true
     options:
       path: /etc/grafana/provisioning/dashboards/nih-metrics
+  - name: "Gitlab"
+    orgId: 1
+    folder: "gitlab"
+    type: file
+    disableDeletion: true
+    editable: true
+    allowUiUpdates: true
+    options:
+      path: /etc/grafana/provisioning/dashboards/gitlab

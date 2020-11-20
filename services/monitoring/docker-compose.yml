@@ -25,7 +25,7 @@ configs:
     file: ./node-exporter/docker-entrypoint.sh
 services:
   prometheus:
-    image: prom/prometheus:v2.18.1
+    image: prom/prometheus:v2.22.2
     volumes:
       - ./prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
@@ -182,7 +182,7 @@ services:
         reservations:
           memory: 64M
   grafana:
-    image: grafana/grafana:7.0.0
+    image: grafana/grafana:7.3.3
     depends_on:
       - prometheus
     volumes:
@@ -231,5 +231,29 @@ services:
       resources:
         limits:
           memory: 512M
+        reservations:
+          memory: 64M
+
+  gitlab-ci-pipelines-exporter:
+    image: mvisonneau/gitlab-ci-pipelines-exporter:v0.4.4
+    # https://github.com/mvisonneau/gitlab-ci-pipelines-exporter
+    ports:
+      - 8080:8080
+    environment:
+      GCPE_CONFIG: /etc/gitlab-ci-pipelines-exporter/config.yml
+      GCPE_LOG_LEVEL: info
+    networks:
+      - internal
+    volumes:
+      - type: bind
+        source: ./gitlab-ci-pipelines-exporter
+        target: /etc/gitlab-ci-pipelines-exporter
+    deploy:
+      placement:
+        constraints:
+          - node.role==manager
+      resources:
+        limits:
+          memory: 128M
         reservations:
           memory: 64M

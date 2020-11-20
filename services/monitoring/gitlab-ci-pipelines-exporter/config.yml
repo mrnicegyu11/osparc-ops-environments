@@ -1,0 +1,32 @@
+gitlab:
+  url: https://git.speag.com
+  token: ckb2oL2aVD71sdk9GxRe
+  health_url: https://git.speag.com/-/health
+
+# Pull jobs related metrics on all projects
+project_defaults:
+  pull:
+    environments:
+      # Whether or not to pull project environments & their deployments
+      # (optional, default: false)
+      enabled: true
+    refs:
+      # Filter refs (branches/tags only) to include
+      # (optional, default: "^main|master$" -- main or master branch)
+      regexp: "^main|master$"
+    pipeline:
+      jobs:
+        enabled: true
+
+projects:
+  - name: simphony/Simphony
+  - name: supermash/SuperMash
+
+wildcards:
+  - owner:
+      name: oSparc
+      # Owner kind: can be either 'group' or 'user' (required)
+      kind: group
+      # if owner kind is 'group', whether to include subgroups
+      # or not (optional, default: false)
+      include_subgroups: true

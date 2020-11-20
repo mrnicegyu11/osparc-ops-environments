@@ -62,6 +62,13 @@ scrape_configs:
         type: "A"
         port: 9323
 
+  - job_name: "gitlab-ci-pipelines-exporter"
+    dns_sd_configs:
+      - names:
+          - "tasks.gitlab-ci-pipelines-exporter"
+        type: "A"
+        port: 8080
+
   - job_name: "traefik"
     static_configs:
       - targets: ["traefik:8082"]
