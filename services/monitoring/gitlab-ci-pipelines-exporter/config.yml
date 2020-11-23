@@ -13,7 +13,7 @@ project_defaults:
     refs:
       # Filter refs (branches/tags only) to include
       # (optional, default: "^main|master$" -- main or master branch)
-      regexp: "^main|master$"
+      regexp: "^(main|master|staging.*|production.*)$"
     pipeline:
       jobs:
         enabled: true

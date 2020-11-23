@@ -1,8 +1,7 @@
 version: "3.7"
 services:
   jaeger:
-
-    image: jaegertracing/all-in-one:1.18.1
+    image: jaegertracing/all-in-one:1.21
     command: >
       --query.base-path=/jaeger
       --memory.max-traces=200
@@ -22,6 +21,8 @@ services:
         - traefik.http.routers.jaeger.entrypoints=https
         - traefik.http.routers.jaeger.tls=true
         - traefik.http.routers.jaeger.middlewares=ops_whitelist_ips@docker, ops_auth@docker, ops_gzip@docker
+        - prometheus-job=jaeger
+        - prometheus-port=14269
       resources:
         limits:
           memory: 2048M

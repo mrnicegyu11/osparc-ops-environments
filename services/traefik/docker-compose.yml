@@ -70,6 +70,9 @@ services:
         - traefik.http.routers.api.tls=true
         - traefik.http.routers.api.middlewares=ops_whitelist_ips@docker, ops_auth@docker, ops_gzip@docker
         - traefik.http.services.api.loadbalancer.server.port=8080
+        # prometheus labels
+        - prometheus-job=traefik_ops
+        - prometheus-port=8082
 
     networks:
       - public

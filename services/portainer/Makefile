@@ -31,8 +31,8 @@ up-dalco: up-letsencrypt-dns
 up-aws: .init .env .secrets ${TEMP_COMPOSE}-aws  ## Deploys portainer stack in aws
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
-.PHONY: configure-registry ## Add if necessary dockerhub registry configuration to portainer.
-configure-registry:
+.PHONY: configure-registry
+configure-registry:  ## Add if necessary dockerhub registry configuration to portainer.
 	@set -o allexport; source ../../repo.config; set +o allexport; \
 	while [ "$$(curl -s -o /dev/null -I -w "%{http_code}" --max-time 10  -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://"$$MONITORING_DOMAIN"/portainer/#/auth)" != 200 ]; do\
 		echo "waiting for portainer to run...";\
