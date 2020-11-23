@@ -25,61 +25,59 @@ alerting:
             - "alertmanager:9093"
 
 # A scrape configuration containing exactly one endpoint to scrape:
-# Here it's Prometheus itself.
 scrape_configs:
   # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
 
-  - job_name: "prometheus"
-    static_configs:
-      - targets: ["localhost:9090"]
+  # Create a job for Docker daemons. see [https://prometheus.io/docs/guides/dockerswarm/]
+  - job_name: "docker-engines"
+    dockerswarm_sd_configs:
+      - host: unix:///var/run/docker.sock
+        role: nodes # this scrapes docker nodes
+    relabel_configs:
+      # Fetch metrics on port 9323.
+      - source_labels: [__meta_dockerswarm_node_address]
+        target_label: __address__
+        replacement: $1:9323
+      # Set hostname as instance label
+      - source_labels: [__meta_dockerswarm_node_hostname]
+        target_label: instance
 
-  - job_name: "cadvisor"
-    dns_sd_configs:
-      - names:
-          - "tasks.cadvisor"
-        type: "A"
-        port: 8080
-
-  - job_name: "node-exporter"
-    dns_sd_configs:
-      - names:
-          - "tasks.node-exporter"
-        type: "A"
-        port: 9100
-
-  - job_name: "nvidia-exporter"
-    dns_sd_configs:
-      - names:
-          - "tasks.nvidia-exporter"
-        type: "A"
-        port: 9445
-
-  # monitor docker engine (https://docs.docker.com/config/thirdparty/prometheus/)
-  - job_name: "dockerd-exporter"
-    dns_sd_configs:
-      - names:
-          - "tasks.dockerd-exporter"
-        type: "A"
-        port: 9323
-
-  - job_name: "gitlab-ci-pipelines-exporter"
-    dns_sd_configs:
-      - names:
-          - "tasks.gitlab-ci-pipelines-exporter"
-        type: "A"
-        port: 8080
-
-  - job_name: "traefik"
-    static_configs:
-      - targets: ["traefik:8082"]
-
-  - job_name: "registry"
-    static_configs:
-      - targets: ["registry:5001"]
-
-  - job_name: "jaeger"
-    dns_sd_configs:
-      - names:
-          - "tasks.jaeger"
-        type: "A"
-        port: 14269
+  # Create a job for Docker Swarm containers.
+  # Prometheus docker swarm discovery will automatically discover services that need to be scraped by prometheus
+  # All services that need to be monitored must at least define the following SERVICE labels (in deploy/labels section):
+  # deploy:
+  #   labels:
+  #     # prometheus labels
+  #     - prometheus-job=traefik_ops
+  #     - prometheus-port=8082
+  #
+  - job_name: "dockerswarm-tasks"
+    dockerswarm_sd_configs:
+      - host: unix:///var/run/docker.sock
+        role: tasks # this scrapes docker tasks
+    relabel_configs:
+      # keep only metrics that are available over monitored network
+      - source_labels: [__meta_dockerswarm_network_name]
+        regex: ${MONITORED_NETWORK}
+        action: keep
+      # Only keep containers that should be running.
+      - source_labels: [__meta_dockerswarm_task_desired_state]
+        regex: running
+        action: keep
+      # Only keep containers that have a `prometheus-job` label.
+      - source_labels: [__meta_dockerswarm_service_label_prometheus_job]
+        regex: .+
+        action: keep
+      # Use the prometheus-job Swarm label as Prometheus job label.
+      - source_labels:
+          [__address__, __meta_dockerswarm_service_label_prometheus_port]
+        separator: ";"
+        regex: "(.*):.*;(.*)"
+        target_label: __address__
+        replacement: $1:$2
+      # Use the prometheus-port Swarm label as Prometheus job port.
+      - source_labels: [__meta_dockerswarm_service_label_prometheus_job]
+        target_label: job
+      # Set hostname as instance label
+      - source_labels: [__meta_dockerswarm_node_hostname]
+        target_label: instance

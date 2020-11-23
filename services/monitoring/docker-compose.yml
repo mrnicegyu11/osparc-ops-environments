@@ -29,6 +29,8 @@ services:
     volumes:
       - ./prometheus/:/etc/prometheus/
       - prometheus_data:/prometheus
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    user: root # only user root can use the docker socket
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
@@ -37,8 +39,7 @@ services:
       - "--web.console.templates=/usr/share/prometheus/consoles"
       - "--web.external-url=https://${MONITORING_DOMAIN}/prometheus/"
       - "--web.route-prefix=/"
-    depends_on:
-      - cadvisor
+
     networks:
       - internal
       - monitored
@@ -64,30 +65,11 @@ services:
         # - traefik.http.routers.prometheus.tls.certresolver=lehttpchallenge
         - traefik.http.middlewares.prometheus_stripprefixregex.stripprefixregex.regex=^/prometheus
         - traefik.http.routers.prometheus.middlewares=ops_whitelist_ips@docker, ops_auth@docker, ops_gzip@docker, prometheus_stripprefixregex
+        - prometheus-job=prometheus
+        - prometheus-port=9090
       resources:
         limits:
           memory: 4096M
-        reservations:
-          memory: 64M
-
-  dockerd-exporter:
-    # the docker engine(s) need to set the following in /etc/docker/daemon.json to provide prometheus metrics:
-    # {"metrics-addr": "0.0.0.0:9323",
-    # "experimental": true}
-    image: stefanprodan/caddy
-    networks:
-      - internal
-    environment:
-      # Replace 172.18.0.1 with the docker_gwbridge address
-      - DOCKER_GWBRIDGE_IP=172.18.0.1
-    configs:
-      - source: dockerd_config
-        target: /etc/caddy/Caddyfile
-    deploy:
-      mode: global
-      resources:
-        limits:
-          memory: 128M
         reservations:
           memory: 64M
 
@@ -116,7 +98,11 @@ services:
       - /docker-entrypoint.sh
     networks:
       - internal
+      - monitored
     deploy:
+      labels:
+        - prometheus-job=node-exporter
+        - prometheus-port=9100
       mode: global
       resources:
         limits:
@@ -128,7 +114,11 @@ services:
     image: mindprince/nvidia_gpu_prometheus_exporter:0.1
     networks:
       - internal
+      - monitored
     deploy:
+      labels:
+        - prometheus-job=nvidia-exporter
+        - prometheus-port=9445
       mode: global
       resources:
         limits:
@@ -163,7 +153,7 @@ services:
           memory: 64M
 
   cadvisor:
-    image: gcr.io/google-containers/cadvisor:v0.35.0
+    image: gcr.io/cadvisor/cadvisor:v0.37.0
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro
@@ -175,6 +165,9 @@ services:
       - monitored
     command: -logtostderr -docker_only
     deploy:
+      labels:
+        - prometheus-job=cadvisor
+        - prometheus-port=8080
       mode: global
       resources:
         limits:
@@ -218,6 +211,32 @@ services:
         reservations:
           memory: 64M
 
+  gitlab-ci-pipelines-exporter:
+    image: mvisonneau/gitlab-ci-pipelines-exporter:v0.4.4
+    # https://github.com/mvisonneau/gitlab-ci-pipelines-exporter
+    environment:
+      GCPE_CONFIG: /etc/gitlab-ci-pipelines-exporter/config.yml
+      GCPE_LOG_LEVEL: info
+    networks:
+      - internal
+      - monitored
+    volumes:
+      - type: bind
+        source: ./gitlab-ci-pipelines-exporter
+        target: /etc/gitlab-ci-pipelines-exporter
+    deploy:
+      labels:
+        - prometheus-job=gitlab-ci-pipelines-exporter
+        - prometheus-port=8080
+      placement:
+        constraints:
+          - node.role==manager
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 64M
+
   grafana-image-renderer:
     image: grafana/grafana-image-renderer:latest
     environment:
@@ -231,29 +250,5 @@ services:
       resources:
         limits:
           memory: 512M
-        reservations:
-          memory: 64M
-
-  gitlab-ci-pipelines-exporter:
-    image: mvisonneau/gitlab-ci-pipelines-exporter:v0.4.4
-    # https://github.com/mvisonneau/gitlab-ci-pipelines-exporter
-    ports:
-      - 8080:8080
-    environment:
-      GCPE_CONFIG: /etc/gitlab-ci-pipelines-exporter/config.yml
-      GCPE_LOG_LEVEL: info
-    networks:
-      - internal
-    volumes:
-      - type: bind
-        source: ./gitlab-ci-pipelines-exporter
-        target: /etc/gitlab-ci-pipelines-exporter
-    deploy:
-      placement:
-        constraints:
-          - node.role==manager
-      resources:
-        limits:
-          memory: 128M
         reservations:
           memory: 64M
