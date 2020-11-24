@@ -9,7 +9,7 @@ project_defaults:
     environments:
       # Whether or not to pull project environments & their deployments
       # (optional, default: false)
-      enabled: true
+      enabled: false
     refs:
       # Filter refs (branches/tags only) to include
       # (optional, default: "^main|master$" -- main or master branch)
