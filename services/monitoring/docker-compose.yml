@@ -211,31 +211,32 @@ services:
         reservations:
           memory: 64M
 
-  gitlab-ci-pipelines-exporter:
-    image: mvisonneau/gitlab-ci-pipelines-exporter:v0.4.4
-    # https://github.com/mvisonneau/gitlab-ci-pipelines-exporter
-    environment:
-      GCPE_CONFIG: /etc/gitlab-ci-pipelines-exporter/config.yml
-      GCPE_LOG_LEVEL: info
-    networks:
-      - internal
-      - monitored
-    volumes:
-      - type: bind
-        source: ./gitlab-ci-pipelines-exporter
-        target: /etc/gitlab-ci-pipelines-exporter
-    deploy:
-      labels:
-        - prometheus-job=gitlab-ci-pipelines-exporter
-        - prometheus-port=8080
-      placement:
-        constraints:
-          - node.role==manager
-      resources:
-        limits:
-          memory: 128M
-        reservations:
-          memory: 64M
+  # This guy is de-activated since it takes a big toll on gitlab for now
+  # gitlab-ci-pipelines-exporter:
+  #   image: mvisonneau/gitlab-ci-pipelines-exporter:v0.4.4
+  #   # https://github.com/mvisonneau/gitlab-ci-pipelines-exporter
+  #   environment:
+  #     GCPE_CONFIG: /etc/gitlab-ci-pipelines-exporter/config.yml
+  #     GCPE_LOG_LEVEL: info
+  #   networks:
+  #     - internal
+  #     - monitored
+  #   volumes:
+  #     - type: bind
+  #       source: ./gitlab-ci-pipelines-exporter
+  #       target: /etc/gitlab-ci-pipelines-exporter
+  #   deploy:
+  #     labels:
+  #       - prometheus-job=gitlab-ci-pipelines-exporter
+  #       - prometheus-port=8080
+  #     placement:
+  #       constraints:
+  #         - node.role==manager
+  #     resources:
+  #       limits:
+  #         memory: 128M
+  #       reservations:
+  #         memory: 64M
 
   grafana-image-renderer:
     image: grafana/grafana-image-renderer:latest
