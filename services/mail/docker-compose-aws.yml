@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 services:
   mail:
     dns: # Sometimes the DNS from the AWS AMI are not properly copied into the container and the container canno't acces internet
