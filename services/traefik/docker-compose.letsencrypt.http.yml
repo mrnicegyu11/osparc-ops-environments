@@ -23,7 +23,7 @@ services:
       - "--tracing.jaeger.localAgentHostPort=jaeger:6831"
       - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge=true"
       - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge.entrypoint=http"
-      - "--certificatesresolvers.lehttpchallenge.acme.email=anderegg@itis.swiss"
+      - "--certificatesresolvers.lehttpchallenge.acme.email=allexandre@itis.swiss"
       - "--certificatesresolvers.lehttpchallenge.acme.storage=/letsencrypt/acme.json"
       # uncomment the caserver when testing such that let's encrypt does not ban us
   #    - '--certificatesresolvers.lehttpchallenge.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory'
