@@ -67,6 +67,10 @@ up-dalco: ## Deploy ops and simcore stacks on the Dalco Cluster
 up-aws: ## Deploy opt and simcore stacks on the AWS Cluster
 	./scripts/deployments/deploy.sh aws
 
+.PHONY: up-master
+up-master: ## Deploy opt and simcore stacks on the Master Cluster
+	./scripts/deployments/deploy.sh master
+
 
 .PHONY: down 
 down: ## Stop all services

@@ -40,6 +40,8 @@ up-dalco: up-letsencrypt-dns
 up-aws: .env ${TEMP_COMPOSE}-aws  ## Deploys registry on AWS
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
+.PHONY: up-master
+up-master: up-dalco
 
 # Helpers -------------------------------------------------
 

@@ -31,6 +31,9 @@ up-dalco: up-letsencrypt-dns
 up-aws: .init .env .secrets ${TEMP_COMPOSE}-aws  ## Deploys portainer stack in aws
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
+.PHONY: up-master
+up-master: up-dalco
+
 .PHONY: configure-registry
 configure-registry:  ## Add if necessary dockerhub registry configuration to portainer.
 	@set -o allexport; source ../../repo.config; set +o allexport; \

@@ -31,6 +31,9 @@ up-dalco: .init .env ${TEMP_COMPOSE}-dalco ## Deploys the stack on dalco cluster
 up-aws: .init .env ${TEMP_COMPOSE}-aws ## Deploys the stack aws 
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
+.PHONY: up-master
+up-master: up-dalco
+
 # Helpers -------------------------------------------------
 
 .PHONY: ${TEMP_COMPOSE}-local .env

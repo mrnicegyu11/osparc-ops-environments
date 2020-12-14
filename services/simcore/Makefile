@@ -46,13 +46,16 @@ compose-local: .env-simcore ${TEMP_COMPOSE}-local ## Create docker-compose.deplo
 compose-letsencrypt-http: .env-simcore ${TEMP_COMPOSE}-letsencrypt-http ## Create docker-compose.deploy for letsencrypt with http challenge deployment
 
 .PHONY: compose-letsencrypt-dns 
-compose-letsencrypt-dns: .env-simcore ${TEMP_COMPOSE}-letsencrypt-http ## Create docker-compose.deploy for letsencrypt with http dns deployment
+compose-letsencrypt-dns: .env-simcore ${TEMP_COMPOSE}-letsencrypt-dns ## Create docker-compose.deploy for letsencrypt with http dns deployment
 
 .PHONY: compose-dalco 
 compose-dalco: .env-simcore ${TEMP_COMPOSE}-dalco ## Create docker-compose.deploy for Daclo cluster
 
 .PHONY: compose-aws 
 compose-aws: .env-simcore ${TEMP_COMPOSE}-aws ## Create docker-compose.deploy for AWS
+
+.PHONY: compose-master 
+compose-master: compose-letsencrypt-dns
 
 
 .PHONY: ${TEMP_COMPOSE}-local

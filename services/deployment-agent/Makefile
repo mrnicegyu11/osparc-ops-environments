@@ -58,6 +58,9 @@ up-dalco: up
 up-aws: .init ${DEPLOYMENT_AGENT_CONFIG} ${TEMP_COMPOSE-aws} ## Deploys or updates current stack "$(STACK_NAME)" using replicas=X (defaults to 1) on aws
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE-aws} $(STACK_NAME)
 
+.PHONY: up-master
+up-master: up-dalco
+
 .PHONY: down
 down: ## Stops and remove stack from swarm
 	-@docker stack rm $(STACK_NAME)

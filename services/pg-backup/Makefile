@@ -18,6 +18,9 @@ up: ${TEMP_COMPOSE}  ## Deploys pg-backup stack
 .PHONY: up-dalco ## Deploys pg-backup stack for Dalco Cluster
 up-dalco: up
 
+.PHONY: up-master ## Deploys pg-backup stack for Master Cluster
+up-master: up-dalco
+
 # Helpers -------------------------------------------------
 
 .PHONY: ${TEMP_COMPOSE}
