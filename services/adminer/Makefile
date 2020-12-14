@@ -29,6 +29,9 @@ up-dalco: up-letsencrypt-dns
 up-aws: .init .env ${TEMP_COMPOSE}-aws  ## Deploys adminer stack using let's encrypt dns challenge
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
+.PHONY: up-master
+up-master: up-dalco
+
 # Helpers -------------------------------------------------
 
 .PHONY: ${TEMP_COMPOSE}

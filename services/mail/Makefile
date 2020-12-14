@@ -22,6 +22,9 @@ up-dalco: up
 up-aws: .env configure ${TEMP_COMPOSE}-aws  ## Deploys mail stack in aws
 	docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
+.PHONY: up-master ## Deploys mail stack for Master Cluster
+up-master: up-dalco
+
 # Helpers -------------------------------------------------
 
 .PHONY: ${TEMP_COMPOSE}

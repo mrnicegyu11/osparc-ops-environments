@@ -31,6 +31,8 @@ up-dalco: .init .env datasource.dalco.yml config.monitoring  config.prometheus.m
 up-aws: .init .env datasource.aws.yml config.monitoring config.prometheus.aws ${TEMP_COMPOSE}-aws   ## Deploys or updates current stack "$(STACK_NAME)" in AWS
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
+.PHONY: up-master
+up-master: up-dalco
 
 .PHONY: ${TEMP_COMPOSE}
 ${TEMP_COMPOSE}: docker-compose.yml

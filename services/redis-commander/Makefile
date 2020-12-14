@@ -31,6 +31,9 @@ up-dalco: .env ${TEMP_COMPOSE}-dalco
 up-aws: .env ${TEMP_COMPOSE}-aws  ## Deploys redis stack in aws
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
+.PHONY: up-master
+up-master: up-dalco
+
 .PHONY: ${TEMP_COMPOSE}
 ${TEMP_COMPOSE}: docker-compose.yml
 	@docker-compose -f $< --log-level=ERROR config > $@
