@@ -11,7 +11,7 @@ services:
     hostname: minio{{ service_id|string }}
     volumes: # default uses a named volume, option2 is to use the variable to set specific mount path(s)
       {%- for j in range(num_partitions|int) %}
-      {% if host_folder == true %}
+      {% if host_folder == 'true' %}
       - /data/disk{{ j|string }}/minio:/data{{ j|string }}
       {% else %}
       - minio{{ service_id|string }}_data_part{{ j|string }}:/data{{ j|string }}
