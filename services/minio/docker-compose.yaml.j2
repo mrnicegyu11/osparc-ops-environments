@@ -2,6 +2,7 @@ version: '3.7'
 services:
 {% set num_minios = MINIO_NUM_MINIOS %}
 {% set num_partitions = MINIO_NUM_PARTITIONS %}
+{% set host_folder = MINIO_HOST_DATA_FOLDER %}
 {%- for i in range(num_minios|int) %}
   {%- set service_id = i+1 %}
   minio{{ service_id|string }}:
@@ -10,7 +11,11 @@ services:
     hostname: minio{{ service_id|string }}
     volumes: # default uses a named volume, option2 is to use the variable to set specific mount path(s)
       {%- for j in range(num_partitions|int) %}
-      - ${MINIO_INTERNAL_VOLUME_DATA_PART{{ j|string }}:-minio{{ service_id|string }}_data_part{{ j|string }}}:/data{{ j|string }}
+      {% if host_folder == true %}
+      - /data/disk{{ j|string }}/minio:/data{{ j|string }}
+      {% else %}
+      - minio{{ service_id|string }}_data_part{{ j|string }}:/data{{ j|string }}
+      {% endif %}
       {%- endfor %}
     networks:
       - default
