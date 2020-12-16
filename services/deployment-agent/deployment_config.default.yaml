@@ -14,7 +14,7 @@ main:
       url: https://github.com/ITISFoundation/osparc-simcore.git
       branch: ${SIMCORE_BRANCH}
       pull_only_files: false # if true will only pull the files define in paths
-      tags: ^v[0-9]+.[0-9]+.[0-9]+$
+      ${TAGS_SIMCORE_REPO}
       paths:
         # lists the files where to look for changes in the repo
         - services/docker-compose.yml
