@@ -76,9 +76,9 @@ main:
   polling_interval: 60
   notifications:
     - service: mattermost
-      url: https://mattermost.speag.com
-      message: ":panda_face: New [SIM-Core](https://github.com/ITISFoundation/osparc-simcore) on [Prod Dalco](https://osparc.speag.com) :panda_face:"
+      url: ${MATTERMOST_URL}
+      message: ":panda_face: :panda_face: :panda_face:  New [SIM-Core](https://github.com/ITISFoundation/osparc-simcore) on [${MATTERMOST_HEADER_NAME}](https://${MACHINE_FQDN}) :panda_face: :panda_face: :panda_face:"
       enabled: true
-      channel_id: 9wj54k8k9tdxffu86jo69za8sc
-      personal_token: ygtxeyabrpfc3bw9obizsm7pky
-      header_unique_name: prod-dalco
+      channel_id: ${MATTERMOST_CHANNEL_ID}
+      personal_token: ${MATTERMOST_PERSONAL_TOKEN}
+      header_unique_name: ${MATTERMOST_HEADER_NAME}
