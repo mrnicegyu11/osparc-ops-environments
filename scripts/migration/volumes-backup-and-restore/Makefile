@@ -24,6 +24,5 @@ transfer: ## Transfer volumes saved in /tmp/backup to another host
 all_ssh: ## Connect to a distant server in ssh, backup the volume and restore it in the local server
 	@./volume-backup-and-restore.bash backup_and_restore_ssh
  
-clean: ## Remove the backup in /tmp/backup
-	@sudo rm -rf /tmp/backup/*
-
+clean: ## Remove the backup in /backup
+	@sudo rm -rf /backup/*
