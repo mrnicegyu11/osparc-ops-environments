@@ -1,18 +1,19 @@
-version: '3.7'
+version: "3.7"
 services:
   prometheus:
-    dns: 
-      8.8.8.8
+    dns: 8.8.8.8
     deploy:
       placement:
         constraints:
-        - node.labels.traefik==true
+          - node.labels.traefik==true
   grafana:
-    dns: 
-      8.8.8.8
+    dns: 8.8.8.8
+    deploy:
+      placement:
+        constraints:
+          - node.labels.traefik==true
   postgres-exporter:
-    dns:
-      8.8.8.8
+    dns: 8.8.8.8
     image: bitnami/postgres-exporter:0.8.0
     networks:
       - internal
