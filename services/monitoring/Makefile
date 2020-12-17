@@ -32,7 +32,8 @@ up-aws: .init .env datasource.aws.yml config.monitoring config.prometheus.aws ${
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 .PHONY: up-master
-up-master: up-dalco
+up-master: .init .env datasource.dalco.yml config.monitoring  config.prometheus.minio ${TEMP_COMPOSE}-master ## Deploys monitoring stack for Master Cluster
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-master ${STACK_NAME}
 
 .PHONY: ${TEMP_COMPOSE}
 ${TEMP_COMPOSE}: docker-compose.yml
@@ -53,6 +54,10 @@ ${TEMP_COMPOSE}-dalco: docker-compose.yml docker-compose.dalco.yml docker-compos
 .PHONY: ${TEMP_COMPOSE}-aws
 ${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml docker-compose.letsencrypt.dns.yml
 	@docker-compose -f $< -f docker-compose.aws.yml -f docker-compose.letsencrypt.dns.yml --log-level=ERROR config > $@
+
+.PHONY: ${TEMP_COMPOSE}-master
+${TEMP_COMPOSE}-master: docker-compose.yml docker-compose.master.yml docker-compose.letsencrypt.dns.yml
+	@docker-compose -f $< -f docker-compose.letsencrypt.dns.yml -f docker-compose.master.yml --log-level=ERROR config > $@
 
 
 .PHONY: config.monitoring

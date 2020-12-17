@@ -4,8 +4,8 @@ services:
     command:
       - '--api=true'
       - '--api.dashboard=true'
-      - '--log.level=WARNING'
-   #   - '--accesslog=true'
+      - '--log.level=DEBUG'
+      - '--accesslog=true'
       - '--metrics.prometheus=true'
       - '--metrics.prometheus.addEntryPointsLabels=true'
       - '--metrics.prometheus.addServicesLabels=true'
@@ -23,33 +23,29 @@ services:
       - '--tracing.jaeger.localAgentHostPort=jaeger:6831'   
       - "--providers.docker.constraints=!LabelRegex(`io.simcore.zone`, `*`)"
       - "--entryPoints.https.forwardedHeaders.insecure"
-      - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=rfc2136"
-      - "--certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=120"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=route53"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=0"
       - "--certificatesresolvers.myresolver.acme.email=allexandre@itis.swiss"
       - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge=true"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge.entrypoint=http"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.email=allexandre@itis.swiss"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.storage=/letsencrypt/acme.json"
     # For debug purpose, to avoid being ban by let's encrypt servers
     #  - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      - "--certificatesresolvers.myresolver.acme.dnschallenge.resolvers=195.176.8.15"
     volumes:
       - "letsencrypt_certs:/letsencrypt"
     environment:
-      -  RFC2136_TSIG_KEY=${RFC2136_TSIG_KEY}
-      -  RFC2136_TSIG_SECRET=${RFC2136_TSIG_SECRET}
-      -  RFC2136_TSIG_ALGORITHM=${RFC2136_TSIG_ALGORITHM}
-      -  RFC2136_NAMESERVER=${RFC2136_NAMESERVER}
-      -  RFC2136_PROPAGATION_TIMEOUT=${RFC2136_PROPAGATION_TIMEOUT}
-      -  RFC2136_POLLING_INTERVAL=${RFC2136_POLLING_INTERVAL}
+      -  AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      -  AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      -  AWS_HOSTED_ZONE_ID=${AWS_HOSTED_ZONE_ID}
     deploy:
       placement:
         constraints:
           - node.labels.traefik==true
       labels:
         - traefik.http.routers.api.tls.certresolver=myresolver
-        - traefik.http.middlewares.ops_whitelist_ips.ipwhitelist.sourcerange=0.0.0.0/0
-  whoami:
-    deploy:
-      labels:
-        - traefik.http.routers.whoami.tls.certresolver=myresolver
+        - traefik.http.middlewares.ops_whitelist_ips.ipwhitelist.sourcerange=195.176.8.0/24, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, ${MANAGER_PUBLIC_ENDPOINT_IP} 
 
 volumes:
   letsencrypt_certs:

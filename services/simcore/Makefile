@@ -72,7 +72,7 @@ ${TEMP_COMPOSE}-letsencrypt-dns: docker-compose.yml docker-compose.deploy.letsen
 
 .PHONY: ${TEMP_COMPOSE}-aws
 ${TEMP_COMPOSE}-aws: 
-	@yq merge --append docker-compose.yml docker-compose.deploy.aws.yml docker-compose.deploy.letsencrypt.http.yml > ${TEMP_COMPOSE}
+	@$(_yq) merge --append docker-compose.yml docker-compose.deploy.aws.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}
 
 .PHONY: ${TEMP_COMPOSE}-dalco
 ${TEMP_COMPOSE}-dalco: docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml
