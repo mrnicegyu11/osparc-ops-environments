@@ -37,8 +37,8 @@ ${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose-aws.yml
 
 
 .PHONY : configure
-configure: ## If it does not exist, add the configuration (create mails and alias) to the mail service
-	@if [ -d "config" ] ; then \
+configure: ## If it does not exist, add the configuration (create mails and alias, and add amavis config) to the mail service
+	@if [ -f "config/postfix-accounts.cf" ] ; then \
 		echo "Config already created for mail..."; \
 	else \
 		set -o allexport; \
