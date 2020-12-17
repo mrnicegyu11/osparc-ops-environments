@@ -1,0 +1,51 @@
+version: '3.7'
+services:
+  traefik:
+    command:
+      - '--api=true'
+      - '--api.dashboard=true'
+      - '--log.level=DEBUG'
+      - '--accesslog=true'
+      - '--metrics.prometheus=true'
+      - '--metrics.prometheus.addEntryPointsLabels=true'
+      - '--metrics.prometheus.addServicesLabels=true'
+      - '--entryPoints.metrics.address=:8082'
+      - '--metrics.prometheus.entryPoint=metrics'
+      - '--entryPoints.http.address=:80'
+      - '--entryPoints.https.address=:443'
+      - '--entryPoints.smtp.address=:25'
+      - '--providers.docker.endpoint=unix:///var/run/docker.sock'
+      - '--providers.docker.swarmMode=true'
+      - '--providers.docker.exposedByDefault=false'
+      - '--tracing=true'
+      - '--tracing.jaeger=true'
+      - '--tracing.jaeger.samplingServerURL=http://jaeger:5778/sampling'
+      - '--tracing.jaeger.localAgentHostPort=jaeger:6831'   
+      - "--providers.docker.constraints=!LabelRegex(`io.simcore.zone`, `*`)"
+      - "--entryPoints.https.forwardedHeaders.insecure"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=route53"
+      - "--certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=0"
+      - "--certificatesresolvers.myresolver.acme.email=allexandre@itis.swiss"
+      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge=true"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.httpchallenge.entrypoint=http"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.email=allexandre@itis.swiss"
+    #  - "--certificatesresolvers.lehttpchallenge.acme.storage=/letsencrypt/acme.json"
+    # For debug purpose, to avoid being ban by let's encrypt servers
+    #  - "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+    volumes:
+      - "letsencrypt_certs:/letsencrypt"
+    environment:
+      -  AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      -  AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      -  AWS_HOSTED_ZONE_ID=${AWS_HOSTED_ZONE_ID}
+    deploy:
+      placement:
+        constraints:
+          - node.labels.traefik==true
+      labels:
+        - traefik.http.routers.api.tls.certresolver=myresolver
+        - traefik.http.middlewares.ops_whitelist_ips.ipwhitelist.sourcerange=195.176.8.0/24, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, ${MANAGER_PUBLIC_ENDPOINT_IP} 
+
+volumes:
+  letsencrypt_certs:
