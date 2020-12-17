@@ -51,15 +51,15 @@ up: .init ${DEPLOYMENT_AGENT_CONFIG} ${TEMP_COMPOSE} ## Deploys or updates curre
 up-devel: .init ${DEPLOYMENT_AGENT_CONFIG} ${TEMP_COMPOSE-devel} ## Deploys or updates current stack "$(STACK_NAME)" using replicas=X (defaults to 1)
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE-devel} $(STACK_NAME)
 
-.PHONY: up-dalco ## Deploys deploymentagent stack for Dalco Cluster
-up-dalco: up
+.PHONY: up-dalco
+up-dalco: up ## Deploys deploymentagent stack for Dalco Cluster
 
 .PHONY: up-aws
 up-aws: .init ${DEPLOYMENT_AGENT_CONFIG} ${TEMP_COMPOSE-aws} ## Deploys or updates current stack "$(STACK_NAME)" using replicas=X (defaults to 1) on aws
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE-aws} $(STACK_NAME)
 
 .PHONY: up-master
-up-master: up-dalco
+up-master: up-dalco ## Deploys deploymentagent stack for Master Cluster
 
 .PHONY: down
 down: ## Stops and remove stack from swarm
