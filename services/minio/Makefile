@@ -41,9 +41,6 @@ up-dalco: up-letsencrypt-dns ## Deploys minio stack for Dalco Cluster
 up-master: up-dalco ## Deploys minio stack for Master Cluster
 
 
-.PHONY: up-master
-up-master: up-dalco
-
 # Helpers -------------------------------------------------
 .PHONY: .create-secrets
 .venv:
