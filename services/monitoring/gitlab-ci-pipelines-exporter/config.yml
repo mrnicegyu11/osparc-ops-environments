@@ -1,7 +1,117 @@
+# Exporter HTTP servers configuration
+server:
+  # [address:port] to make the process listen
+  # upon (optional, default: :8080)
+  listen_address: :8080
+  
+  # Enable profiling pages
+  # at /debug/pprof (optional, default: false)
+  enable_pprof: false
+  
+  metrics:
+    # Enable /metrics endpoint (optional, default: true)
+    enabled: true
+
+    # Enable OpenMetrics content encoding in
+    # prometheus HTTP handler (optional, default: false)
+    # see: https://godoc.org/github.com/prometheus/client_golang/prometheus/promhttp#HandlerOpts
+    enable_openmetrics_encoding: true
+
+  webhook:
+    # Enable /webhook endpoint to
+    # support GitLab requests (optional, default: false)
+    enabled: false
+
+    # Secret token to authenticate legitimate webhook
+    # requests coming from the GitLab server
+    # (required if enabled but can also be configured using
+    # the --webhook-secret-token flag or $GCPE_WEBHOOK_SECRET_TOKEN
+    # environment variable)
+    secret_token: 063f51ec-09a4-11eb-adc1-0242ac120002
+
+# Redis configuration, optional and solely useful for an HA setup.
+# By default the data is held in memory of the exporter
+# redis:
+  # URL used to connect onto the redis endpoint
+  # format: redis[s]://[:password@]host[:port][/db-number][?option=value])
+  # (required to use the feature but can also be configured using
+  # the --redis-url flag or $GCPE_REDIS_URL
+  # environment variable)
+  # url: redis://foo:bar@redis.example.net:6379
+
+# URL and Token with sufficient permissions to access
+# your GitLab's projects pipelines informations (optional)
 gitlab:
   url: https://git.speag.com
   token: ckb2oL2aVD71sdk9GxRe
   health_url: https://git.speag.com/-/health
+  # Enable verification of readiness for target
+  # GitLab instance calling `health_url` (optional, default: true)
+  enable_health_check: true
+
+  # Enable TLS validation for target
+  # GitLab instance (handy when self-hosting) (optional, default: true)
+  enable_tls_verify: true
+
+pull:
+  # Global rate limit for the GitLab API request/sec
+  # (optional, default: 10)
+  maximum_gitlab_api_requests_per_second: 2
+
+  projects_from_wildcards:
+    # Whether to trigger a discovery or not when the
+    # exporter starts (optional, default: true)
+    on_init: true
+
+    # Whether to attempt retrieving new projects from wildcards
+    # on a regular basis (optional, default: true)
+    scheduled: true
+
+    # Interval in seconds to discover projects
+    # from wildcards (optional, default: 1800)
+    interval_seconds: 1800
+
+  environments_from_projects:
+    # Whether to trigger a discovery of project environments when
+    # exporter starts (optional, default: true)
+    on_init: true
+
+    # Whether to attempt retrieving project environments
+    # on a regular basis (optional, default: true)
+    scheduled: true
+
+    # Interval in seconds to discover project environments
+    # (optional, default: 300)
+    interval_seconds: 300
+
+  refs_from_projects:
+    # Whether to trigger a discovery of project refs from
+    # branches, tags and merge requests when the
+    # exporter starts (optional, default: true)
+    # nb: merge requests refs discovery needs to be
+    # additionally enabled on a per project basis
+    on_init: true
+
+    # Whether to attempt retrieving project refs from branches,
+    # tags & merge requests on a regular basis (optional, default: true)
+    scheduled: true
+
+    # Interval in seconds to discover refs
+    # from projects branches and tags (optional, default: 300)
+    interval_seconds: 300
+
+  metrics:
+    # Whether or not to trigger a pull of the metrics when the
+    # exporter starts (optional, default: true)
+    on_init: true
+
+    # Whether or not to attempt refreshing the metrics
+    # on a regular basis (optional, default: true)
+    scheduled: true
+
+    # Interval in seconds to pull metrics from
+    # discovered project refs (optional, default: 30)
+    interval_seconds: 30
 
 # Pull jobs related metrics on all projects
 project_defaults:
@@ -16,7 +126,18 @@ project_defaults:
       regexp: "^(main|master|staging.*|production.*)$"
     pipeline:
       jobs:
+        # Whether to attempt retrieving job level metrics from pipelines.
+        # Increases the number of outputed metrics significantly!
+        # (optional, default: false)
         enabled: true
+        variables:
+          # Fetch pipeline variables in a separate metric (optional, default: false)
+          enabled: false
+
+          # Filter pipelines variables to include
+          # (optional, default: ".*", all variables)
+          regexp: ".*"
+        
 
 projects:
   - name: simphony/Simphony
