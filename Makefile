@@ -195,6 +195,11 @@ service_paths =
 service_names = $(notdir $(wildcard $(CURDIR)/services/*))
 doc_md = $(docs_dir)/stacks-graph-auto.md
 
+.PHONY: print-labels
+print-labels: ## Print all labels from all nodes, thanks to https://stackoverflow.com/questions/42414703/how-to-list-docker-swarm-nodes-with-labels
+	@docker node ls -q | xargs docker node inspect \
+    -f '{{ .ID }} [{{ .Description.Hostname }}]: {{ .Spec.Labels }}'
+
 autodoc: ## [UNDER DEV] creates diagrams of every stack based on docker-compose files
 	mkdir -p $(docs_dir)/img
 	# generating a graph of the stack in $(docs_dir)
