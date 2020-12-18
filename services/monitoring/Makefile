@@ -1,5 +1,14 @@
 .DEFAULT_GOAL := help
 
+define jinja
+	.venv/bin/j2 --format=env $(1) .env -o $(2)
+endef
+
+.venv:
+	# creating virtual environment with tooling (jinja, etc)
+	@python3 -m venv .venv
+	@.venv/bin/pip3 install --upgrade pip wheel setuptools
+	@.venv/bin/pip3 install jinja2 j2cli[yaml]
 
 
 # STACK_NAME defaults to name of the current directory. Should not to be changed if you follow GitOps operating procedures.
@@ -24,15 +33,15 @@ up-letsencrypt-dns: .init .env config.monitoring  config.prometheus  datasource.
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
 
 .PHONY: up-dalco
-up-dalco: .init .env datasource.dalco.yml config.monitoring  config.prometheus.minio ${TEMP_COMPOSE}-dalco ## Deploys monitoring stack for Dalco Cluster
+up-dalco: .init .env config.grafana.dashboards datasource.dalco.yml config.monitoring  config.prometheus.minio ${TEMP_COMPOSE}-dalco ## Deploys monitoring stack for Dalco Cluster
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-dalco ${STACK_NAME}
 
 .PHONY: up-aws
-up-aws: .init .env datasource.aws.yml config.monitoring config.prometheus.aws ${TEMP_COMPOSE}-aws   ## Deploys or updates current stack "$(STACK_NAME)" in AWS
+up-aws: .init .env  config.grafana.dashboards datasource.aws.yml config.monitoring config.prometheus.aws ${TEMP_COMPOSE}-aws   ## Deploys or updates current stack "$(STACK_NAME)" in AWS
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 .PHONY: up-master
-up-master: .init .env datasource.dalco.yml config.monitoring  config.prometheus.minio ${TEMP_COMPOSE}-master ## Deploys monitoring stack for Master Cluster
+up-master: .init .env config.grafana.dashboards datasource.dalco.yml config.monitoring  config.prometheus.minio ${TEMP_COMPOSE}-master ## Deploys monitoring stack for Master Cluster
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-master ${STACK_NAME}
 
 .PHONY: ${TEMP_COMPOSE}
@@ -52,13 +61,17 @@ ${TEMP_COMPOSE}-dalco: docker-compose.yml docker-compose.dalco.yml docker-compos
 	@docker-compose -f $< -f docker-compose.letsencrypt.dns.yml -f docker-compose.dalco.yml --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE}-aws
-${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml docker-compose.letsencrypt.dns.yml
+${TEMP_COMPOSE}-aws:  docker-compose.yml docker-compose.aws.yml docker-compose.letsencrypt.dns.yml
 	@docker-compose -f $< -f docker-compose.aws.yml -f docker-compose.letsencrypt.dns.yml --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE}-master
 ${TEMP_COMPOSE}-master: docker-compose.yml docker-compose.master.yml docker-compose.letsencrypt.dns.yml
 	@docker-compose -f $< -f docker-compose.letsencrypt.dns.yml -f docker-compose.master.yml --log-level=ERROR config > $@
 
+
+.PHONY: config.grafana.dashboards
+config.grafana.dashboards: grafana/templates-provisioning/dashboards/simcore/Metrics-dashboard.json.j2 .venv #Configure dashboards for aws or dalco clusters
+	$(call jinja, $<, grafana/provisioning/dashboards/simcore/Metrics-dashboard.json)
 
 .PHONY: config.monitoring
 config.monitoring: grafana/template-config.monitoring ../../repo.config
