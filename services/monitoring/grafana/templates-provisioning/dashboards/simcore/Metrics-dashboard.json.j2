@@ -21,7 +21,7 @@
     "gnetId": null,
     "graphTooltip": 0,
     "id": 2,
-    "iteration": 1604522818894,
+    "iteration": 1611819691845,
     "links": [
       {
         "$$hashKey": "object:183",
@@ -312,7 +312,8 @@
         "description": "",
         "fieldConfig": {
           "defaults": {
-            "custom": {}
+            "custom": {},
+            "links": []
           },
           "overrides": []
         },
@@ -333,7 +334,7 @@
           "max": true,
           "min": true,
           "show": true,
-          "total": true,
+          "total": false,
           "values": true
         },
         "lines": true,
@@ -344,7 +345,7 @@
           "dataLinks": []
         },
         "percentage": false,
-        "pluginVersion": "6.7.3",
+        "pluginVersion": "7.3.3",
         "pointradius": 2,
         "points": false,
         "renderer": "flot",
@@ -444,10 +445,12 @@
             "calcs": [
               "last"
             ],
+            "fields": "",
             "values": false
-          }
+          },
+          "textMode": "auto"
         },
-        "pluginVersion": "7.0.0",
+        "pluginVersion": "7.3.3",
         "targets": [
           {
             "expr": "count(redis_key_value{key=~\".+:alive\", deployment=\"$deployment\"})",
@@ -476,7 +479,8 @@
         "description": "",
         "fieldConfig": {
           "defaults": {
-            "custom": {}
+            "custom": {},
+            "links": []
           },
           "overrides": []
         },
@@ -507,6 +511,7 @@
           "dataLinks": []
         },
         "percentage": false,
+        "pluginVersion": "7.3.3",
         "pointradius": 2,
         "points": false,
         "renderer": "flot",
@@ -620,7 +625,8 @@
         "datasource": "$Postgresql",
         "fieldConfig": {
           "defaults": {
-            "custom": {}
+            "custom": {},
+            "links": []
           },
           "overrides": []
         },
@@ -653,6 +659,7 @@
           "dataLinks": []
         },
         "percentage": false,
+        "pluginVersion": "7.3.3",
         "pointradius": 2,
         "points": false,
         "renderer": "flot",
@@ -785,7 +792,8 @@
         "datasource": "$Postgresql",
         "fieldConfig": {
           "defaults": {
-            "custom": {}
+            "custom": {},
+            "links": []
           },
           "overrides": []
         },
@@ -818,6 +826,7 @@
           "dataLinks": []
         },
         "percentage": false,
+        "pluginVersion": "7.3.3",
         "pointradius": 2,
         "points": false,
         "renderer": "flot",
@@ -1208,9 +1217,10 @@
               "lastNotNull"
             ],
             "values": false
-          }
+          },
+          "textMode": "auto"
         },
-        "pluginVersion": "7.0.0",
+        "pluginVersion": "7.3.3",
         "targets": [
           {
             "expr": "sum by (endpoint) (increase(http_requests_total{endpoint=~\"/study/.+\", app_name=~\".*webserver\", deployment=\"production\"}[$__range]))",
@@ -1238,7 +1248,8 @@
         "decimals": 0,
         "fieldConfig": {
           "defaults": {
-            "custom": {}
+            "custom": {},
+            "links": []
           },
           "overrides": []
         },
@@ -1275,7 +1286,7 @@
           "dataLinks": []
         },
         "percentage": false,
-        "pluginVersion": "6.7.3",
+        "pluginVersion": "7.3.3",
         "pointradius": 2,
         "points": false,
         "renderer": "flot",
@@ -1348,7 +1359,8 @@
         "decimals": 0,
         "fieldConfig": {
           "defaults": {
-            "custom": {}
+            "custom": {},
+            "links": []
           },
           "overrides": []
         },
@@ -1385,7 +1397,7 @@
           "dataLinks": []
         },
         "percentage": false,
-        "pluginVersion": "6.7.3",
+        "pluginVersion": "7.3.3",
         "pointradius": 2,
         "points": false,
         "renderer": "flot",
@@ -1456,7 +1468,8 @@
         "decimals": 2,
         "fieldConfig": {
           "defaults": {
-            "custom": {}
+            "custom": {},
+            "links": []
           },
           "overrides": []
         },
@@ -1466,7 +1479,7 @@
           "h": 7,
           "w": 12,
           "x": 0,
-          "y": 22
+          "y": 31
         },
         "hiddenSeries": false,
         "id": 42,
@@ -1493,6 +1506,7 @@
           "dataLinks": []
         },
         "percentage": false,
+        "pluginVersion": "7.3.3",
         "pointradius": 5,
         "points": false,
         "renderer": "flot",
@@ -1554,13 +1568,138 @@
         }
       },
       {
+        "aliasColors": {},
+      "bars": false,
+      "cacheTimeout": null,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "decimals": 0,
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": [],
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "fill": 0,
+      "fillGradient": 1,
+      "gridPos": {
+        "h": 10,
+        "w": 12,
+        "x": 12,
+        "y": 31
+      },
+      "hiddenSeries": false,
+      "id": 43,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": false,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "null as zero",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.3.3",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": ""
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "expr": "label_replace(increase({__name__=~\"simcore_simcore_service_(director|webserver)_services_started_total:sum_by_service_key_service_tag\", deployment=\"$deployment\"}[24h]), \"service_name\", \"$3\", \"service_key\", \"simcore/services/(dynamic|comp)/([a-zA-Z0-9]*/)?(.*)\")",
+          "interval": "",
+          "legendFormat": "{{ '{{' }}service_name{{ '}}' }}:{{ '{{' }}service_tag{{ '}}' }}",
+          "refId": "A"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Service started / day [time]",
+      "tooltip": {
+        "shared": true,
+        "sort": 2,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:797",
+          "format": "short",
+          "label": null,
+          "logBase": 10,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:798",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
         "collapsed": false,
         "datasource": null,
         "gridPos": {
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 29
+          "y": 41
         },
         "id": 32,
         "panels": [],
@@ -1575,7 +1714,8 @@
         "datasource": null,
         "fieldConfig": {
           "defaults": {
-            "custom": {}
+            "custom": {},
+            "links": []
           },
           "overrides": []
         },
@@ -1585,20 +1725,20 @@
           "h": 8,
           "w": 12,
           "x": 0,
-          "y": 30
+          "y": 42
         },
         "hiddenSeries": false,
         "id": 27,
         "interval": "",
         "legend": {
           "alignAsTable": true,
-          "avg": true,
-          "current": false,
+          "avg": false,
+          "current": true,
           "max": false,
           "min": false,
           "rightSide": false,
           "show": true,
-          "total": true,
+          "total": false,
           "values": true
         },
         "lines": true,
@@ -1608,6 +1748,7 @@
           "dataLinks": []
         },
         "percentage": false,
+        "pluginVersion": "7.3.3",
         "pointradius": 2,
         "points": true,
         "renderer": "flot",
@@ -1616,6 +1757,11 @@
             "$$hashKey": "object:419",
             "alias": "increase cpu hours",
             "yaxis": 2
+          },
+          {
+            "$$hashKey": "object:966",
+            "alias": "increase cpu hours range",
+            "yaxis": 2
           }
         ],
         "spaceLength": 10,
@@ -1623,27 +1769,21 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "node_cpu_seconds_total:nonidle_sum_over_nodes/3600",
+            "expr": "sum(increase(node_cpu_seconds_total:nonidle_sum_over_nodes[$__range]))/3600",
             "format": "time_series",
             "hide": false,
             "instant": false,
-            "interval": "",
+            "interval": "1h",
             "intervalFactor": 1,
-            "legendFormat": "total cpu hours",
-            "refId": "A"
-          },
-          {
-            "expr": "increase(node_cpu_seconds_total:nonidle_sum_over_nodes[1h])/3600",
-            "interval": "10m",
-            "legendFormat": "increase cpu hours",
-            "refId": "B"
+            "legendFormat": "increase cpu hours over selected range",
+            "refId": "C"
           }
         ],
         "thresholds": [],
         "timeFrom": null,
         "timeRegions": [],
         "timeShift": null,
-        "title": "Total CPU consumption  [cpu-hours]",
+        "title": "Total CPU consumption over all nodes  [cpu-hours]",
         "tooltip": {
           "shared": true,
           "sort": 0,
@@ -1690,7 +1830,8 @@
         "datasource": null,
         "fieldConfig": {
           "defaults": {
-            "custom": {}
+            "custom": {},
+            "links": []
           },
           "overrides": []
         },
@@ -1700,7 +1841,7 @@
           "h": 8,
           "w": 12,
           "x": 12,
-          "y": 30
+          "y": 42
         },
         "hiddenSeries": false,
         "id": 28,
@@ -1723,6 +1864,7 @@
           "dataLinks": []
         },
         "percentage": false,
+        "pluginVersion": "7.3.3",
         "pointradius": 2,
         "points": true,
         "renderer": "flot",
@@ -1788,7 +1930,8 @@
         "datasource": null,
         "fieldConfig": {
           "defaults": {
-            "custom": {}
+            "custom": {},
+            "links": []
           },
           "overrides": []
         },
@@ -1798,7 +1941,7 @@
           "h": 8,
           "w": 12,
           "x": 0,
-          "y": 38
+          "y": 50
         },
         "hiddenSeries": false,
         "id": 25,
@@ -1820,6 +1963,7 @@
           "dataLinks": []
         },
         "percentage": false,
+        "pluginVersion": "7.3.3",
         "pointradius": 2,
         "points": false,
         "renderer": "flot",
@@ -1919,7 +2063,7 @@
           "h": 8,
           "w": 6,
           "x": 12,
-          "y": 38
+          "y": 50
         },
         "id": 22,
         "options": {
@@ -1933,7 +2077,7 @@
           },
           "showUnfilled": true
         },
-        "pluginVersion": "7.0.0",
+        "pluginVersion": "7.3.3",
         "targets": [
           {
             "expr": "sort_desc(1 - sum(node_filesystem_avail_bytes{mountpoint=~\"/\", device!~'rootfs'}/node_filesystem_size_bytes{mountpoint=~\"/\", device!~'rootfs'} * on(instance) group_left(node_name) node_meta{}) by (node_name))",
@@ -2016,7 +2160,7 @@
           "h": 8,
           "w": 6,
           "x": 18,
-          "y": 38
+          "y": 50
         },
         "id": 23,
         "interval": null,
@@ -2029,11 +2173,12 @@
             "calcs": [
               "last"
             ],
+            "fields": "",
             "values": false
           },
           "showUnfilled": true
         },
-        "pluginVersion": "7.0.0",
+        "pluginVersion": "7.3.3",
         "targets": [
           {
             "expr": "sort(sum(node_filesystem_avail_bytes{mountpoint=~\"/\", device!~'rootfs'} /1024/1024/1024 * on(instance) group_left(node_name) node_meta{}) by (node_name))",
@@ -2057,7 +2202,7 @@
       }
     ],
     "refresh": "30s",
-    "schemaVersion": 25,
+    "schemaVersion": 26,
     "style": "dark",
     "tags": [],
     "templating": {
@@ -2069,6 +2214,7 @@
             "text": "production",
             "value": "production"
           },
+          "error": null,
           "hide": 0,
           "includeAll": false,
           "label": "Deployment",
@@ -2097,6 +2243,7 @@
             "text": "ProductionPostgres",
             "value": "ProductionPostgres"
           },
+          "error": null,
           "hide": 2,
           "includeAll": false,
           "label": null,
@@ -2108,16 +2255,17 @@
           "regex": "/^($deployment).*/i",
           "skipUrlSync": false,
           "type": "datasource"
-        }
-        ,{
+        },
+        {
           "allValue": ".+",
           "current": {
-            "selected": true,
+            "selected": false,
             "text": "All",
             "value": "$__all"
           },
           "datasource": "Prometheus",
           "definition": "node_meta",
+          "error": null,
           "hide": 0,
           "includeAll": true,
           "label": "Swarm node",
@@ -2193,5 +2341,5 @@
     "timezone": "browser",
     "title": "Metrics",
     "uid": "X_99jTHWk",
-    "version": 17
+    "version": 20
   }
