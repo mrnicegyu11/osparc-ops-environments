@@ -46,6 +46,8 @@ services:
       labels:
         - traefik.http.routers.api.tls.certresolver=myresolver
         - traefik.http.middlewares.ops_whitelist_ips.ipwhitelist.sourcerange=0.0.0.0/0
+        - traefik.http.routers.stagingdalco.tls.domains[0].main=service.osparc-staging.speag.com
+        - traefik.http.routers.stagingdalco.tls.domains[0].sans=*.services.osparc-staging.speag.com
   whoami:
     deploy:
       labels:
