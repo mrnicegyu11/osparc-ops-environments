@@ -73,6 +73,15 @@ services:
         # prometheus labels
         - prometheus-job=traefik_ops
         - prometheus-port=8082
+        - traefik.http.middlewares.minio_allow_origin.headers.accessControlAllowOriginList=*
+        - traefik.http.middlewares.minio_allow_origin.headers.accesscontrolallowcredentials=true
+        - traefik.http.middlewares.minio_allow_origin.headers.accesscontrolallowheaders=Authorization,Origin,Content-Type,Accept
+        - traefik.http.middlewares.minio_allow_origin.headers.accesscontrolallowmethods=GET,POST,PUT,PATCH,DELETE,OPTIONS
+        - traefik.http.middlewares.minio_allow_origin.headers.customresponseheaders.Access-Control-Allow-Headers=Authorization,Origin,Content-Type,Accept
+        - traefik.http.middlewares.minio_allow_origin.headers.customresponseheaders.Access-Control-Allow-Methods=GET,POST,PUT,PATCH,DELETE,OPTIONS
+        # wildcard certificate
+        - traefik.http.routers.api.tls.domains[0].main=service.${MACHINE_FQDN}
+        - traefik.http.routers.api.tls.domains[0].sans=*.services.${MACHINE_FQDN}
 
     networks:
       - public
