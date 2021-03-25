@@ -273,9 +273,9 @@ services:
       placement:
         constraints:
           - node.role==manager
+          - node.labels.postgres==true
     labels:
       - "pgbackup.enable=true"
-      - node.labels.postgres==true
   traefik:
     networks:
       - monitored
