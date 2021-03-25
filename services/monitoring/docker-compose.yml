@@ -153,7 +153,7 @@ services:
           memory: 64M
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.37.0
+    image: gcr.io/cadvisor/cadvisor:v0.39.0
     volumes:
       - /:/rootfs:ro
       - /var/run:/var/run:ro

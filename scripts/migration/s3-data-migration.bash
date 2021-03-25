@@ -10,6 +10,10 @@ set -o pipefail
 IFS=$'\n\t'
 source .env
 
+# TODO
+# start in a screen
+# correct help
+
 usage()
 {
     echo "usage: s3-data-migration.bash [--rm ] [--create] [--copy]"
@@ -21,7 +25,7 @@ usage()
 rm=false
 create=false
 cp=false
-docker build --tag minio_custom:0.1 .
+#docker build --tag minio_custom:0.1 .
 
 for var in "$@"
 do
