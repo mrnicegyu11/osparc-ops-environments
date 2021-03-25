@@ -275,6 +275,7 @@ services:
           - node.role==manager
     labels:
       - "pgbackup.enable=true"
+      - node.labels.postgres==true
   traefik:
     networks:
       - monitored
