@@ -2,7 +2,10 @@ services:
   postgres:
     labels:
       - "pgbackup.enable=true"
-      - node.labels.postgres==true
+    deploy:
+      placement:
+          constraints:
+            - node.labels.postgres==true
   api-server:
     deploy:
       placement:
