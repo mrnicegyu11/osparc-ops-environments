@@ -161,7 +161,7 @@ services:
       replicas: 16
       update_config:
         parallelism: 2
-        order: start-first
+        order: stop-first
         failure_action: rollback
         delay: 10s
       rollback_config:
