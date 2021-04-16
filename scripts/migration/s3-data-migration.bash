@@ -25,7 +25,6 @@ usage()
 rm=false
 create=false
 cp=false
-#docker build --tag minio_custom:0.1 .
 
 for var in "$@"
 do
@@ -53,7 +52,7 @@ if [ "$rm" = true ]; then
             --network host \
             --env MC_HOST_old="https://${S3_ORIGIN_ACCESS_KEY}:${S3_ORIGIN_SECRET_KEY}@${S3_ORIGIN_ENDPOINT}" \
             --env MC_HOST_new="https://${S3_DEST_ACCESS_KEY}:${S3_DEST_SECRET_KEY}@${S3_DEST_ENDPOINT}" \
-            minio_custom:0.1 rb --force new/${element}
+            minio/mc rb --force new/${element}
         fi
 	done
 fi
@@ -68,7 +67,7 @@ if [ "$create" = true ]; then
             --network host \
             --env MC_HOST_old="https://${S3_ORIGIN_ACCESS_KEY}:${S3_ORIGIN_SECRET_KEY}@${S3_ORIGIN_ENDPOINT}" \
             --env MC_HOST_new="https://${S3_DEST_ACCESS_KEY}:${S3_DEST_SECRET_KEY}@${S3_DEST_ENDPOINT}" \
-            minio_custom:0.1 mb new/${element}
+            minio/mc mb new/${element}
     done
 fi
 
@@ -85,7 +84,7 @@ if [ "$cp" = true ]; then
             --network host \
             --env MC_HOST_old="https://${S3_ORIGIN_ACCESS_KEY}:${S3_ORIGIN_SECRET_KEY}@${S3_ORIGIN_ENDPOINT}" \
             --env MC_HOST_new="https://${S3_DEST_ACCESS_KEY}:${S3_DEST_SECRET_KEY}@${S3_DEST_ENDPOINT}" \
-            minio_custom:0.1 cp --recursive  old/${element}/ new/${new_buckets[$count]} || true
+            minio/mc cp --recursive  old/${element}/ new/${new_buckets[$count]} || true
         count=$((count+1))
     done
 fi
