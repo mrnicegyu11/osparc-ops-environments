@@ -5,7 +5,7 @@
 #
 # http://redsymbol.net/articles/unofficial-bash-strict-mode/
 
-docker exec -it $(docker container ls  | grep 'minio' | awk '{print $1}') sh echo $hostname; \
+docker exec -it $(docker container ls  | grep 'minio' | awk '{print $1}')   
 curl https://dl.min.io/client/mc/release/linux-amd64/mc --output mc; \
 chmod +x mc; \
 ls;\
