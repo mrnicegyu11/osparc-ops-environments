@@ -23,14 +23,15 @@ up-letsencrypt-dns: .init .env ${TEMP_COMPOSE}-letsencrypt-dns  ## Deploys grayl
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
 
 .PHONY: up-dalco ## Deploys graylog stack for Dalco Cluster
-up-dalco: up-letsencrypt-dns
+up-dalco: .init .env ${TEMP_COMPOSE}-letsencrypt-dalco
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-letsencrypt-dalco ${STACK_NAME}
 
 .PHONY: up-aws
 up-aws: .init .env ${TEMP_COMPOSE}-aws  ## Deploys graylog stack using let's encrypt
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 .PHONY: up-master
-up-master: up-dalco
+up-master: up-letsencrypt-dns
 
 # Helpers -------------------------------------------------
 
@@ -45,6 +46,10 @@ ${TEMP_COMPOSE}-letsencrypt-http: docker-compose.yml docker-compose.letsencrypt.
 .PHONY: ${TEMP_COMPOSE}-letsencrypt-dns
 ${TEMP_COMPOSE}-letsencrypt-dns: docker-compose.yml docker-compose.letsencrypt.dns.yml
 	@docker-compose -f $< -f docker-compose.letsencrypt.dns.yml --log-level=ERROR config > $@
+
+.PHONY: ${TEMP_COMPOSE}-letsencrypt-dalco
+${TEMP_COMPOSE}-letsencrypt-dalco: docker-compose.yml docker-compose.dalco.yml docker-compose.letsencrypt.dns.yml
+	@docker-compose -f $< -f docker-compose.dalco.yml -f docker-compose.letsencrypt.dns.yml --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE}-aws
 ${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.letsencrypt.dns.yml docker-compose.aws.yml
