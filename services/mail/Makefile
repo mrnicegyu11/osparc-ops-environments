@@ -49,8 +49,14 @@ configure: ## If it does not exist, add the configuration (create mails and alia
 		bash setup.sh email add root@$${MACHINE_FQDN} $${SMTP_PASSWORD}; \
 		bash setup.sh email add devops@$${MACHINE_FQDN} $${SMTP_PASSWORD}; \
 		bash setup.sh email add code-of-conduct@$${MACHINE_FQDN} $${SMTP_PASSWORD}; \
-		bash setup.sh alias add root guidon@speag.swiss; \
-		bash setup.sh alias add support osparcio-support@speag.swiss; \
-		bash setup.sh alias add devops osparcio-devops@speag.swiss; \
-		bash setup.sh alias add code-of-conduct neagu@itis.swiss; \
+		bash setup.sh email add e2e@$${MACHINE_FQDN} $${SMTP_PASSWORD}; \
+		bash setup.sh alias add root@$${MACHINE_FQDN} guidon@speag.swiss; \
+		bash setup.sh alias add support@$${MACHINE_FQDN} osparcio-support@speag.swiss; \
+		bash setup.sh alias add devops@$${MACHINE_FQDN} osparcio-devops@speag.swiss; \
+		bash setup.sh alias add code-of-conduct@$${MACHINE_FQDN} neagu@itis.swiss; \
+		bash setup.sh alias add e2e@$${MACHINE_FQDN} test-osparc@itis.swiss; \
+		touch amavis.cf; \
+		echo '$$final_bad_header_destiny = D_PASS;' >> amavis.cf; \
+		echo '$$bad_header_quarantine_to = undef;' >> amavis.cf; \
+		sudo mv amavis.cf config/amavis.cf; \
 	fi;
