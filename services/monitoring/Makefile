@@ -33,7 +33,7 @@ up-letsencrypt-dns: .init .env config.monitoring  config.prometheus  datasource.
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
 
 .PHONY: up-dalco
-up-dalco: .init .env config.grafana.dashboards datasource.dalco.yml config.monitoring  config.prometheus.minio ${TEMP_COMPOSE}-dalco ## Deploys monitoring stack for Dalco Cluster
+up-dalco: .init .env config.grafana.dashboards datasource.dalco.yml config.monitoring  config.prometheus.minio.dalco ${TEMP_COMPOSE}-dalco ## Deploys monitoring stack for Dalco Cluster
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-dalco ${STACK_NAME}
 
 .PHONY: up-aws
@@ -41,7 +41,7 @@ up-aws: .init .env  config.grafana.dashboards datasource.aws.yml config.monitori
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 .PHONY: up-master
-up-master: .init .env config.grafana.dashboards datasource.dalco.yml config.monitoring  config.prometheus.minio ${TEMP_COMPOSE}-master ## Deploys monitoring stack for Master Cluster
+up-master: .init .env config.grafana.dashboards datasource.dalco.yml config.monitoring  config.prometheus.minio.master ${TEMP_COMPOSE}-master ## Deploys monitoring stack for Master Cluster
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-master ${STACK_NAME}
 
 .PHONY: ${TEMP_COMPOSE}
@@ -80,12 +80,22 @@ config.monitoring: grafana/template-config.monitoring ../../repo.config
 	set +o allexport; \
 	envsubst < $< > grafana/$@
 
-.PHONY: config.prometheus.minio
-config.prometheus.minio: ../../repo.config
+.PHONY: config.prometheus.minio.dalco
+config.prometheus.minio.dalco: ../../repo.config
 	@set -o allexport; \
 	source $(realpath $(CURDIR)/../../repo.config); \
 	set +o allexport; \
 	$(_yq) merge --append prometheus/prometheus-base.yml prometheus/prometheus-dalco.yml > prometheus/prometheus.yml; \
+	envsubst < prometheus/prometheus.yml > prometheus/prometheus.temp.yml; \
+	mv prometheus/prometheus.temp.yml prometheus/prometheus.yml
+
+
+.PHONY: config.prometheus.minio.master
+config.prometheus.minio.master: ../../repo.config
+	@set -o allexport; \
+	source $(realpath $(CURDIR)/../../repo.config); \
+	set +o allexport; \
+	$(_yq) merge --append prometheus/prometheus-base.yml prometheus/prometheus-master.yml > prometheus/prometheus.yml; \
 	envsubst < prometheus/prometheus.yml > prometheus/prometheus.temp.yml; \
 	mv prometheus/prometheus.temp.yml prometheus/prometheus.yml
 

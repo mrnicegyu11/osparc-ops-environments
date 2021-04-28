@@ -72,20 +72,6 @@ ${TEMP_COMPOSE}-letsencrypt-dns: docker-compose.yaml.j2 docker-compose.letsencry
 	@docker-compose -f tmp.yaml -f tmp-letsencrypt.dns.yaml --log-level=ERROR config > $@
 	@rm tmp.yaml tmp-letsencrypt.dns.yaml
 
-.PHONY: token
-token: ## Generate minio JTW token and add it to repo.config
-	@set -o allexport; \
-	source $(realpath $(CURDIR)/../../repo.config); \
-	set +o allexport; \
-	envsubst < $(realpath $(CURDIR)/../../scripts/minio_prometheus_token.bash) > $(CURDIR)/../../scripts/minio_prometheus_token.temp.bash; \
-    echo "Asking minio for JWT key..."; \
-    MINIO_PROMETHEUS_TOKEN=$$(docker node ls | cut -c 1-25 | grep -v ID | sed '3q;d' | xargs docker node inspect | jq '.[0].Status.Addr' | xargs -I"SERVER" sh -c "ssh SERVER 'bash -s' < $(realpath $(CURDIR)/../../scripts/minio_prometheus_token.temp.bash)"); \
-	MINIO_PROMETHEUS_TOKEN=$$(echo "$$MINIO_PROMETHEUS_TOKEN"); \
-	ar=( $$MINIO_PROMETHEUS_TOKEN );\
-    MINIO_PROMETHEUS_TOKEN=$${ar[10]}; \
-	echo $${MINIO_PROMETHEUS_TOKEN}; \
-    sed --in-place "s/MINIO_PROMETHEUS_TOKEN=.*/MINIO_PROMETHEUS_TOKEN=$${MINIO_PROMETHEUS_TOKEN}/" $(realpath $(CURDIR)/../../repo.config); \
-    rm $(realpath $(CURDIR)/../../scripts/minio_prometheus_token.temp.bash)
 .create-secrets:
 	@$(if $(DOCKER_MINIO_ACCESS_KEY), \
 		, \

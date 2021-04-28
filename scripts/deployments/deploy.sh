@@ -136,13 +136,6 @@ if [ $# -le 1 ] || [ $2 != "--simcore_only" ]; then
             sleep 5s
         done
 
-        # Ask for minio to give a JWT Token if the key is empty in repo.config
-        # This key is used to allow prometheus to access Minio's metrics
-
-        if [[ -z "${MINIO_PROMETHEUS_TOKEN}" ]]; then
-            call_make "${repo_basedir}"/services/minio token
-        fi
-
     fi
 
     if [ $1 = "dalco" ]; then
