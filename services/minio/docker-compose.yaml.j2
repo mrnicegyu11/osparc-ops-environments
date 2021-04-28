@@ -6,7 +6,7 @@ services:
 {%- for i in range(num_minios|int) %}
   {%- set service_id = i+1 %}
   minio{{ service_id|string }}:
-    image: minio/minio:RELEASE.2021-03-01T04-20-55Z-16-gf12517b4d
+    image: minio/minio:RELEASE.2021-04-22T15-44-28Z 
     init: true
     hostname: minio{{ service_id|string }}
     volumes: # default uses a named volume, option2 is to use the variable to set specific mount path(s)
@@ -26,8 +26,7 @@ services:
     environment:
       - MINIO_ACCESS_KEY_FILE=minio_access_key
       - MINIO_SECRET_KEY_FILE=minio_secret_key
-      - MINIO_HEAL_MAX_SLEEP=100ms
-      - MINIO_HEAL_MAX_IO=1000000000
+      - MINIO_PROMETHEUS_AUTH_TYPE=public
     deploy:
       restart_policy:
         delay: 10s
