@@ -1,0 +1,55 @@
+# Minio config
+scrape_configs:
+  # to generate the token use the following
+  # docker run -v /etc/ssl/certs:/etc/ssl/certs:ro --network host \
+  #   -e MC_HOST_local="https://12345678:12345678@osparc.local:10000" \
+  #   minio/mc admin prometheus generate local
+  - job_name: minio-job
+    metrics_path: /minio/v2/metrics/cluster
+    scheme: https
+    static_configs:
+      - targets: ["${STORAGE_DOMAIN}"]
+
+  # SIMCORE -------------------------------------------------------------------
+  - job_name: "simcore"
+    scrape_interval: 73s
+    relabel_configs:
+      - source_labels: [__meta_dns_name]
+        replacement: $1
+        target_label: deployment
+      - source_labels: [__meta_dns_name]
+        replacement: $1
+        target_label: service_name
+    dns_sd_configs:
+      - names:
+          - "webserver"
+        type: "A"
+        port: 8080
+      - names:
+          - "storage"
+        type: "A"
+        port: 8080
+      - names:
+          - "director"
+        type: "A"
+        port: 8080
+      - names:
+          - "rabbit"
+        type: "A"
+        port: 15692
+      - names:
+          - "traefik"
+        type: "A"
+        port: 8082
+      - names:
+          - "redis-exporter"
+        type: "A"
+        port: 9121
+      - names:
+          - "postgres-exporter"
+        type: "A"
+        port: 9187
+      - names:
+         - "pgbouncer-exporter"
+        type: "A"
+        port: 9127
