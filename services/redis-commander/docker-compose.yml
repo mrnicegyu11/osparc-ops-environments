@@ -9,7 +9,7 @@ services:
       - monitored
       - public
     environment:
-      REDIS_HOSTS: ${PREFIX_STACK_NAME}_redis
+      REDIS_HOSTS: "resources:${REDIS_HOST}:${REDIS_PORT}:0,locks:${REDIS_HOST}:${REDIS_PORT}:1,celery_backend:${REDIS_HOST}:${REDIS_PORT}:2"
       URL_PREFIX: /redis
     deploy:
       labels:
