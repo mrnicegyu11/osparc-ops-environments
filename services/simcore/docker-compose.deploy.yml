@@ -57,25 +57,6 @@ services:
         constraints:
           - node.labels.sidecar!=true
           - node.role == worker
-
-  static-webserver:
-    environment:
-      - LOGSPOUT_MULTILINE=true
-    deploy:
-      update_config:
-        parallelism: 2
-        order: start-first
-        failure_action: rollback
-        delay: 10s
-      rollback_config:
-        parallelism: 0
-        order: stop-first
-      restart_policy:
-        condition: any
-        delay: 5s
-        max_attempts: 3
-        window: 120s
-        
   webserver:
     networks:
       - public
@@ -84,7 +65,6 @@ services:
       - LOGSPOUT_MULTILINE=true
       - PYTHONTRACEMALLOC=1
       - DIAGNOSTICS_MAX_AVG_LATENCY=10
-      - WEBSERVER_STATIC_MODULE_STATIC_WEB_SERVER_URL=http://${PREFIX_STACK_NAME}_static-webserver:8000
     deploy:
       labels:
         # ssl header necessary so that socket.io upgrades correctly from polling to websocket mode. the middleware must be attached to the right connection.
