@@ -52,7 +52,7 @@ services:
         condition: any
         delay: 5s
         max_attempts: 3
-        window: 1
+        window: 120s
       placement:
         constraints:
           - node.labels.sidecar!=true
