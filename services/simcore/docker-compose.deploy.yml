@@ -57,6 +57,88 @@ services:
         constraints:
           - node.labels.sidecar!=true
           - node.role == worker
+  postgres:
+    labels:
+      - "pgbackup.enable=true"
+    deploy:
+      placement:
+        constraints:
+          - node.labels.postgres==true
+  migration:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  rabbit:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+      labels:
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.tls.certresolver=myresolver
+  redis:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  sidecar:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar==true
+          - node.role == worker
+  storage:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  traefik:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.traefik==true
+      labels:
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.tls.certresolver=myresolver
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls.certresolver=myresolver
+  traefik_api:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  webserver:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  whoami:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+static-webserver:
+  environment:
+    - LOGSPOUT_MULTILINE=true
+  deploy:
+    update_config:
+      parallelism: 2
+      order: start-first
+      failure_action: rollback
+      delay: 10s
+    rollback_config:
+      parallelism: 0
+      order: stop-first
+    restart_policy:
+      condition: any
+      delay: 5s
+      max_attempts: 3
+      window: 120s
   webserver:
     networks:
       - public
@@ -85,10 +167,6 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-      placement:
-        constraints:
-          - node.labels.sidecar!=true
-          - node.role == worker
     extra_hosts: []
   # need to pass self-signed certificate in /usr/local/share/ca-certificates and call update-ca-certificates
   storage:
@@ -120,10 +198,6 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-      placement:
-        constraints:
-          - node.labels.sidecar!=true
-          - node.role == worker
   director:
     # Certificate necessary for local deploiement only
     #secrets:
@@ -193,8 +267,6 @@ services:
       placement:
         constraints:
           - node.role == worker
-          - node.labels.sidecar==true
-          - node.role == worker
       replicas: 16
       update_config:
         parallelism: 2
@@ -228,7 +300,6 @@ services:
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_rabbit_replace_regex.replacepathregex.regex=^/${PREFIX_STACK_NAME}_rabbit/(.*)$$
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_rabbit_replace_regex.replacepathregex.replacement=/$${1}
         - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.middlewares=${PREFIX_STACK_NAME}_rabbit_replace_regex@docker, ops_gzip@docker
-        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.tls.certresolver=myresolver
       update_config:
         parallelism: 2
         order: start-first
@@ -242,10 +313,6 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-      placement:
-        constraints:
-          - node.labels.sidecar!=true
-          - node.role == worker
   redis:
     networks:
       - monitored
@@ -265,10 +332,6 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-      placement:
-        constraints:
-          - node.labels.sidecar!=true
-          - node.role == worker
   postgres:
     networks:
       - monitored
@@ -296,9 +359,6 @@ services:
       placement:
         constraints:
           - node.role==manager
-          - node.labels.postgres==true
-    labels:
-      - "pgbackup.enable=true"
   traefik:
     networks:
       - monitored
@@ -352,8 +412,6 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls=true
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.middlewares=ops_gzip@docker
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.service=${SWARM_STACK_NAME}_simcore_api
-        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.tls.certresolver=myresolver
-        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls.certresolver=myresolver
       update_config:
         parallelism: 2
         order: start-first
@@ -367,9 +425,6 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-      placement:
-        constraints:
-          - node.labels.traefik==true
   traefik_api:
     # NOTE: this is a trick to allow to access the internal traefik REST API
     # list router like so: curl https://domain/api/http/routers | jq
@@ -402,10 +457,6 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-      placement:
-        constraints:
-          - node.labels.sidecar!=true
-          - node.role == worker
   whoami:
     image: "containous/whoami"
     networks:
@@ -440,16 +491,6 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-      placement:
-        constraints:
-          - node.labels.sidecar!=true
-          - node.role == worker
-  migration:
-    deploy:
-      placement:
-        constraints:
-          - node.labels.sidecar!=true
-          - node.role == worker
 networks:
   public:
     external: true
