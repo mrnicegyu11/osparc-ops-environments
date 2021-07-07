@@ -30,11 +30,11 @@ services:
         max_attempts: 3
         window: 120s
     extra_hosts: []
-  
+
   catalog:
-    environment: 
+    environment:
       - LOGSPOUT_MULTILINE=true
-    networks: 
+    networks:
       - monitored
     deploy:
       update_config:
@@ -214,6 +214,45 @@ services:
         window: 120s
     extra_hosts:
       - "${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}"
+  dask-sidecar:
+    environment:
+      - LOGSPOUT_MULTILINE=true
+    deploy: &standard_deploy
+      update_config:
+        parallelism: 2
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+  dask-scheduler:
+    networks:
+      - public
+    environment:
+      - LOGSPOUT_MULTILINE=true
+    deploy:
+      <<: *standard_deploy
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=${PUBLIC_NETWORK}
+        - traefik.http.services.${PREFIX_STACK_NAME}_dask_scheduler.loadbalancer.server.port=8787
+        - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.rule=Host(`${MONITORING_DOMAIN}`) && PathPrefix(`/${PREFIX_STACK_NAME}_dask`)
+        - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.entrypoints=https
+        - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.tls=true
+        - traefik.http.middlewares.${PREFIX_STACK_NAME}_dask_scheduler_replace_regex.replacepathregex.regex=^/${PREFIX_STACK_NAME}_dask/(.*)$$
+        - traefik.http.middlewares.${PREFIX_STACK_NAME}_dask_scheduler_replace_regex.replacepathregex.replacement=/$${1}
+        - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.middlewares=${SWARM_STACK_NAME}_auth@docker, ${PREFIX_STACK_NAME}_dask_scheduler_replace_regex@docker, ops_gzip@docker
+  datcore-adapter:
+    environment:
+      - LOGSPOUT_MULTILINE=true
+    deploy:
+      <<: *standard_deploy
   rabbit:
     networks:
       - monitored
@@ -263,6 +302,7 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+
   postgres:
     networks:
       - monitored
