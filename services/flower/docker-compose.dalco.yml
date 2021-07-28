@@ -9,9 +9,9 @@ services:
       - monitored
       - public
     environment:
-      - CELERY_BROKER_URL=amqp://${RABBIT_USER}:${RABBIT_PASSWORD}@$staging_rabbit:${RABBIT_PORT}
+      - CELERY_BROKER_URL=amqp://${RABBIT_USER}:${RABBIT_PASSWORD}@staging_rabbit:${RABBIT_PORT}
       - FLOWER_URL_PREFIX=staging_flower
-      - FLOWER_BROKER_API=http://${RABBIT_USER}:${RABBIT_PASSWORD}@$staging_rabbit:15672/api/
+      - FLOWER_BROKER_API=http://${RABBIT_USER}:${RABBIT_PASSWORD}@staging_rabbit:15672/api/
       - FLOWER_PORT=5555
     
     deploy:
