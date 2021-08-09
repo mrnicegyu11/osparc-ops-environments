@@ -3,3 +3,18 @@ services:
   graylog:
     dns: 
       8.8.8.8
+  mongodb:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.leader==true
+  elasticsearch:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.leader==true
+  graylog:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.leader==true
