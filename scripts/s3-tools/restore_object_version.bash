@@ -11,6 +11,8 @@ source .env
 set +o allexport
 git clone https://github.com/angeloc/s3-pit-restore
 cd s3-pit-restore
-s3-pit-restore $@
+python3 setup.py install
+pip install boto3
+./s3-pit-restore $@
 cd ..
 rm -rf s3-pit-restore
