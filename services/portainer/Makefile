@@ -52,7 +52,7 @@ configure-registry:  ## Add if necessary dockerhub registry configuration to por
 # Helpers -------------------------------------------------
 
 .PHONY: ${TEMP_COMPOSE}
-${TEMP_COMPOSE}: docker-compose.yml
+${TEMP_COMPOSE}: docker-compose.yml ## bouh
 	@docker-compose -f $< --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE}-letsencrypt-http
@@ -68,7 +68,7 @@ ${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml docker-compose.le
 	@docker-compose -f $< -f docker-compose.aws.yml -f docker-compose.letsencrypt.dns.yml --log-level=ERROR config > $@
 
 .PHONY: .secrets
-.secrets: .env
+secrets: .env ## Construct secrets for portainer pwd, to change pwd it need to be done manually :https://documentation.portainer.io/v2.0/users/reset-admin/
 	@$(if $(DOCKER_PORTAINER_ADMIN_PASSWORD_SECRET), \
 		docker secret rm portainer_admin_password;  set -o allexport; source .env; set +o allexport; echo -n "$${PORTAINER_ADMIN_PWD}" | docker secret create portainer_admin_password -  2>/dev/null;  , \
 		set -o allexport; source .env; set +o allexport; echo -n "$${PORTAINER_ADMIN_PWD}" | docker secret create portainer_admin_password -  2>/dev/null;\
