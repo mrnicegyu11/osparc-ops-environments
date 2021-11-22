@@ -80,9 +80,9 @@ services:
       - monitored
     environment:
       - LOGSPOUT_MULTILINE=true
-      - PYTHONTRACEMALLOC=1
       - DIAGNOSTICS_MAX_AVG_LATENCY=10
       - WEBSERVER_STATIC_MODULE_STATIC_WEB_SERVER_URL=http://${PREFIX_STACK_NAME}_static-webserver:8000
+      - PYTHONTRACEMALLOC=1
     deploy:
       labels:
         # ssl header necessary so that socket.io upgrades correctly from polling to websocket mode. the middleware must be attached to the right connection.
@@ -205,7 +205,13 @@ services:
   dask-sidecar:
     environment:
       - LOGSPOUT_MULTILINE=true
+      - TARGET_MPI_NODE_CPU_COUNT=${TARGET_MPI_NODE_CPU_COUNT}
     deploy: &standard_deploy
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.sidecar==true
+          - node.role == worker
       update_config:
         parallelism: 2
         order: start-first
@@ -219,6 +225,8 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+    extra_hosts:
+      - "${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}"
   dask-scheduler:
     networks:
       - public
@@ -236,11 +244,19 @@ services:
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_dask_scheduler_replace_regex.replacepathregex.regex=^/${PREFIX_STACK_NAME}_dask/(.*)$$
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_dask_scheduler_replace_regex.replacepathregex.replacement=/$${1}
         - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.middlewares=${SWARM_STACK_NAME}_auth@docker, ${PREFIX_STACK_NAME}_dask_scheduler_replace_regex@docker, ops_gzip@docker
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
   datcore-adapter:
     environment:
       - LOGSPOUT_MULTILINE=true
     deploy:
       !!merge <<: *standard_deploy
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
   rabbit:
     networks:
       - monitored
