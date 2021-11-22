@@ -202,33 +202,6 @@ services:
         window: 120s
     extra_hosts:
       - "${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}"
-  sidecar:
-    environment:
-      - LOGSPOUT_MULTILINE=true
-      - RABBIT_HOST=${PREFIX_STACK_NAME}_rabbit
-      - TARGET_MPI_NODE_CPU_COUNT=${TARGET_MPI_NODE_CPU_COUNT}
-    deploy:
-      placement:
-        constraints:
-          - node.role == worker
-          - node.labels.sidecar==true
-          - node.role == worker
-      replicas: 16
-      update_config:
-        parallelism: 2
-        order: stop-first
-        failure_action: rollback
-        delay: 10s
-      rollback_config:
-        parallelism: 0
-        order: stop-first
-      restart_policy:
-        condition: any
-        delay: 5s
-        max_attempts: 3
-        window: 120s
-    extra_hosts:
-      - "${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}"
   dask-sidecar:
     environment:
       - LOGSPOUT_MULTILINE=true

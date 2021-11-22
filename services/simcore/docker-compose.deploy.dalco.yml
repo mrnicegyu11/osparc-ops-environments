@@ -2,3 +2,66 @@ services:
   postgres:
     labels:
       - "pgbackup.enable=true"
+    deploy:
+      placement:
+          constraints:
+            - node.labels.postgres==true
+  api-server:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  catalog:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  migration:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  rabbit:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  redis:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  storage:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  traefik:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.traefik==true
+  traefik_api:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  webserver:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  whoami:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
