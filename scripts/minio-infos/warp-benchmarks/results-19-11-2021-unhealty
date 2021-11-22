@@ -1,0 +1,99 @@
+Operation: DELETE - total: 119, 10.0%, Concurrency: 20, Duration: 4m32s, starting 2021-11-19 12:55:18.467 +0000 UTC
+
+Throughput by host:
+
+http://minio4:9000: Avg: 0.15 obj/s.
+http://minio1:9000: Avg: 0.10 obj/s.
+http://minio3:9000: Avg: 0.08 obj/s.
+http://minio2:9000: Avg: 0.15 obj/s.
+Requests considered: 120:
+
+Avg: 439ms, 50%: 69ms, 90%: 1.322s, 99%: 3.579s, Fastest: 9ms, Slowest: 3.579s
+Requests by host:
+
+http://minio1:9000 - 27 requests:
+ - Avg: 449ms Fastest: 10ms Slowest: 3.312s 50%: 29ms 90%: 2.493s
+http://minio2:9000 - 39 requests:
+ - Avg: 263ms Fastest: 9ms Slowest: 2.808s 50%: 20ms 90%: 796ms
+http://minio3:9000 - 21 requests:
+ - Avg: 550ms Fastest: 10ms Slowest: 2.704s 50%: 376ms 90%: 2.422s
+http://minio4:9000 - 35 requests:
+ - Avg: 566ms Fastest: 9ms Slowest: 3.579s 50%: 207ms 90%: 2.801s
+Operation: GET - total: 533, 44.8%, Concurrency: 20, Duration: 4m31s, starting 2021-11-19 12:55:18.462 +0000 UTC
+
+Throughput by host:
+
+http://minio3:9000: Avg: 4.78 MiB/s, 0.48 obj/s.
+http://minio1:9000: Avg: 5.02 MiB/s, 0.50 obj/s.
+http://minio2:9000: Avg: 5.50 MiB/s, 0.55 obj/s.
+http://minio4:9000: Avg: 5.53 MiB/s, 0.55 obj/s.
+Requests considered: 534:
+
+Avg: 2.926s, 50%: 2.77s, 90%: 5.748s, 99%: 9.241s, Fastest: 104ms, Slowest: 10.986s
+TTFB: Avg: 1.15s, Best: 11ms, 25th: 331ms, Median: 963ms, 75th: 1.77s, 90th: 2.625s, 99th: 4.021s, Worst: 4.417s
+First Access: Avg: 3.503s, 50%: 3.252s, 90%: 6.187s, 99%: 9.581s, Fastest: 108ms, Slowest: 10.986s
+First Access TTFB: Avg: 1.389s, Best: 12ms, 25th: 633ms, Median: 1.192s, 75th: 2.014s, 90th: 2.724s, 99th: 4.078s, Worst: 4.417s
+Requests by host:
+
+http://minio1:9000 - 124 requests:
+ - Avg: 3.079s Fastest: 111ms Slowest: 10.986s 50%: 3.114s 90%: 5.886s
+ - First Byte: Avg: 1.084s, Best: 11ms, 25th: 272ms, Median: 832ms, 75th: 1.649s, 90th: 2.627s, 99th: 4.301s, Worst: 4.301s
+http://minio2:9000 - 140 requests:
+ - Avg: 3.391s Fastest: 105ms Slowest: 9.801s 50%: 2.934s 90%: 7.418s
+ - First Byte: Avg: 1.258s, Best: 11ms, 25th: 352ms, Median: 1.081s, 75th: 2.1s, 90th: 2.655s, 99th: 3.994s, Worst: 3.994s
+http://minio3:9000 - 122 requests:
+ - Avg: 2.87s Fastest: 107ms Slowest: 8.052s 50%: 2.907s 90%: 5.249s
+ - First Byte: Avg: 1.126s, Best: 11ms, 25th: 427ms, Median: 1.119s, 75th: 1.654s, 90th: 2.204s, 99th: 3.56s, Worst: 3.56s
+http://minio4:9000 - 151 requests:
+ - Avg: 2.382s Fastest: 104ms Slowest: 9.118s 50%: 2.323s 90%: 4.702s
+ - First Byte: Avg: 1.115s, Best: 12ms, 25th: 309ms, Median: 829ms, 75th: 1.779s, 90th: 2.724s, 99th: 4.078s, Worst: 4.417s
+Operation: PUT - total: 155, 13.0%, Concurrency: 20, Duration: 4m33s, starting 2021-11-19 12:55:19.025 +0000 UTC
+
+Throughput by host:
+
+http://minio4:9000: Avg: 1.72 MiB/s, 0.17 obj/s.
+http://minio2:9000: Avg: 1.49 MiB/s, 0.15 obj/s.
+http://minio3:9000: Avg: 1.73 MiB/s, 0.17 obj/s.
+http://minio1:9000: Avg: 1.73 MiB/s, 0.17 obj/s.
+Requests considered: 156:
+
+Avg: 20.543s, 50%: 20.591s, 90%: 25.811s, 99%: 28.751s, Fastest: 6.23s, Slowest: 29.782s
+Requests by host:
+
+http://minio1:9000 - 44 requests:
+ - Avg: 20.881s Fastest: 13.176s Slowest: 29.696s 50%: 20.944s 90%: 26.932s
+http://minio2:9000 - 39 requests:
+ - Avg: 21.069s Fastest: 6.23s Slowest: 31.368s 50%: 20.864s 90%: 26.737s
+http://minio3:9000 - 44 requests:
+ - Avg: 21.178s Fastest: 3.233s Slowest: 31.37s 50%: 21.21s 90%: 27.661s
+http://minio4:9000 - 44 requests:
+ - Avg: 21.155s Fastest: 11.984s Slowest: 31.135s 50%: 20.618s 90%: 26.858s
+Operation: STAT - total: 367, 30.8%, Concurrency: 20, Duration: 4m25s, starting 2021-11-19 12:55:18.462 +0000 UTC
+
+Throughput by host:
+
+http://minio4:9000: Avg: 0.31 obj/s.
+http://minio2:9000: Avg: 0.44 obj/s.
+http://minio3:9000: Avg: 0.30 obj/s.
+http://minio1:9000: Avg: 0.39 obj/s.
+Requests considered: 368:
+
+Avg: 9ms, 50%: 6ms, 90%: 11ms, 99%: 25ms, Fastest: 5ms, Slowest: 215ms
+First Access: Avg: 9ms, 50%: 7ms, 90%: 11ms, 99%: 36ms, Fastest: 5ms, Slowest: 215ms
+Requests by host:
+
+http://minio1:9000 - 97 requests:
+ - Avg: 9ms Fastest: 5ms Slowest: 26ms 50%: 7ms 90%: 13ms
+http://minio2:9000 - 112 requests:
+ - Avg: 9ms Fastest: 5ms Slowest: 213ms 50%: 7ms 90%: 11ms
+http://minio3:9000 - 78 requests:
+ - Avg: 8ms Fastest: 5ms Slowest: 20ms 50%: 6ms 90%: 12ms
+http://minio4:9000 - 83 requests:
+ - Avg: 10ms Fastest: 5ms Slowest: 215ms 50%: 6ms 90%: 9ms
+Cluster Total: 26.07 MiB/s, 4.42 obj/s over 4m31s.
+
+http://minio4:9000: 7.18 MiB/s, 1.15 obj/s
+http://minio1:9000: 6.41 MiB/s, 1.12 obj/s
+http://minio3:9000: 6.48 MiB/s, 1.04 obj/s
+http://minio2:9000: 7.00 MiB/s, 1.29 obj/s
+warp: Starting cleanup...

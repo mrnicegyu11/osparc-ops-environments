@@ -1,0 +1,150 @@
+warp: Preparing server.
+[2K
+[Awarp: Clearing Bucket "warp-benchmark-bucket"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/"...[2K
+[Awarp: Uploading 2500 objects of Random data; 10485760 bytes totalwarp: Starting benchmark in 3s...
+warp: Benchmark starting...
+warp: Saving benchmark data...
+warp: Benchmark data written to "warp-mixed-2021-11-22[022920]-GRAa.csv.zst"
+
+Mixed operations.
+Operation: DELETE - total: 370, 10.0%, Concurrency: 20, Duration: 4m54s, starting 2021-11-22 02:29:25.761 +0000 UTC
+
+Throughput by host:
+ * http://minio1:9000: Avg: 0.29 obj/s.
+ * http://minio3:9000: Avg: 0.30 obj/s.
+ * http://minio4:9000: Avg: 0.37 obj/s.
+ * http://minio2:9000: Avg: 0.34 obj/s.
+
+Requests considered: 371:
+ * Avg: 111ms, 50%: 19ms, 90%: 320ms, 99%: 1.231s, Fastest: 9ms, Slowest: 2.317s
+
+Requests by host:
+ * http://minio1:9000 - 83 requests: 
+	- Avg: 108ms Fastest: 10ms Slowest: 1.485s 50%: 19ms 90%: 323ms
+ * http://minio2:9000 - 99 requests: 
+	- Avg: 114ms Fastest: 9ms Slowest: 2.317s 50%: 19ms 90%: 320ms
+ * http://minio3:9000 - 85 requests: 
+	- Avg: 133ms Fastest: 10ms Slowest: 1.25s 50%: 21ms 90%: 529ms
+ * http://minio4:9000 - 106 requests: 
+	- Avg: 90ms Fastest: 10ms Slowest: 1.231s 50%: 18ms 90%: 240ms
+
+Operation: GET - total: 1667, 44.9%, Concurrency: 20, Duration: 4m54s, starting 2021-11-22 02:29:25.75 +0000 UTC
+
+Throughput by host:
+ * http://minio1:9000: Avg: 13.86 MiB/s, 1.39 obj/s.
+ * http://minio4:9000: Avg: 13.76 MiB/s, 1.38 obj/s.
+ * http://minio3:9000: Avg: 15.00 MiB/s, 1.50 obj/s.
+ * http://minio2:9000: Avg: 14.30 MiB/s, 1.43 obj/s.
+
+Requests considered: 1668:
+ * Avg: 1.36s, 50%: 1.156s, 90%: 2.784s, 99%: 5.119s, Fastest: 104ms, Slowest: 6.898s
+ * TTFB: Avg: 354ms, Best: 11ms, 25th: 30ms, Median: 241ms, 75th: 514ms, 90th: 797ms, 99th: 2.239s, Worst: 3.245s
+ * First Access: Avg: 1.916s, 50%: 1.818s, 90%: 3.096s, 99%: 5.423s, Fastest: 134ms, Slowest: 6.898s
+ * First Access TTFB: Avg: 540ms, Best: 13ms, 25th: 267ms, Median: 422ms, 75th: 648ms, 90th: 1.041s, 99th: 2.682s, Worst: 3.245s
+
+Requests by host:
+ * http://minio1:9000 - 409 requests: 
+	- Avg: 1.3s Fastest: 105ms Slowest: 6.696s 50%: 1.054s 90%: 2.629s
+	- First Byte: Avg: 312ms, Best: 11ms, 25th: 29ms, Median: 224ms, 75th: 462ms, 90th: 707ms, 99th: 2.06s, Worst: 2.682s
+ * http://minio2:9000 - 419 requests: 
+	- Avg: 1.406s Fastest: 105ms Slowest: 6.898s 50%: 1.178s 90%: 2.852s
+	- First Byte: Avg: 375ms, Best: 11ms, 25th: 32ms, Median: 239ms, 75th: 563ms, 90th: 812ms, 99th: 2.453s, Worst: 3.13s
+ * http://minio3:9000 - 440 requests: 
+	- Avg: 1.411s Fastest: 104ms Slowest: 6.569s 50%: 1.276s 90%: 2.838s
+	- First Byte: Avg: 382ms, Best: 11ms, 25th: 33ms, Median: 264ms, 75th: 528ms, 90th: 902ms, 99th: 2.695s, Worst: 3.233s
+ * http://minio4:9000 - 407 requests: 
+	- Avg: 1.319s Fastest: 104ms Slowest: 6.019s 50%: 1.11s 90%: 2.803s
+	- First Byte: Avg: 343ms, Best: 11ms, 25th: 27ms, Median: 243ms, 75th: 486ms, 90th: 756ms, 99th: 2.331s, Worst: 3.245s
+
+Operation: PUT - total: 539, 14.5%, Concurrency: 20, Duration: 4m55s, starting 2021-11-22 02:29:25.772 +0000 UTC
+
+Throughput by host:
+ * http://minio4:9000: Avg: 4.95 MiB/s, 0.49 obj/s.
+ * http://minio2:9000: Avg: 4.64 MiB/s, 0.46 obj/s.
+ * http://minio3:9000: Avg: 4.39 MiB/s, 0.44 obj/s.
+ * http://minio1:9000: Avg: 4.78 MiB/s, 0.48 obj/s.
+
+Requests considered: 540:
+ * Avg: 6.456s, 50%: 5.206s, 90%: 13.256s, 99%: 15.942s, Fastest: 1.696s, Slowest: 19.211s
+
+Requests by host:
+ * http://minio1:9000 - 140 requests: 
+	- Avg: 6.578s Fastest: 1.775s Slowest: 15.942s 50%: 5.621s 90%: 13.217s
+ * http://minio2:9000 - 137 requests: 
+	- Avg: 6.264s Fastest: 1.696s Slowest: 18.876s 50%: 4.317s 90%: 13.282s
+ * http://minio3:9000 - 127 requests: 
+	- Avg: 6.474s Fastest: 1.723s Slowest: 16.007s 50%: 5.316s 90%: 13.279s
+ * http://minio4:9000 - 144 requests: 
+	- Avg: 6.318s Fastest: 1.709s Slowest: 19.211s 50%: 4.602s 90%: 13.288s
+
+Operation: STAT - total: 1122, 30.2%, Concurrency: 20, Duration: 4m54s, starting 2021-11-22 02:29:25.736 +0000 UTC
+
+Throughput by host:
+ * http://minio3:9000: Avg: 1.00 obj/s.
+ * http://minio2:9000: Avg: 0.94 obj/s.
+ * http://minio1:9000: Avg: 0.93 obj/s.
+ * http://minio4:9000: Avg: 0.98 obj/s.
+
+Requests considered: 1123:
+ * Avg: 16ms, 50%: 9ms, 90%: 18ms, 99%: 220ms, Fastest: 5ms, Slowest: 238ms
+ * First Access: Avg: 15ms, 50%: 9ms, 90%: 17ms, 99%: 219ms, Fastest: 5ms, Slowest: 238ms
+
+
+Requests by host:
+ * http://minio1:9000 - 275 requests: 
+	- Avg: 15ms Fastest: 5ms Slowest: 227ms 50%: 9ms 90%: 18ms
+ * http://minio2:9000 - 274 requests: 
+	- Avg: 16ms Fastest: 5ms Slowest: 226ms 50%: 9ms 90%: 18ms
+ * http://minio3:9000 - 290 requests: 
+	- Avg: 14ms Fastest: 5ms Slowest: 224ms 50%: 9ms 90%: 17ms
+ * http://minio4:9000 - 286 requests: 
+	- Avg: 18ms Fastest: 5ms Slowest: 238ms 50%: 10ms 90%: 19ms
+
+Cluster Total: 75.37 MiB/s, 12.61 obj/s over 4m55s.
+ * http://minio2:9000: 18.96 MiB/s, 3.17 obj/s
+ * http://minio1:9000: 18.64 MiB/s, 3.08 obj/s
+ * http://minio3:9000: 19.24 MiB/s, 3.20 obj/s
+ * http://minio4:9000: 18.68 MiB/s, 3.19 obj/s
+warp: Starting cleanup...
+[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/2u25d1vS/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/mPVQc)cC/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/dNjfRWV1/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/h)SKxXkq/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/J5WbQTS8/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/QoKZDcwX/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/13IDkY4D/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/isclH4tx/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/G0yucVhV/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/D1RUzbA4/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/CFVE(J43/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/FURpzCvQ/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/zblJG8J6/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/pQ9ssoW1/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/aBoYLhg0/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/r4OiwHZh/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/Cx9Eboxj/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/qWasn6rI/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/vP4zIiNH/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/aqBkHTD9/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/bVV4xPff/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/)f3AmyL3/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/OAyMmQqS/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/m6KPn3RP/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/SyNpDp9k/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/R)tnab9f/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/ker6TKm)/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/oDcSMCjB/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/8H(Gvfoy/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/mxj)Sr96/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/PfBaB5mL/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/3rOc4Pt4/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/BkROyNm2/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/a()mTe8q/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/3t0N5aH8/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/CrOdDtzM/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/vZfbDtz(/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/f5uzpxQ0/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/m3dwcQov/"...[2K
+[Awarp: Clearing Prefix "warp-benchmark-bucket/sogCTh1w/"...warp: Cleanup Done.

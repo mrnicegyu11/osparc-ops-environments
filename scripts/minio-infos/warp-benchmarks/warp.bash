@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Give current usage about minio buckets in GB
+# Execute mixed test on minio and put then in a file
 #
 #
 # http://redsymbol.net/articles/unofficial-bash-strict-mode/
@@ -10,11 +10,7 @@ set -o pipefail
 IFS=$'\n\t'
 source ../../repo.config
 
-if [ -f "warp_results" ]
-then 
-    rm "warp_results" && touch "warp_results"
-    echo "$var" > "$destdir"
-fi
+
 
 results=$(docker run \
 -v /etc/ssl/certs:/etc/ssl/certs:ro \
@@ -25,3 +21,9 @@ results=$(docker run \
 minio/warp mixed --analyze.v)
 
 
+if [ -f "warp_results" ]
+then 
+    rm "warp_results" && touch "warp_results"
+fi
+
+echo "$results" > "warp_results"
