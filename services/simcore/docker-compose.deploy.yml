@@ -206,6 +206,11 @@ services:
     environment:
       - LOGSPOUT_MULTILINE=true
     deploy: &standard_deploy
+      placement:
+        constraints:
+          - node.role == worker
+          - node.labels.sidecar==true
+          - node.role == worker
       update_config:
         parallelism: 2
         order: start-first
@@ -219,10 +224,8 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
-      placement:
-        constraints:
-          - node.labels.sidecar==true
-          - node.role == worker
+    extra_hosts:
+      - "${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}"
   dask-scheduler:
     networks:
       - public

@@ -4,8 +4,8 @@ services:
       - "pgbackup.enable=true"
     deploy:
       placement:
-          constraints:
-            - node.labels.postgres==true
+        constraints:
+          - node.labels.postgres==true
   api-server:
     deploy:
       placement:
@@ -25,6 +25,24 @@ services:
           - node.labels.sidecar!=true
           - node.role == worker
   rabbit:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  dask-sidecar:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar==true
+          - node.role == worker
+  dask-scheduler:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.sidecar!=true
+          - node.role == worker
+  datcore-adapter:
     deploy:
       placement:
         constraints:
