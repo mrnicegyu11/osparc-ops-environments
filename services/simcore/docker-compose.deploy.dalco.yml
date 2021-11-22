@@ -36,12 +36,6 @@ services:
         constraints:
           - node.labels.sidecar!=true
           - node.role == worker
-  sidecar:
-    deploy:
-      placement:
-        constraints:
-          - node.labels.sidecar==true
-          - node.role == worker
   storage:
     deploy:
       placement:
