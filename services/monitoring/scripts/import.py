@@ -15,13 +15,13 @@ if __name__ == '__main__':
     # We first import the datasources
     url = "https://monitoring." + env.str('MACHINE_FQDN') + "/grafana/api/"
     session = requests.Session()
-    session.auth = ("admin", "adminadmin")
+    session.auth = (env.str('SERVICES_USER'), env.str('SERVICES_PASSWORD'))
     #auth_token='eyJrIjoiVXlFMDVaZzJOWEFXN1pIcGlXMkptT2hzdDdDVDNXMWUiLCJuIjoidGVzdCIsImlkIjoxfQ=='
     #hed = {'Authorization': 'Bearer ' + auth_token, 'Content-Type': 'application/json'}
     hed = {'Content-Type': 'application/json'}
 
 
-    directories = glob.glob("./../grafana/provisioning2/datasources/*")
+    directories = glob.glob("./../grafana/" + env.str('PREFIX_STACK_NAME') + "/datasources/*")
     for file in directories:
         with open(file) as jsonFile:
             jsonObject = json.load(jsonFile)
@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     # Second, we import the folders structure
     directoriesData = []
-    directories = glob.glob("./../grafana/provisioning2/dashboards/*")
+    directories = glob.glob("./../grafana/" + env.str('PREFIX_STACK_NAME') + "/dashboards/*")
     # We can't create folder with their originial Ids, so we store them and simulate how Grafana will create the new Ids (1, 2, 3, etc)
     countIds = 1
     for directory in directories:
