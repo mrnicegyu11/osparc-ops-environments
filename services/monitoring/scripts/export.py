@@ -37,11 +37,14 @@ if __name__ == '__main__':
     os.mkdir(directory + "/dashboards")
     r = session.get(url + "search?query=%", headers=hed)
     for dashboard in r.json():
-        print(url + "dashboards/uid/" + str(dashboard["uid"]))
-        rDashboard = session.get(url + "dashboards/uid/" + str(dashboard["uid"]), headers=hed)
-        with open(directory + "/dashboards/" + str(dashboard["id"]) + ".json", 'w') as outfile:
-            print(rDashboard.text)
-            json.dump(rDashboard.json(), outfile) 
+            rDashboard = session.get(url + "dashboards/uid/" + str(dashboard["uid"]), headers=hed)
+            if rDashboard.json()["meta"]["isFolder"] is not True:
+                if os.path.exists(directory + "/dashboards/" + rDashboard.json()["meta"]["folderTitle"]) == False:
+                    os.mkdir(directory + "/dashboards/" + rDashboard.json()["meta"]["folderTitle"])
+
+                with open(directory + "/dashboards/" + rDashboard.json()["meta"]["folderTitle"] + "/" + str(dashboard["id"]) + ".json", 'w') as outfile:
+                    print(rDashboard.text)
+                    json.dump(rDashboard.json(), outfile) 
 
 
 
