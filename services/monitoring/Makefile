@@ -33,15 +33,15 @@ up-letsencrypt-dns: .init .env config.monitoring  config.prometheus  datasource.
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-letsencrypt-dns ${STACK_NAME}
 
 .PHONY: up-dalco
-up-dalco: .init .env config.grafana.dashboards datasource.dalco.yml config.monitoring  config.prometheus.minio.dalco ${TEMP_COMPOSE}-dalco ## Deploys monitoring stack for Dalco Cluster
+up-dalco: .init .env  config.monitoring  config.prometheus.minio.dalco ${TEMP_COMPOSE}-dalco ## Deploys monitoring stack for Dalco Cluster
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-dalco ${STACK_NAME}
 
 .PHONY: up-aws
-up-aws: .init .env  config.grafana.dashboards datasource.aws.yml config.monitoring config.prometheus.aws ${TEMP_COMPOSE}-aws   ## Deploys or updates current stack "$(STACK_NAME)" in AWS
+up-aws: .init .env config.monitoring config.prometheus.aws ${TEMP_COMPOSE}-aws   ## Deploys or updates current stack "$(STACK_NAME)" in AWS
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 .PHONY: up-master
-up-master: .init .env config.grafana.dashboards datasource.dalco.yml config.monitoring  config.prometheus.minio.master ${TEMP_COMPOSE}-master ## Deploys monitoring stack for Master Cluster
+up-master: .init .env config.monitoring  config.prometheus.minio.master ${TEMP_COMPOSE}-master ## Deploys monitoring stack for Master Cluster
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-master ${STACK_NAME}
 
 .PHONY: ${TEMP_COMPOSE}
