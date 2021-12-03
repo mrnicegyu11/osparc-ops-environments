@@ -21,7 +21,7 @@ if __name__ == '__main__':
     hed = {'Content-Type': 'application/json'}
 
 
-    directories = glob.glob("./../grafana/provisioning2/datasources/*")
+    directories = glob.glob("./../grafana/" + env.str('PREFIX_STACK_NAME') + "/datasources/*")
     for file in directories:
         with open(file) as jsonFile:
             jsonObject = json.load(jsonFile)
@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     # Second, we import the folders structure
     directoriesData = []
-    directories = glob.glob("./../grafana/provisioning2/dashboards/*")
+    directories = glob.glob("./../grafana/"+ env.str('PREFIX_STACK_NAME') + "/dashboards/*")
     # We can't create folder with their originial Ids, so we store them and simulate how Grafana will create the new Ids (1, 2, 3, etc)
     countIds = 1
     for directory in directories:
@@ -71,13 +71,19 @@ if __name__ == '__main__':
             with open(file) as jsonFile:
                 jsonObject = json.load(jsonFile)
                 jsonFile.close()
-                jsonObject["meta"]["id"] = "null"
-                jsonObject["id"] = "null"
+                #jsonObject["meta"]["id"] = "null"
+                #jsonObject["id"] = "null"
                 #print(jsonObject)
 
                 # New id for the folder
                 folder = [folder for folder in directoriesData if folder["oldId"] == jsonObject["meta"]["folderId"]]
-                dashboard = {"Dashboard": jsonObject, "overwrite": True, "id": 'null', "folderId": folder[0]["newId"] }
+                print(folder)
+                dashboard = {"Dashboard": jsonObject["dashboard"] }
+                dashboard["Dashboard"]["id"] = 'null'
+                dashboard["overwrite"] = True
+                dashboard["folderId"] = folder[0]["newId"]
+                print(dashboard)
+                #{"Dashboard": jsonObject, "overwrite": True, "id": 'null', "folderId": folder[0]["newId"] }
                 #print(dashboard)
                 #print(url + "dashboards/db")
                 r = session.post(url + "dashboards/db", json = dashboard, headers=hed)
