@@ -29,17 +29,9 @@ if __name__ == '__main__':
 
         # We add the credentials for the PGSQL Databases with the secureJsonData field (password can't be exported so we have to set it here manually)
         if jsonObject["type"] == "postgres":
-            # Check if we have multi PG source
-            if env.str('GRAFANA_PG_NAMES') == "":
-                print("Only One PG source")
-                jsonObject["secureJsonData"] = { "password": env.str('POSTGRES_PASSWORD') }
-                jsonObject["user"] = env.str('POSTGRES_USER')
-                print(jsonObject)
-            else:
-                print("Multiple PG source")
-                PGnames = env.str('GRAFANA_PG_NAMES')
-                pgPasswords = env.str('GRAFANA_PG_PWDS')
-                jsonObject["secureJsonData"] = { "password": pgPasswords[PGnames.index(jsonObject["name"])] }
+            jsonObject["secureJsonData"] = { "password": env.str('POSTGRES_GRAFANA_PASSWORD') }
+            jsonObject["user"] = env.str('POSTGRES_GRAFANA_USER')
+            print(jsonObject)
         
         r = session.post(url + "datasources", json = jsonObject, headers=hed)
         print(r.text)
