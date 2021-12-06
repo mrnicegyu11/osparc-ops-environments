@@ -21,7 +21,7 @@ if __name__ == '__main__':
     hed = {'Content-Type': 'application/json'}
 
 
-    directories = glob.glob("./../grafana/" + env.str('PREFIX_STACK_NAME') + "/datasources/*")
+    directories = glob.glob("./../grafana/" + env.str('MACHINE_FQDN') + "/datasources/*")
     for file in directories:
         with open(file) as jsonFile:
             jsonObject = json.load(jsonFile)
@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     # Second, we import the folders structure
     directoriesData = []
-    directories = glob.glob("./../grafana/"+ env.str('PREFIX_STACK_NAME') + "/dashboards/*")
+    directories = glob.glob("./../grafana/"+ env.str('MACHINE_FQDN') + "/dashboards/*")
     # We can't create folder with their originial Ids, so we store them and simulate how Grafana will create the new Ids (1, 2, 3, etc)
     countIds = 1
     for directory in directories:

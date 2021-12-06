@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
 
     # We delete the previous files
-    directory = "./../grafana/" + env.str('PREFIX_STACK_NAME')
+    directory = "./../grafana/" + env.str('MACHINE_FQDN')
     if os.path.exists(directory):
         shutil.rmtree(directory)
     os.mkdir(directory)
@@ -44,11 +44,4 @@ if __name__ == '__main__':
 
                 with open(directory + "/dashboards/" + rDashboard.json()["meta"]["folderTitle"] + "/" + str(dashboard["id"]) + ".json", 'w') as outfile:
                     print(rDashboard.text)
-                    json.dump(rDashboard.json(), outfile) 
-
-
-
-
-
-
-
+                    json.dump(rDashboard.json(), outfile)
