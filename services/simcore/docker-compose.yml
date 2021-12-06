@@ -75,16 +75,17 @@ services:
       - monitored
     environment:
       - LOGSPOUT_MULTILINE=true
-      - PYTHONTRACEMALLOC=1
       - DIAGNOSTICS_MAX_AVG_LATENCY=10
       - WEBSERVER_STATIC_MODULE_STATIC_WEB_SERVER_URL=http://${PREFIX_STACK_NAME}_static-webserver:8000
+      - PYTHONTRACEMALLOC=1
     deploy:
       labels:
         # ssl header necessary so that socket.io upgrades correctly from polling to websocket mode. the middleware must be attached to the right connection.
         # NOTE: traefik does not like - in the sslheader middleware, so we override it here
         # NOTE: in deploy mode with SSL they must be set to https!
         - traefik.http.middlewares.${SWARM_STACK_NAME_NO_HYPHEN}_sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
-        - traefik.http.routers.${SWARM_STACK_NAME}_webserver.middlewares=${SWARM_STACK_NAME}_gzip@docker, ${SWARM_STACK_NAME_NO_HYPHEN}_sslheader
+        - traefik.http.routers.${SWARM_STACK_NAME}_webserver.middlewares=${SWARM_STACK_NAME}_gzip@docker,
+          ${SWARM_STACK_NAME_NO_HYPHEN}_sslheader
       update_config:
         parallelism: 2
         order: start-first
@@ -192,7 +193,12 @@ services:
   dask-sidecar:
     environment:
       - LOGSPOUT_MULTILINE=true
-    deploy: &standard_deploy
+      - TARGET_MPI_NODE_CPU_COUNT=${TARGET_MPI_NODE_CPU_COUNT}
+    deploy:
+      &standard_deploy
+      placement:
+        constraints:
+          - node.role == worker
       update_config:
         parallelism: 2
         order: start-first
@@ -206,6 +212,8 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+    extra_hosts:
+      - "${REGISTRY_DOMAIN}:${MANAGER_PRIVATE_ENDPOINT_IP}"
   dask-scheduler:
     networks:
       - public
@@ -217,12 +225,15 @@ services:
         - traefik.enable=true
         - traefik.docker.network=${PUBLIC_NETWORK}
         - traefik.http.services.${PREFIX_STACK_NAME}_dask_scheduler.loadbalancer.server.port=8787
-        - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.rule=Host(`${MONITORING_DOMAIN}`) && PathPrefix(`/${PREFIX_STACK_NAME}_dask`)
+        - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.rule=Host(`${MONITORING_DOMAIN}`)
+          && PathPrefix(`/${PREFIX_STACK_NAME}_dask`)
         - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.entrypoints=https
         - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.tls=true
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_dask_scheduler_replace_regex.replacepathregex.regex=^/${PREFIX_STACK_NAME}_dask/(.*)$$
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_dask_scheduler_replace_regex.replacepathregex.replacement=/$${1}
-        - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.middlewares=${SWARM_STACK_NAME}_auth@docker, ${PREFIX_STACK_NAME}_dask_scheduler_replace_regex@docker, ops_gzip@docker
+        - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.middlewares=${SWARM_STACK_NAME}_auth@docker,
+          ${PREFIX_STACK_NAME}_dask_scheduler_replace_regex@docker,
+          ops_gzip@docker
   datcore-adapter:
     environment:
       - LOGSPOUT_MULTILINE=true
@@ -239,12 +250,14 @@ services:
         - traefik.enable=true
         - traefik.docker.network=${PUBLIC_NETWORK}
         - traefik.http.services.${PREFIX_STACK_NAME}_rabbit.loadbalancer.server.port=15672
-        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.rule=Host(`${MONITORING_DOMAIN}`) && PathPrefix(`/${PREFIX_STACK_NAME}_rabbit`)
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.rule=Host(`${MONITORING_DOMAIN}`)
+          && PathPrefix(`/${PREFIX_STACK_NAME}_rabbit`)
         - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.entrypoints=https
         - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.tls=true
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_rabbit_replace_regex.replacepathregex.regex=^/${PREFIX_STACK_NAME}_rabbit/(.*)$$
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_rabbit_replace_regex.replacepathregex.replacement=/$${1}
-        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.middlewares=${PREFIX_STACK_NAME}_rabbit_replace_regex@docker, ops_gzip@docker
+        - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.middlewares=${PREFIX_STACK_NAME}_rabbit_replace_regex@docker,
+          ops_gzip@docker
       update_config:
         parallelism: 2
         order: start-first
@@ -334,7 +347,8 @@ services:
       # https://github.com/traefik/traefik/issues/7886
       - "--providers.docker.swarmModeRefreshSeconds=1"
       - "--providers.docker.exposedByDefault=false"
-      - "--providers.docker.constraints=Label(`io.simcore.zone`, `${TRAEFIK_SIMCORE_ZONE}`)"
+      - "--providers.docker.constraints=Label(`io.simcore.zone`,
+        `${TRAEFIK_SIMCORE_ZONE}`)"
       - "--tracing=true"
       - "--tracing.jaeger=true"
       - "--tracing.jaeger.samplingServerURL=http://jaeger:5778/sampling"
@@ -346,13 +360,16 @@ services:
         - traefik.docker.network=${PUBLIC_NETWORK}
         - traefik.http.services.${SWARM_STACK_NAME}_simcore_http.loadbalancer.server.port=80
         - traefik.http.services.${SWARM_STACK_NAME}_simcore_api.loadbalancer.server.port=10081
-        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.rule=${MACHINE_FQDNS} && PathPrefix(`/`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.rule=${MACHINE_FQDNS}
+          && PathPrefix(`/`)
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.entrypoints=https
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.priority=1
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.tls=true
-        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.middlewares=ops_gzip@docker, ops_sslheader@docker
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.middlewares=ops_gzip@docker,
+          ops_sslheader@docker
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.service=${SWARM_STACK_NAME}_simcore_http
-        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.rule=Host(`${API_DOMAIN}`) && PathPrefix(`/`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.rule=Host(`${API_DOMAIN}`)
+          && PathPrefix(`/`)
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.entrypoints=https
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.priority=1
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls=true
@@ -385,10 +402,12 @@ services:
         # traefik UI
         - traefik.enable=true
         - traefik.http.routers.${SWARM_STACK_NAME}_traefik_api.service=api@internal
-        - traefik.http.routers.${SWARM_STACK_NAME}_traefik_api.rule=PathPrefix(`/dashboard`) || PathPrefix(`/api`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik_api.rule=PathPrefix(`/dashboard`)
+          || PathPrefix(`/api`)
         - traefik.http.routers.${SWARM_STACK_NAME}_traefik_api.entrypoints=http
         - traefik.http.routers.${SWARM_STACK_NAME}_traefik_api.priority=2
-        - traefik.http.routers.${SWARM_STACK_NAME}_traefik_api.middlewares=${SWARM_STACK_NAME}_auth@docker, ${SWARM_STACK_NAME}_gzip@docker
+        - traefik.http.routers.${SWARM_STACK_NAME}_traefik_api.middlewares=${SWARM_STACK_NAME}_auth@docker,
+          ${SWARM_STACK_NAME}_gzip@docker
         - traefik.http.services.${SWARM_STACK_NAME}_traefik_api.loadbalancer.server.port=8080
       update_config:
         parallelism: 2
@@ -420,7 +439,8 @@ services:
         # whoami
         - traefik.enable=true
         - traefik.http.services.${SWARM_STACK_NAME}_whoami.loadbalancer.server.port=80
-        - traefik.http.routers.${SWARM_STACK_NAME}_whoami.rule=hostregexp(`{host:.+}`) && PathPrefix(`/whoami`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_whoami.rule=hostregexp(`{host:.+}`)
+          && PathPrefix(`/whoami`)
         - traefik.http.routers.${SWARM_STACK_NAME}_whoami.entrypoints=http
         - traefik.http.routers.${SWARM_STACK_NAME}_whoami.priority=2
         - traefik.http.routers.${SWARM_STACK_NAME}_whoami.middlewares=${SWARM_STACK_NAME}_auth@docker,${SWARM_STACK_NAME}_gzip@docker
