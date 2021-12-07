@@ -55,3 +55,9 @@ services:
           memory: 128M
         reservations:
           memory: 64M
+  grafana:
+    dns: 8.8.8.8
+    deploy:
+      placement:
+        constraints:
+          - node.labels.traefik==true
