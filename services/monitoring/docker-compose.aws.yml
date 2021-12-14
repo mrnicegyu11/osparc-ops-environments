@@ -5,8 +5,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.traefik==true
-          - node.labels.grafana==true
+          - node.labels.ops==true
       resources:
         limits:
           memory: 24576M
@@ -17,8 +16,7 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.traefik==true
-          - node.labels.grafana==true
+          - node.labels.ops==true
   postgres-exporter:
     dns: 8.8.8.8
     image: bitnami/postgres-exporter:0.8.0
@@ -51,4 +49,4 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.grafana==true
+          - node.labels.ops==true
