@@ -79,10 +79,10 @@ services:
       - public
       - monitored
     environment:
-      - WEBSERVER_STATIC_MODULE_STATIC_WEB_SERVER_URL=http://${PREFIX_STACK_NAME}_static-webserver:8000
       - LOGSPOUT_MULTILINE=true
-      - PYTHONTRACEMALLOC=1
       - DIAGNOSTICS_MAX_AVG_LATENCY=10
+      - WEBSERVER_STATIC_MODULE_STATIC_WEB_SERVER_URL=http://${PREFIX_STACK_NAME}_static-webserver:8000
+      - PYTHONTRACEMALLOC=1
     deploy:
       labels:
         # ssl header necessary so that socket.io upgrades correctly from polling to websocket mode. the middleware must be attached to the right connection.
@@ -205,6 +205,7 @@ services:
   dask-sidecar:
     environment:
       - LOGSPOUT_MULTILINE=true
+      - TARGET_MPI_NODE_CPU_COUNT=${TARGET_MPI_NODE_CPU_COUNT}
     deploy: &standard_deploy
       placement:
         constraints:
@@ -382,9 +383,7 @@ services:
         - traefik.docker.network=${PUBLIC_NETWORK}
         - traefik.http.services.${SWARM_STACK_NAME}_simcore_http.loadbalancer.server.port=80
         - traefik.http.services.${SWARM_STACK_NAME}_simcore_api.loadbalancer.server.port=10081
-        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.rule=${MACHINE_FQDNS} && PathPrefix(`/`)
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.entrypoints=https
-        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.priority=1
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.tls=true
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.middlewares=ops_gzip@docker, ops_sslheader@docker
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.service=${SWARM_STACK_NAME}_simcore_http
@@ -394,10 +393,10 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls=true
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.middlewares=ops_gzip@docker
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.service=${SWARM_STACK_NAME}_simcore_api
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.rule=(${MACHINE_FQDNS}) && PathPrefix(`/`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.priority=1
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.tls.certresolver=myresolver
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls.certresolver=myresolver
-        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.rule=(${MACHINE_FQDNS}) && PathPrefix(`/`) && ClientIP(`195.176.8.200`)
-        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.priority=2
       update_config:
         parallelism: 2
         order: start-first
