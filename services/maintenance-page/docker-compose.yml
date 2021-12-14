@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  nginx:
+    # nginx config
+    image: nginx
+    volumes:
+        - ./page:/usr/share/nginx/html:r
+    networks:
+      - public
+      - monitored
+      
+    deploy:
+      labels:
+          - traefik.enable=true
+          - traefik.docker.network=${PUBLIC_NETWORK}
+          - traefik.http.routers.nginx.priority=1
+          - traefik.http.routers.nginx.rule=(${MACHINE_FQDNS}) && PathPrefix(`/`)
+          - traefik.http.routers.nginx.tls=true
+          - traefik.http.routers.nginx.tls.certresolver=myresolver
+          - traefik.http.services.nginx.loadbalancer.server.port=80
+          - traefik.http.routers.nginx.entrypoints=https
+      placement:
+        constraints:
+        - node.role == manager
+networks:
+  public:
+    external: true
+    name: ${PUBLIC_NETWORK}
+  monitored:
+    name: ${MONITORED_NETWORK}
+    external: true

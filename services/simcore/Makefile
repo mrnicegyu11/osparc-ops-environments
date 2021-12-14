@@ -31,6 +31,21 @@ MACHINE_FQDNS_TRAEFIK=$(shell set -o allexport; \
 	fi; \
 	echo $$MACHINE_FQDNS_TRAEFIK; \
 	set +o allexport; )
+
+
+
+MAINTENANCE_TEAM_IPS_FORMATTED=$(shell set -o allexport; \
+	source $(realpath $(CURDIR)/../../repo.config); \
+	IFS=', ' read -r -a hosts <<< "$${MAINTENANCE_TEAM_IPS}"; \
+	MAINTENANCE_TEAM_IPS_FORMATTED=""; \
+	for element in "$${hosts[@]}"; \
+	do \
+		MAINTENANCE_TEAM_IPS_FORMATTED="$$MAINTENANCE_TEAM_IPS_FORMATTED\`$$element\`,";\
+	done; \
+	echo "\"$${MAINTENANCE_TEAM_IPS_FORMATTED::-1}\""; \
+	set +o allexport; )
+
+
 # Host machine IP
 MACHINE_IP = $(shell source $(realpath $(CURDIR)/../../scripts/portable.sh) && get_this_private_ip)
 # TARGETS --------------------------------------------------
@@ -54,34 +69,42 @@ compose-dalco: .env-simcore ${TEMP_COMPOSE}-dalco ## Create docker-compose.deplo
 .PHONY: compose-aws 
 compose-aws: .env-simcore ${TEMP_COMPOSE}-aws ## Create docker-compose.deploy for AWS
 
+.PHONY: compose-maintenance 
+compose-maintenance: .env-simcore ${TEMP_COMPOSE}-maintenance  ## Create docker-compose.deploy for maintenance of the stack
+
 .PHONY: compose-master 
 compose-master: compose-letsencrypt-dns
 
 
 .PHONY: ${TEMP_COMPOSE}-local
 ${TEMP_COMPOSE}-local: docker-compose.yml docker-compose.deploy.local.yml
-	@$(_yq) merge --append  docker-compose.yml docker-compose.deploy.local.yml > ${TEMP_COMPOSE}
+	@$(_yq) merge --append  docker-compose.yml docker-compose.deploy.maintenance.down.yml docker-compose.deploy.local.yml > ${TEMP_COMPOSE}
 
 .PHONY: ${TEMP_COMPOSE}-letsencrypt-http
 ${TEMP_COMPOSE}-letsencrypt-http: docker-compose.yml docker-compose.deploy.letsencrypt.http.yml
-	@$(_yq) merge --append  docker-compose.yml docker-compose.deploy.letsencrypt.http.yml > ${TEMP_COMPOSE}
+	@$(_yq) merge --append  docker-compose.yml docker-compose.deploy.maintenance.down.yml docker-compose.deploy.letsencrypt.http.yml > ${TEMP_COMPOSE}
 
 .PHONY: ${TEMP_COMPOSE}-letsencrypt-dns
 ${TEMP_COMPOSE}-letsencrypt-dns: docker-compose.yml docker-compose.deploy.letsencrypt.dns.yml
-	@$(_yq) merge --append  docker-compose.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}	
+	@$(_yq) merge --append  docker-compose.yml docker-compose.deploy.maintenance.down.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}	
 
 .PHONY: ${TEMP_COMPOSE}-aws
 ${TEMP_COMPOSE}-aws: 
-	@$(_yq) merge --append docker-compose.yml docker-compose.deploy.aws.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}
+	@$(_yq) merge --append docker-compose.yml docker-compose.deploy.maintenance.down.yml docker-compose.deploy.aws.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}
+
+.PHONY: ${TEMP_COMPOSE}-maintenance
+${TEMP_COMPOSE}-maintenance: 
+	@$(_yq) merge --append docker-compose.deploy.yml docker-compose.deploy.maintenance.up.yml > tmp.yml && cp tmp.yml ${TEMP_COMPOSE} && rm tmp.yml
 
 .PHONY: ${TEMP_COMPOSE}-dalco
 ${TEMP_COMPOSE}-dalco: docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml
-	@$(_yq) merge --append docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}
+	@$(_yq) merge --append docker-compose.yml docker-compose.deploy.maintenance.down.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml > ${TEMP_COMPOSE}
 
 .PHONY: .env-simcore
 .env-simcore: template.env ../../repo.config
 	@set -o allexport; \
 	source $(realpath $(CURDIR)/../../repo.config); \
 	export MACHINE_FQDNS_TRAEFIK='${MACHINE_FQDNS_TRAEFIK}'; \
+	export MAINTENANCE_TEAM_IPS_FORMATTED='${MAINTENANCE_TEAM_IPS_FORMATTED}'; \
 	set +o allexport; \
 	envsubst < $< >.env

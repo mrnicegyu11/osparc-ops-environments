@@ -72,6 +72,29 @@ up-master: ## Deploy opt and simcore stacks on the Master Cluster
 	./scripts/deployments/deploy.sh master
 
 
+.PHONY: up-maintenance
+up-maintenance: ## Put Osparc into maintenance mode - only team member can access it, display a maintenance page
+	@cd services/maintenance-page; \
+	make up;\
+	cd ../simcore;\
+	make compose-maintenance;\
+	git add docker-compose.deploy.yml;\
+	git add .env;\
+	git commit -m "Docker compose deploy updated for maintenance - maintenance going UP";\
+	echo "Please push the docker-compose.deploy file (Already commited)";
+
+
+.PHONY: down-maintenance
+down-maintenance: ## Stop the maintenance mode
+	cd services/maintenance-page; \
+	make down;\
+	cd ../simcore;\
+	make compose-$(CLUSTER_NAME);\
+	git add docker-compose.deploy.yml;\
+	git add .env;\
+	git commit -m "Docker compose deploy updated for maintenance - maintenance mode going DOWN";\
+	echo "Please push the docker-compose.deploy file (Already commited)";
+
 .PHONY: down 
 down: ## Stop all services
 	@for service in $(SERVICES); do \

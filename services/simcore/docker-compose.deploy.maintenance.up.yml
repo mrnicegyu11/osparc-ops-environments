@@ -1,0 +1,7 @@
+version: "3.8"
+services:
+  traefik:
+    deploy:
+      labels:
+      - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.rule=(${MACHINE_FQDNS}) && PathPrefix(`/`) && ClientIP(`172.16.9.146`)
+      - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.priority=2
