@@ -3,3 +3,7 @@ services:
   adminer:
     dns:
       8.8.8.8
+    deploy:
+      placement:
+        constraints:
+          - node.labels.ops==true
