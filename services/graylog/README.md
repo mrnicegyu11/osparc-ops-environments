@@ -35,3 +35,10 @@ This needs to be added to /etc/docker/daemon.json
 Restart the docker daemon after the modifications.
 
 **Note:** In that case logspout is not necessary, BUT the downside is that all commands relying on "docker logs" will then fail.
+
+## Accessing Web-browser API
+
+The link provided in the documentation is wrong. [The working one](https://community.graylog.org/t/graylog-api-browser-points-to-local-ip-instead-of-configured-external-url/17085/3) is : https://monitoring. + ${MACHINE_FQDN} + /grafana/api/api-browser/global/index.html 
+
+
+

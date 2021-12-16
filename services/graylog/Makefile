@@ -64,23 +64,14 @@ ${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.letsencrypt.dns.yml docke
 	set +o allexport; \
 	envsubst < $< > $@
 
-.PHONY: configure-instance
-configure-instance: ../../repo.config
-	# waiting for graylog to run...
-	@set -o allexport; source ../../repo.config; set +o allexport; \
-	while [ ! "$$(curl -s -o /dev/null -I -w "%{http_code}" --max-time 10  -H "Accept: application/json" -H "Content-Type: application/json" -X GET https://"$$MONITORING_DOMAIN"/graylog/api/users)" = 401 ]; do\
-		echo "waiting for graylog to run...";\
-		sleep 5s;\
-	done;\
-	json_data="{\
-		\"title\": \"standard GELF UDP input\",\
-		\"type\": \"org.graylog2.inputs.gelf.udp.GELFUDPInput\",\
-		\"global\": \"true\",\
-		\"configuration\": {\
-			\"bind_address\": \"0.0.0.0\",\
-			\"port\":12201\
-		}\
-	}";\
-	curl -u "$$TRAEFIK_USER":"$$TRAEFIK_PASSWORD" --header "Content-Type: application/json" \
-		--header "X-Requested-By: cli" -X POST \
-		--data "$$json_data" https://"$$MONITORING_DOMAIN"/graylog/api/system/inputs
+
+.PHONY: configure
+configure: ## Test is Graylog is online and configure Graylog inputs
+	@cd scripts;\
+	if [ ! -d "venv" ]; \
+	then\
+		python3 -m venv venv;\
+	fi;\
+	source venv/bin/activate;\
+	pip install -r requirements.txt > /dev/null 2>&1;\
+	python configure.py;
