@@ -173,7 +173,7 @@ if [ $# -le 1 ] || [ $2 != "--simcore_only" ]; then
     echo
     echo -e "\e[1;33mstarting graylog...\e[0m"
     service_dir="${repo_basedir}"/services/graylog
-    call_make "${service_dir}" up-$1 configure-instance
+    call_make "${service_dir}" up-$1 configure
 
 fi
 
