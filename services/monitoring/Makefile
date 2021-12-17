@@ -69,6 +69,37 @@ ${TEMP_COMPOSE}-master: docker-compose.yml docker-compose.master.yml docker-comp
 	@docker-compose -f $< -f docker-compose.letsencrypt.dns.yml -f docker-compose.master.yml --log-level=ERROR config > $@
 
 
+.PHONY: update.grafana.pwd
+update.grafana.pwd: .env ## Change grafana pwd
+	@set -o allexport; \
+	source $(realpath $(CURDIR)/../../repo.config); \
+	set +o allexport; \
+	grafanacontainerid=$$(docker ps | grep grafana | awk '{print $$1;}');\
+	docker exec -ti $$grafanacontainerid grafana-cli admin reset-admin-password $$TRAEFIK_PASSWORD
+
+
+.PHONY: grafana-export
+grafana-export: ## Export grafana dashboards and datasources
+	@cd grafana/scripts;\
+	if [ ! -d "venv" ]; \
+	then\
+		python3 -m venv venv;\
+	fi;\
+	source venv/bin/activate;\
+	pip install -r requirements.txt > /dev/null 2>&1;\
+	python export.py;
+
+.PHONY: grafana-import
+grafana-import: ## Import grafana dashboards and datasources
+	@cd grafana/scripts;\
+	if [ ! -d "venv" ]; \
+	then\
+		python3 -m venv venv;\
+	fi;\
+	source venv/bin/activate;\
+	pip install -r requirements.txt > /dev/null 2>&1;\
+	python import.py;
+
 .PHONY: config.grafana.dashboards
 config.grafana.dashboards: grafana/templates-provisioning/dashboards/simcore/Metrics-dashboard.json.j2 .venv #Configure dashboards for aws or dalco clusters
 	$(call jinja, $<, grafana/provisioning/dashboards/simcore/Metrics-dashboard.json)
