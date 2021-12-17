@@ -46,8 +46,21 @@ services:
       labels:
         - traefik.http.routers.api.tls.certresolver=myresolver
         - traefik.http.middlewares.ops_whitelist_ips.ipwhitelist.sourcerange=0.0.0.0/0
-        - traefik.http.routers.stagingdalco.tls.domains[0].main=service.osparc-staging.speag.com
+         # wildcard certificate staging
+        - traefik.http.routers.stagingdalco.tls.certresolver=myresolver
+        - traefik.http.routers.stagingdalco.entrypoints=https
+        - traefik.http.routers.stagingdalco.tls=true
+        - traefik.http.routers.stagingdalco.tls.domains[0].main=services.osparc-staging.speag.com
         - traefik.http.routers.stagingdalco.tls.domains[0].sans=*.services.osparc-staging.speag.com
+        # wildcard certificate grandmaster
+        - traefik.http.routers.grandmaster.tls.certresolver=myresolver
+        - traefik.http.routers.grandmaster.entrypoints=https
+        - traefik.http.routers.grandmaster.tls=true
+        - traefik.http.routers.grandmaster.tls.domains[0].main=services.osparc-grandmaster.speag.com
+        - traefik.http.routers.grandmaster.tls.domains[0].sans=*.services.osparc-grandmaster.speag.com
+        # wildcard certificate production
+        - traefik.http.routers.api.tls.domains[0].main=services.${MACHINE_FQDN}
+        - traefik.http.routers.api.tls.domains[0].sans=*.services.${MACHINE_FQDN}
   whoami:
     deploy:
       labels:

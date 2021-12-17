@@ -12,7 +12,7 @@ services:
     deploy:
       placement:
         constraints:
-        - node.role==manager
+          - node.labels.pg==true
 networks:
   monitored:
     name: ${MONITORED_NETWORK}

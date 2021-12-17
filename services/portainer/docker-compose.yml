@@ -21,7 +21,7 @@ services:
         constraints: [node.platform.os == linux]
 
   portainer:
-    image: portainer/portainer-ce:2.1.1
+    image: portainer/portainer-ce:2.11.0
     init: true
     command: >
       -H tcp://tasks.agent:9001 --tlsskipverify
