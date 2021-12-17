@@ -37,11 +37,11 @@ up-dalco: .init .env config.grafana.dashboards datasource.dalco.yml config.monit
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-dalco ${STACK_NAME}
 
 .PHONY: up-aws
-up-aws: .init .env  config.grafana.dashboards datasource.aws.yml config.monitoring config.prometheus.aws ${TEMP_COMPOSE}-aws   ## Deploys or updates current stack "$(STACK_NAME)" in AWS
+up-aws: .init .env  datasource.aws.yml config.monitoring config.prometheus.aws ${TEMP_COMPOSE}-aws   ## Deploys or updates current stack "$(STACK_NAME)" in AWS
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 .PHONY: up-master
-up-master: .init .env config.grafana.dashboards datasource.dalco.yml config.monitoring  config.prometheus.minio.master ${TEMP_COMPOSE}-master ## Deploys monitoring stack for Master Cluster
+up-master: .init .env datasource.dalco.yml config.monitoring  config.prometheus.minio.master ${TEMP_COMPOSE}-master ## Deploys monitoring stack for Master Cluster
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-master ${STACK_NAME}
 
 .PHONY: ${TEMP_COMPOSE}
@@ -61,11 +61,11 @@ ${TEMP_COMPOSE}-dalco: docker-compose.yml docker-compose.dalco.yml docker-compos
 	@docker-compose -f $< -f docker-compose.letsencrypt.dns.yml -f docker-compose.dalco.yml --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE}-aws
-${TEMP_COMPOSE}-aws:  docker-compose.yml docker-compose.aws.yml docker-compose.letsencrypt.dns.yml
+${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml docker-compose.letsencrypt.dns.yml
 	@docker-compose -f $< -f docker-compose.aws.yml -f docker-compose.letsencrypt.dns.yml --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE}-master
-${TEMP_COMPOSE}-master: docker-compose.yml docker-compose.master.yml docker-compose.letsencrypt.dns.yml
+${TEMP_COMPOSE}-master: config.prometheus.minio.master docker-compose.yml docker-compose.master.yml docker-compose.letsencrypt.dns.yml
 	@docker-compose -f $< -f docker-compose.letsencrypt.dns.yml -f docker-compose.master.yml --log-level=ERROR config > $@
 
 
@@ -76,10 +76,6 @@ update.grafana.pwd: .env ## Change grafana pwd
 	set +o allexport; \
 	grafanacontainerid=$$(docker ps | grep grafana | awk '{print $$1;}');\
 	docker exec -ti $$grafanacontainerid grafana-cli admin reset-admin-password $$TRAEFIK_PASSWORD
-
-.PHONY: config.grafana.dashboards
-config.grafana.dashboards: grafana/templates-provisioning/dashboards/simcore/Metrics-dashboard.json.j2 .venv #Configure dashboards for aws or dalco clusters
-	$(call jinja, $<, grafana/provisioning/dashboards/simcore/Metrics-dashboard.json)
 
 .PHONY: config.monitoring
 config.monitoring: grafana/template-config.monitoring ../../repo.config
