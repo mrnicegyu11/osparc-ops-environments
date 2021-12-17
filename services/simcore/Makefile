@@ -15,7 +15,7 @@ TEMP_COMPOSE=docker-compose.deploy.yml
 MACHINE_FQDNS_TRAEFIK=$(shell set -o allexport; \
 	source $(realpath $(CURDIR)/../../repo.config); \
 	if [ -z "$${MACHINE_FQDNS}" ]; then \
-		MACHINE_FQDNS_TRAEFIK="Host(\`$$MACHINE_FQDN\`)"; \
+		MACHINE_FQDNS_TRAEFIK="Host(\`$$MACHINE_FQDN\`) || HostRegexp(\`services.$$MACHINE_FQDN\`,\`{subhost:[a-zA-Z0-9-]+}.services.$$MACHINE_FQDN\`)"; \
 	else \
 		IFS=', ' read -r -a hosts <<< "$${MACHINE_FQDNS}"; \
 		MACHINE_FQDNS_TRAEFIK="Host(\`$$MACHINE_FQDN\`)"; \
@@ -23,7 +23,9 @@ MACHINE_FQDNS_TRAEFIK=$(shell set -o allexport; \
 		for element in "$${hosts[@]}"; \
 		do \
 			if (( count > 0 )); then \
-				MACHINE_FQDNS_TRAEFIK="$$MACHINE_FQDNS_TRAEFIK || Host(\`$$element\`)"; \
+				MACHINE_FQDNS_TRAEFIK="$$MACHINE_FQDNS_TRAEFIK || Host(\`$$element\`) || HostRegexp(\`services.$$element\`,\`{subhost:[a-zA-Z0-9-]+}.services.$$element\`)";\
+			else\
+				MACHINE_FQDNS_TRAEFIK="$$MACHINE_FQDNS_TRAEFIK || HostRegexp(\`services.$$element\`,\`{subhost:[a-zA-Z0-9-]+}.services.$$element\`)";\
 			fi; \
 		count=$$((count+1)); \
 		done; \
