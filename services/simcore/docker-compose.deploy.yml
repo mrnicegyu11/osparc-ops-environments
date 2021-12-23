@@ -388,13 +388,13 @@ services:
         - traefik.http.services.${SWARM_STACK_NAME}_simcore_api.loadbalancer.server.port=10081
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.entrypoints=https
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.tls=true
-        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.middlewares=ops_gzip@docker, ops_sslheader@docker
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.middlewares=ops_gzip@docker, ops_sslheader@docker, ops_ratelimit@docker
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.service=${SWARM_STACK_NAME}_simcore_http
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.rule=Host(`${API_DOMAIN}`) && PathPrefix(`/`)
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.entrypoints=https
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.priority=1
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls=true
-        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.middlewares=ops_gzip@docker
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.middlewares=ops_gzip@docker, ops_ratelimit@docker
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.service=${SWARM_STACK_NAME}_simcore_api
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.rule=(${MACHINE_FQDNS}) && PathPrefix(`/`)
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.priority=1
