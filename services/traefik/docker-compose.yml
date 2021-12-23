@@ -82,6 +82,9 @@ services:
         # wildcard certificate
         - traefik.http.routers.api.tls.domains[0].main=service.${MACHINE_FQDN}
         - traefik.http.routers.api.tls.domains[0].sans=*.services.${MACHINE_FQDN}
+        # ops generic rate limiter
+        - traefik.http.middlewares.ops_ratelimit.ratelimit.average=100
+        - traefik.http.middlewares.ops_ratelimit.ratelimit.burst=50
 
     networks:
       - public
