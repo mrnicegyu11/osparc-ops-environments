@@ -46,6 +46,7 @@ services:
           - node.role == manager
       labels:
         - traefik.http.routers.api.tls.certresolver=myresolver
+        - traefik.http.routers.wwwsecure-catchall.tls.certresolver=myresolver
         - traefik.http.middlewares.ops_whitelist_ips.ipwhitelist.sourcerange=195.176.8.0/24, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, ${MANAGER_PUBLIC_ENDPOINT_IP} 
 
   whoami:

@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   traefik:
-    image: traefik:v2.5.4
+    image: traefik:v2.5.6
     init: true
     command:
       - "--api=true"
@@ -53,6 +53,21 @@ services:
         - traefik.http.routers.http_to_https.rule=hostregexp(`{host:.+}`)
         - traefik.http.routers.http_to_https.entrypoints=http
         - traefik.http.routers.http_to_https.middlewares=http_to_https
+        ###########################
+        # via https://community.traefik.io/t/v2-2-8-global-redirect-www-to-non-www-with-http-to-https/7428
+        # see also: https://community.traefik.io/t/get-a-valid-ssl-certificate-for-www-domains-via-traefik-and-lets-encrypt/2023
+        # Global redirection: https (www.) to https
+        - traefik.http.routers.wwwsecure-catchall.rule=HostRegexp(`{host:(www\.).+}`)
+        - traefik.http.routers.wwwsecure-catchall.entrypoints=https
+        - traefik.http.routers.wwwsecure-catchall.tls=true
+        - traefik.http.routers.wwwsecure-catchall.middlewares=wwwtohttps
+        # middleware: http(s)://(www.) to  https://
+        - traefik.http.middlewares.wwwtohttps.redirectregex.regex=^https?://(?:www\.)?(.+)
+        - traefik.http.middlewares.wwwtohttps.redirectregex.replacement=https://$${1}
+        - traefik.http.middlewares.wwwtohttps.redirectregex.permanent=true
+        # Explicit www domain certificate
+        - traefik.http.routers.wwwsecure-catchall.tls.domains[0].main=www.${MACHINE_FQDN}
+        ###########################
         # basic authentication
         # Note: all dollar signs in the hash need to be doubled for escaping.
         # To create user:password pair, it's possible to use this command:
