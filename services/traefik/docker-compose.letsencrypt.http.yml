@@ -16,7 +16,7 @@ services:
       - "--providers.docker.endpoint=unix:///var/run/docker.sock"
       - "--providers.docker.swarmMode=true"
       - "--providers.docker.exposedByDefault=false"
-      - "--providers.docker.constraints=!LabelRegex(`io.simcore.zone`, `*`)"
+      - "--providers.docker.constraints=!LabelRegex(`io.simcore.zone`, `.+`)"
       - "--tracing=true"
       - "--tracing.jaeger=true"
       - "--tracing.jaeger.samplingServerURL=http://jaeger:5778/sampling"
