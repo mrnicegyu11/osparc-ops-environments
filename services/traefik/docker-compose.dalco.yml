@@ -21,7 +21,7 @@ services:
       - '--tracing.jaeger=true'
       - '--tracing.jaeger.samplingServerURL=http://jaeger:5778/sampling'
       - '--tracing.jaeger.localAgentHostPort=jaeger:6831'   
-      - "--providers.docker.constraints=!LabelRegex(`io.simcore.zone`, `*`)"
+      - "--providers.docker.constraints=!LabelRegex(`io.simcore.zone`, `.+`)"
       - "--entryPoints.https.forwardedHeaders.insecure"
       - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=rfc2136"
       - "--certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=120"
