@@ -27,12 +27,12 @@ up-letsencrypt-dns: .init .env .secrets ${TEMP_COMPOSE}-letsencrypt-dns ## Deplo
 .PHONY: up-dalco ## Deploys portainer stack for Dalco Cluster
 up-dalco: up-letsencrypt-dns
 
-.PHONY: up-aws ## Deploys portainer stack for AWS
+.PHONY: up-aws
 up-aws: .init .env .secrets ${TEMP_COMPOSE}-aws  ## Deploys portainer stack in aws
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 .PHONY: up-master
-up-master: up-dalco
+up-master: up-dalco ## Deploys portainer on master
 
 .PHONY: configure-registry
 configure-registry:  ## Add if necessary dockerhub registry configuration to portainer.
@@ -52,7 +52,7 @@ configure-registry:  ## Add if necessary dockerhub registry configuration to por
 # Helpers -------------------------------------------------
 
 .PHONY: ${TEMP_COMPOSE}
-${TEMP_COMPOSE}: docker-compose.yml
+${TEMP_COMPOSE}: docker-compose.yml ## bouh
 	@docker-compose -f $< --log-level=ERROR config > $@
 
 .PHONY: ${TEMP_COMPOSE}-letsencrypt-http
@@ -68,7 +68,7 @@ ${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.aws.yml docker-compose.le
 	@docker-compose -f $< -f docker-compose.aws.yml -f docker-compose.letsencrypt.dns.yml --log-level=ERROR config > $@
 
 .PHONY: .secrets
-.secrets: .env
+secrets: .env ## Construct secrets for portainer pwd, to change pwd it need to be done manually :https://documentation.portainer.io/v2.0/users/reset-admin/
 	@$(if $(DOCKER_PORTAINER_ADMIN_PASSWORD_SECRET), \
 		docker secret rm portainer_admin_password;  set -o allexport; source .env; set +o allexport; echo -n "$${PORTAINER_ADMIN_PWD}" | docker secret create portainer_admin_password -  2>/dev/null;  , \
 		set -o allexport; source .env; set +o allexport; echo -n "$${PORTAINER_ADMIN_PWD}" | docker secret create portainer_admin_password -  2>/dev/null;\
