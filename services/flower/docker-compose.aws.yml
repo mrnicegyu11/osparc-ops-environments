@@ -1,5 +1,0 @@
-version: '3.8'
-services:
-  flower:
-    dns: 
-      8.8.8.8

@@ -160,15 +160,6 @@ if [ $# -le 1 ] || [ $2 != "--simcore_only" ]; then
     make up-$1;
     popd
 
-    # -------------------------------- FLOWER -------------------------------
-
-    echo
-    echo -e "\e[1;33mstarting flower...\e[0m"
-    # Pushd because a call with call_make trigger a strange behavior
-    pushd "${repo_basedir}"/services/flower;
-    make up-$1;
-    popd
-
     # -------------------------------- GRAYLOG -------------------------------
     echo
     echo -e "\e[1;33mstarting graylog...\e[0m"
