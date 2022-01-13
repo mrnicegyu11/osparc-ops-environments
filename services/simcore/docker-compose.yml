@@ -229,7 +229,7 @@ services:
         - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.tls=true
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_dask_scheduler_replace_regex.replacepathregex.regex=^/${PREFIX_STACK_NAME}_dask/(.*)$$
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_dask_scheduler_replace_regex.replacepathregex.replacement=/$${1}
-        - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.middlewares=${SWARM_STACK_NAME}_auth@docker,
+        - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.middlewares=ops_auth@docker,
           ${PREFIX_STACK_NAME}_dask_scheduler_replace_regex@docker,
           ops_gzip@docker
   datcore-adapter:
