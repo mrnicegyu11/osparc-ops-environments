@@ -229,9 +229,8 @@ services:
         - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.tls=true
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_dask_scheduler_replace_regex.replacepathregex.regex=^/${PREFIX_STACK_NAME}_dask/(.*)$$
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_dask_scheduler_replace_regex.replacepathregex.replacement=/$${1}
-        - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.middlewares=ops_auth@docker,
-          ${PREFIX_STACK_NAME}_dask_scheduler_replace_regex@docker,
-          ops_gzip@docker
+        - traefik.http.routers.${PREFIX_STACK_NAME}_dask_scheduler.middlewares=${PREFIX_STACK_NAME}_dask_scheduler_replace_regex@docker,
+          ops_gzip@docker, ops_auth@docker
   datcore-adapter:
     environment:
       - LOGSPOUT_MULTILINE=true
@@ -356,6 +355,7 @@ services:
         # external traefik
         - traefik.enable=true
         - traefik.docker.network=${PUBLIC_NETWORK}
+        # oSparc webAPI
         - traefik.http.services.${SWARM_STACK_NAME}_simcore_http.loadbalancer.server.port=80
         - traefik.http.services.${SWARM_STACK_NAME}_simcore_api.loadbalancer.server.port=10081
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.entrypoints=https
@@ -363,6 +363,7 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.middlewares=ops_gzip@docker,
           ops_sslheader@docker, ops_ratelimit@docker
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.service=${SWARM_STACK_NAME}_simcore_http
+        # oSparc publicAPI
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.rule=Host(`${API_DOMAIN}`)
           && PathPrefix(`/`)
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.entrypoints=https
@@ -371,6 +372,22 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.middlewares=ops_gzip@docker,
           ops_ratelimit@docker
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.service=${SWARM_STACK_NAME}_simcore_api
+        # oSparc non rate limited webAPI for testing
+        - traefik.http.services.${SWARM_STACK_NAME}_testing_simcore_http.loadbalancer.server.port=80
+        - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_http.service=${SWARM_STACK_NAME}_testing_simcore_http
+        - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_http.rule=Host(`${TESTING_WEB_DOMAIN}`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_http.entrypoints=https
+        - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_http.tls=true
+        - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_http.middlewares=ops_gzip@docker,
+          ops_sslheader@docker, ops_auth@docker, ops_whitelist_ips@docker
+        # oSparc non rate limited publicAPI for testing
+        - traefik.http.services.${SWARM_STACK_NAME}_testing_simcore_api.loadbalancer.server.port=10081
+        - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_api.service=${SWARM_STACK_NAME}_testing_simcore_api
+        - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_api.rule=Host(`${TESTING_API_DOMAIN}`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_api.entrypoints=https
+        - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_api.tls=true
+        - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_api.middlewares=ops_gzip@docker,
+          ops_sslheader@docker, ops_auth@docker, ops_whitelist_ips@docker
       update_config:
         parallelism: 2
         order: start-first
