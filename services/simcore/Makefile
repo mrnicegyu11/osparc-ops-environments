@@ -75,7 +75,7 @@ compose-aws: .env-simcore ${TEMP_COMPOSE}-aws ## Create docker-compose.deploy fo
 compose-maintenance: .env-simcore ${TEMP_COMPOSE}-maintenance  ## Create docker-compose.deploy for maintenance of the stack
 
 .PHONY: compose-master 
-compose-master: compose-letsencrypt-dns
+compose-master: compose-letsencrypt-dns ## Create docker-compose.deploy for master cluster
 
 
 .PHONY: ${TEMP_COMPOSE}-local
