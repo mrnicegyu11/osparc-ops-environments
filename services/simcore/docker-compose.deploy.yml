@@ -61,6 +61,14 @@ services:
     environment:
       - LOGSPOUT_MULTILINE=true
     deploy:
+      labels:
+        - traefik.http.middlewares.${SWARM_STACK_NAME}_static_webserver_prefix.addprefix.prefix=/osparc
+        - traefik.http.routers.${SWARM_STACK_NAME}_static_webserver_freshping.rule=HeadersRegexp(`User-Agent`, `.*(FreshpingBot).*`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_static_webserver_freshping.service=${SWARM_STACK_NAME}_static_webserver_freshping
+        - traefik.http.services.${SWARM_STACK_NAME}_static_webserver_freshping.loadbalancer.server.port=8000
+        - traefik.http.routers.${SWARM_STACK_NAME}_static_webserver_freshping.entrypoints=http
+        - traefik.http.routers.${SWARM_STACK_NAME}_static_webserver_freshping.priority=10 # High number means high priority
+        - traefik.http.routers.${SWARM_STACK_NAME}_static_webserver_freshping.middlewares=${SWARM_STACK_NAME}_gzip@docker,${SWARM_STACK_NAME}_static_webserver_retry,${SWARM_STACK_NAME}_static_webserver_prefix
       update_config:
         parallelism: 2
         order: start-first
