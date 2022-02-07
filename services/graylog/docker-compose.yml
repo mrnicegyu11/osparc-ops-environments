@@ -117,7 +117,7 @@ services:
       - LOGSPOUT=ignore
       - ALLOW_TTY=true
       - MULTILINE_MATCH=first
-      - MULTILINE_PATTERN=^(ERROR|WARNING|INFO|DEBUG|CRITICAL)[:]
+      - MULTILINE_PATTERN=^(.*\[.*)?(ERROR|WARNING|INFO|DEBUG|CRITICAL)(.*\[0m)?[:]
       - MULTILINE_ENABLE_DEFAULT=false
     deploy:
       mode: global
