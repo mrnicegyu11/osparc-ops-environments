@@ -417,6 +417,8 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.tls.certresolver=myresolver
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls.certresolver=myresolver
         - traefik.http.routers.${PREFIX_STACK_NAME}_testing_simcore_http.tls.certresolver=myresolver
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.rule=(${MACHINE_FQDNS}) && PathPrefix(`/`) && ClientIP(`172.16.8.39`, `172.16.8.64`, `10.43.103.179`, `172.16.8.68`, `172.16.8.72`, `10.43.103.168`, `172.16.8.26`, `172.16.9.150`, `172.16.9.89`, `10.43.200.15`, `172.16.9.146`)
+        - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.priority=2
       update_config:
         parallelism: 2
         order: start-first
