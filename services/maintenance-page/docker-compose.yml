@@ -22,6 +22,7 @@ services:
       placement:
         constraints:
         - node.role == manager
+        - node.labels.traefik==true
 networks:
   public:
     external: true
