@@ -56,7 +56,7 @@ services:
         ####### SECURITY HEADERS --> See https://infosec.mozilla.org/guidelines/web_security
         # Content Security Policy
         - >
-                traefik.http.middlewares.ops_sslheader.headers.contentSecurityPolicy=frame-ancestors https://*.osparc.io:* 'self'; default-src 'self'; script-src https: 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src *;
+                traefik.http.middlewares.ops_sslheader.headers.contentSecurityPolicy=frame-ancestors https://*.speag.com:* 'self'; default-src 'self'; script-src https: 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src *;
         # Strict Transport Security
         - traefik.http.middlewares.ops_sslheader.headers.stsSeconds=15768001
         #- traefik.http.middlewares.ops_sslheader.headers.stsPreload=true
