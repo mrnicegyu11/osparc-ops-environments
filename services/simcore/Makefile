@@ -40,12 +40,12 @@ MACHINE_FQDNS_TRAEFIK=$(shell set -o allexport; \
 MAINTENANCE_TEAM_IPS_FORMATTED=$(shell set -o allexport; \
 	source $(realpath $(CURDIR)/../../repo.config); \
 	IFS=', ' read -r -a hosts <<< "$${MAINTENANCE_TEAM_IPS}"; \
-	MAINTENANCE_TEAM_IPS_FORMATTED=""; \
+	MAINTENANCE_TEAM_IPS_FORMATTED=; \
 	for element in "$${hosts[@]}"; \
 	do \
-		MAINTENANCE_TEAM_IPS_FORMATTED="$$MAINTENANCE_TEAM_IPS_FORMATTED\`$$element\`,";\
+		MAINTENANCE_TEAM_IPS_FORMATTED=$$MAINTENANCE_TEAM_IPS_FORMATTED\`$$element\`,;\
 	done; \
-	echo "\"$${MAINTENANCE_TEAM_IPS_FORMATTED::-1}\""; \
+	echo $${MAINTENANCE_TEAM_IPS_FORMATTED::-1}; \
 	set +o allexport; )
 
 
@@ -97,7 +97,13 @@ ${TEMP_COMPOSE}-aws:
 
 .PHONY: ${TEMP_COMPOSE}-maintenance
 ${TEMP_COMPOSE}-maintenance: 
-	@$(_yq) merge --append docker-compose.deploy.yml docker-compose.deploy.maintenance.up.yml > tmp.yml && cp tmp.yml ${TEMP_COMPOSE} && rm tmp.yml
+	@set -o allexport; \
+	source $(realpath $(CURDIR)/../../repo.config); \
+	export MACHINE_FQDNS_TRAEFIK='${MACHINE_FQDNS_TRAEFIK}'; \
+	export MAINTENANCE_TEAM_IPS_FORMATTED='${MAINTENANCE_TEAM_IPS_FORMATTED}'; \
+	set +o allexport; \
+	envsubst < docker-compose.deploy.maintenance.up.yml > docker-compose.deploy.maintenance.up.yml.temp; \
+	$(_yq) merge --append docker-compose.deploy.yml docker-compose.deploy.maintenance.up.yml.temp > tmp.yml && cp tmp.yml ${TEMP_COMPOSE} && rm tmp.yml && rm docker-compose.deploy.maintenance.up.yml.temp
 
 .PHONY: ${TEMP_COMPOSE}-dalco
 ${TEMP_COMPOSE}-dalco: docker-compose.yml docker-compose.deploy.dalco.yml docker-compose.deploy.letsencrypt.dns.yml
