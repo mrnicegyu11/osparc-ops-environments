@@ -51,6 +51,8 @@ services:
       # - graylog_config:/usr/share/graylog/data/config
       # data persistency
       - graylog_journal:/usr/share/graylog/data/journal
+    env_file:
+      - .env
     environment:
       # CHANGE ME (must be at least 16 characters)!
       - GRAYLOG_PASSWORD_SECRET=${GRAYLOG_PASSWORD_SECRET:-somepasswordpepper}
