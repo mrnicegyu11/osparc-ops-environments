@@ -28,7 +28,10 @@ up-master: up ## Deploys maintenance page stack for Master Cluster
 
 .PHONY: ${TEMP_COMPOSE}
 ${TEMP_COMPOSE}: docker-compose.yml
-	@docker-compose -f $< --log-level=ERROR config > $@
+	@set -o allexport; \
+	export MACHINE_FQDNS='${MACHINE_FQDNS_TRAEFIK}'; \
+	set +o allexport; \
+	docker-compose -f $< --log-level=ERROR config > $@
 
 
 # Parse the different FQDNS in repo.config and convert them into traefik typo and add the service rule

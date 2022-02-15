@@ -3,5 +3,5 @@ services:
   traefik:
     deploy:
       labels:
-      - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.rule=(${MACHINE_FQDNS}) && PathPrefix(`/`) && ClientIP(`195.176.8.200`)
-      - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.priority=2
+      - traefik.http.routers.${SIMCORE_STACK_NAME}_simcore_http.rule=(${MACHINE_FQDNS_TRAEFIK}) && PathPrefix(`/`) && ClientIP(${MAINTENANCE_TEAM_IPS_FORMATTED})
+      - traefik.http.routers.${SIMCORE_STACK_NAME}_simcore_http.priority=2
