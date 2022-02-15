@@ -59,3 +59,12 @@ if __name__ == '__main__':
         print(r)
     else:
         print(str(r.json()["total"]) + " input(s) have been found.")
+    
+    # Configure sending email notifications
+    url = "https://monitoring." + env.str('MACHINE_FQDN') + "/graylog/api/events/notifications"
+    raw_data = '{"title":"Graylog ' + env.str('MACHINE_FQDN') + ' mail notification","description":"","config":{"sender":"","subject":"Graylog event notification: ${event_definition_title}","user_recipients":[],"email_recipients":["' +  env.str('OSPARC_DEVOPS_MAIL_ADRESS') + '"],"type":"email-notification-v1"}}'
+    r = session.post(url, headers=hed,data=raw_data)
+    if r.status_code == 200:
+        print("Mail Notification added with success !")
+    else:
+        print("Error while adding the Mail Notification. Status code of the request : " + str(r.status_code) + " " + r.text)
