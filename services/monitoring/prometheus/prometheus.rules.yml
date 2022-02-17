@@ -24,7 +24,8 @@ groups:
       - record: node_cpu_seconds_total:nonidle_sum_over_nodes
         expr: sum(node_cpu_seconds_total{mode!="idle"})
 
-  - name: node_cpu_seconds_total-nonidle-increase-over-nodes
+  - name: node_cpu_seconds_total-nonidle-increase-over-nodes-12weeks
+    interval: 1h
     rules:
-      - record: node_cpu_seconds_total:nonidle_increase_over_nodes
+      - record: node_cpu_seconds_total:nonidle_increase_over_nodes-12weeks
         expr: sum(increase(node_cpu_seconds_total{mode!="idle"}[12w]))
