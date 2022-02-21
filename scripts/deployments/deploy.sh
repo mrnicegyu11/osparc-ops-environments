@@ -146,6 +146,14 @@ if [ $# -le 1 ] || [ $2 != "--simcore_only" ]; then
         call_make "${service_dir}" up-$1
     fi
 
+    if [ $1 = "aws" ]; then
+        # -------------------------------- SFTP server -------------------------------
+        echo
+        echo -e "\e[1;33mstarting SFTP Server...\e[0m"
+        service_dir="${repo_basedir}"/services/sftp-server
+        call_make "${service_dir}" up-$1
+    fi
+
     # -------------------------------- Mail -------------------------------
     echo
     echo -e "\e[1;33mstarting mail server...\e[0m"

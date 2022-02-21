@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  sftp:
+    image: atmoz/sftp:latest
+    ports:
+      - "2222:22"
+    networks:
+      - monitored
+      - public
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=${PUBLIC_NETWORK}
+        - traefik.http.services.sftp.loadbalancer.server.port=22
+        - traefik.http.routers.sftp.rule=Host(`${MONITORING_DOMAIN}`) && PathPrefix(`/sftp`)
+        - traefik.http.routers.sftp.entrypoints=https
+        - traefik.http.routers.sftp.tls=true
+    command: admin:545461454:1002
+    volumes:
+      - ./../monitoring/prometheus/:/home/admin/prometheus
+
+networks:
+  public:
+    external: true
+    name: ${PUBLIC_NETWORK}
+  monitored:
+    name: ${MONITORED_NETWORK}
+
+    external: true

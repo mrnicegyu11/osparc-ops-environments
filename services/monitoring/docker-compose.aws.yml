@@ -2,6 +2,9 @@ version: "3.7"
 services:
   prometheus:
     dns: 8.8.8.8
+    volumes:
+      - /prometheus/:/etc/prometheus/
+      - prometheus_data:/prometheus
     deploy:
       placement:
         constraints:
