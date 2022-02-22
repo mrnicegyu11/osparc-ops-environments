@@ -4,17 +4,19 @@ import json
 import os
 import requests
 import shutil
-
+import typer
 
 env = Env()
 env.read_env("./../../../../repo.config", recurse=False)
 
 
-if __name__ == '__main__':
 
-
+def main(foldername: str = ""):
     # We delete the previous files
-    directory = "./../" + env.str('MACHINE_FQDN')
+    if foldername == "":
+        directory = "./../" + env.str('MACHINE_FQDN')
+    else:
+        directory = foldername
     if os.path.exists(directory):
         shutil.rmtree(directory)
     os.mkdir(directory)
@@ -36,7 +38,7 @@ if __name__ == '__main__':
             if jsonData["type"] == "prometheus":
                 jsonData["basicAuthUser"] = ""
                 jsonData["basicAuthPassword"] = ""
-            json.dump(jsonData, outfile) 
+            json.dump(jsonData, outfile, sort_keys=True, indent=2) 
             print("Export datasource " + jsonData["name"])
 
 
@@ -52,4 +54,13 @@ if __name__ == '__main__':
 
                 with open(directory + "/dashboards/" + rDashboard.json()["meta"]["folderTitle"] + "/" + str(dashboard["id"]) + ".json", 'w') as outfile:
                     print("Export Dashboard " + rDashboard.json()["dashboard"]["title"])
-                    json.dump(rDashboard.json(), outfile)
+                    json.dump(rDashboard.json(), outfile, sort_keys=True, indent=2)
+
+if __name__ == "__main__":
+    """
+    Imports grafana dashboard from dumped json files via the Grafana API
+
+    If --foldername is used, the data is taken from this location.
+    Otherwise, the default ops-repo folder is assumed.
+    """
+    typer.run(main)
