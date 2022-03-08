@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   mail:
-    image: tvial/docker-mailserver:release-v7.2.0
+    image: mailserver/docker-mailserver:10.5.0
     ports:
     - target: 25 
       published: 25
@@ -14,6 +14,7 @@ services:
     - mailstate:/var/mail-state
     - maillogs:/var/log/mail
     - ./config/:/tmp/docker-mailserver/
+    - traefik_letsencrypt_certs:/etc/letsencrypt/:rw
     env_file:
     - .env
     cap_add:
@@ -34,6 +35,7 @@ services:
         - traefik.http.routers.mail.rule=Host(`smtp.${MACHINE_FQDN}`)
         - traefik.http.routers.mail.entrypoints=smtp
         - traefik.http.routers.mail.tls=true
+        - traefik.http.routers.mail.tls.certresolver=myresolver
         #- traefik.http.routers.jaeger.middlewares=whitelist_ips@docker, ops_auth@docker, ops_gzip@docker
 volumes:
   maildata:
@@ -42,6 +44,8 @@ volumes:
     driver: local
   maillogs:
     driver: local
+  traefik_letsencrypt_certs:
+     external: true
 networks:
   public:
     external: true
