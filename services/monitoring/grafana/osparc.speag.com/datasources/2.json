@@ -1,1 +1,31 @@
-{"id": 2, "uid": "lemE952nk", "orgId": 1, "name": "Postgres", "type": "postgres", "typeLogoUrl": "", "access": "proxy", "url": "production_postgres", "password": "", "user": "grafanareader", "database": "simcoredb", "basicAuth": false, "basicAuthUser": "", "basicAuthPassword": "", "withCredentials": false, "isDefault": false, "jsonData": {"connMaxLifetime": 14400, "maxIdleConns": 2, "maxOpenConns": 0, "postgresVersion": 1000, "sslmode": "disable", "timescaledb": false}, "secureJsonFields": {"password": true}, "version": 1, "readOnly": false}
+{
+  "access": "proxy",
+  "basicAuth": false,
+  "basicAuthPassword": "",
+  "basicAuthUser": "",
+  "database": "simcoredb",
+  "id": 2,
+  "isDefault": false,
+  "jsonData": {
+    "connMaxLifetime": 14400,
+    "maxIdleConns": 2,
+    "maxOpenConns": 0,
+    "postgresVersion": 1000,
+    "sslmode": "disable",
+    "timescaledb": false
+  },
+  "name": "StagingPostgres",
+  "orgId": 1,
+  "password": "",
+  "readOnly": false,
+  "secureJsonFields": {
+    "password": true
+  },
+  "type": "postgres",
+  "typeLogoUrl": "",
+  "uid": "CRZPr527k",
+  "url": "staging_postgres",
+  "user": "grafanareader",
+  "version": 1,
+  "withCredentials": false
+}
