@@ -10,3 +10,4 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_http.tls.certresolver=myresolver
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls.certresolver=myresolver
         - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_http.tls.certresolver=myresolver
+        - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_api.tls.certresolver=myresolver
