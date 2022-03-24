@@ -138,6 +138,15 @@ if [ $# -le 1 ] || [ $2 != "--simcore_only" ]; then
 
     fi
 
+    # -------------------------------- Filestash: S3 Tools --------------------------------
+    if [ $1 = "dalco" -o $1 = "master" ]; then
+        echo
+        echo -e "\e[1;33mstarting filestash...\e[0m"
+        service_dir="${repo_basedir}"/services/filestash
+        call_make "${repo_basedir}"/services/filestash up-$1
+
+    fi
+
     if [ $1 = "dalco" ]; then
         # -------------------------------- BACKUP PG -------------------------------
         echo
