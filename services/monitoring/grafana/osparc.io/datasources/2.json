@@ -1,1 +1,31 @@
-{"id": 2, "uid": "DqC_1GT7z", "orgId": 1, "name": "Postgres", "type": "postgres", "typeLogoUrl": "", "access": "proxy", "url": "osparc-production.cvtbqufgg2fx.us-east-1.rds.amazonaws.com", "password": "", "user": "grafanareader", "database": "simcoredb", "basicAuth": false, "basicAuthUser": "", "basicAuthPassword": "", "withCredentials": false, "isDefault": false, "jsonData": {"connMaxLifetime": 14400, "maxIdleConns": 2, "maxOpenConns": 0, "postgresVersion": 1000, "sslmode": "disable", "timescaledb": false}, "secureJsonFields": {"password": true}, "version": 1, "readOnly": false}
+{
+  "access": "proxy",
+  "basicAuth": false,
+  "basicAuthPassword": "",
+  "basicAuthUser": "",
+  "database": "simcoredb",
+  "id": 2,
+  "isDefault": false,
+  "jsonData": {
+    "connMaxLifetime": 14400,
+    "maxIdleConns": 2,
+    "maxOpenConns": 0,
+    "postgresVersion": 1000,
+    "sslmode": "disable",
+    "timescaledb": false
+  },
+  "name": "Postgres",
+  "orgId": 1,
+  "password": "",
+  "readOnly": false,
+  "secureJsonFields": {
+    "password": true
+  },
+  "type": "postgres",
+  "typeLogoUrl": "",
+  "uid": "DqC_1GT7z",
+  "url": "osparc-production.cvtbqufgg2fx.us-east-1.rds.amazonaws.com",
+  "user": "grafanareader",
+  "version": 1,
+  "withCredentials": false
+}

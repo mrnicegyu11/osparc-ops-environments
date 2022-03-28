@@ -1,1 +1,390 @@
-{"meta": {"type": "db", "canSave": true, "canEdit": true, "canAdmin": true, "canStar": true, "slug": "alerts-dashboard", "url": "/grafana/d/MAd4JJfGz/alerts-dashboard", "expires": "0001-01-01T00:00:00Z", "created": "2021-12-16T14:15:46Z", "updated": "2021-12-16T14:15:46Z", "updatedBy": "admin", "createdBy": "admin", "version": 1, "hasAcl": false, "isFolder": false, "folderId": 3, "folderUid": "QGql1MT7k", "folderTitle": "ops", "folderUrl": "/grafana/dashboards/f/QGql1MT7k/ops", "provisioned": false, "provisionedExternalId": ""}, "dashboard": {"annotations": {"list": [{"builtIn": 1, "datasource": "-- Grafana --", "enable": true, "hide": true, "iconColor": "rgba(0, 211, 255, 1)", "name": "Annotations & Alerts", "type": "dashboard"}]}, "editable": true, "gnetId": null, "graphTooltip": 0, "id": 17, "links": [], "panels": [{"alert": {"alertRuleTags": {}, "conditions": [{"evaluator": {"params": [0.8], "type": "gt"}, "operator": {"type": "and"}, "query": {"params": ["B", "5m", "now"]}, "reducer": {"params": [], "type": "last"}, "type": "query"}], "executionErrorState": "keep_state", "for": "0m", "frequency": "1m", "handler": 1, "name": "Used system disk space  [current] alert", "noDataState": "no_data", "notifications": [{"uid": "Iok011BMk"}]}, "aliasColors": {}, "bars": false, "dashLength": 10, "dashes": false, "datasource": null, "fieldConfig": {"defaults": {"custom": {}, "mappings": [], "max": 1, "min": 0, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 0.85}, {"color": "red", "value": 0.95}]}, "unit": "percentunit"}, "overrides": []}, "fill": 1, "fillGradient": 0, "gridPos": {"h": 8, "w": 6, "x": 0, "y": 0}, "hiddenSeries": false, "id": 2, "legend": {"avg": false, "current": false, "max": false, "min": false, "show": true, "total": false, "values": false}, "lines": true, "linewidth": 1, "nullPointMode": "null", "options": {"alertThreshold": true}, "percentage": false, "pluginVersion": "7.3.3", "pointradius": 2, "points": false, "renderer": "flot", "seriesOverrides": [], "spaceLength": 10, "stack": false, "steppedLine": false, "targets": [{"expr": "sort_desc(1 - sum(node_filesystem_avail_bytes{mountpoint=~\"/\", device!~'rootfs'}/node_filesystem_size_bytes{mountpoint=~\"/\", device!~'rootfs'} * on(instance) group_left(node_name) node_meta{}) by (node_name))", "instant": false, "interval": "", "legendFormat": "{{node_name}}", "refId": "B"}], "thresholds": [{"colorMode": "critical", "fill": true, "line": true, "op": "gt", "value": 0.8}], "timeFrom": null, "timeRegions": [], "timeShift": null, "title": "Used system disk space  [current]", "tooltip": {"shared": true, "sort": 0, "value_type": "individual"}, "type": "graph", "xaxis": {"buckets": null, "mode": "time", "name": null, "show": true, "values": []}, "yaxes": [{"format": "percentunit", "label": null, "logBase": 1, "max": null, "min": null, "show": true}, {"format": "short", "label": null, "logBase": 1, "max": null, "min": null, "show": true}], "yaxis": {"align": false, "alignLevel": null}}, {"alert": {"alertRuleTags": {}, "conditions": [{"evaluator": {"params": [0.8], "type": "gt"}, "operator": {"type": "and"}, "query": {"params": ["B", "5m", "now"]}, "reducer": {"params": [], "type": "last"}, "type": "query"}], "executionErrorState": "keep_state", "for": "0m", "frequency": "1m", "handler": 1, "name": "Used docker disk space  [current] alert", "noDataState": "no_data", "notifications": [{"uid": "Iok011BMk"}]}, "aliasColors": {}, "bars": false, "dashLength": 10, "dashes": false, "datasource": null, "fieldConfig": {"defaults": {"custom": {}, "mappings": [], "max": 1, "min": 0, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 0.85}, {"color": "red", "value": 0.95}]}, "unit": "percentunit"}, "overrides": []}, "fill": 1, "fillGradient": 0, "gridPos": {"h": 8, "w": 6, "x": 6, "y": 0}, "hiddenSeries": false, "id": 3, "legend": {"avg": false, "current": false, "max": false, "min": false, "show": true, "total": false, "values": false}, "lines": true, "linewidth": 1, "nullPointMode": "null", "options": {"alertThreshold": true}, "percentage": false, "pluginVersion": "7.3.3", "pointradius": 2, "points": false, "renderer": "flot", "seriesOverrides": [], "spaceLength": 10, "stack": false, "steppedLine": false, "targets": [{"expr": "sort_desc(1 - sum(node_filesystem_avail_bytes{mountpoint=~\"/data\", device!~'rootfs'}/node_filesystem_size_bytes{mountpoint=~\"/data\", device!~'rootfs'} * on(instance) group_left(node_name) node_meta{}) by (node_name))", "instant": false, "interval": "", "legendFormat": "{{node_name}}", "refId": "B"}], "thresholds": [{"colorMode": "critical", "fill": true, "line": true, "op": "gt", "value": 0.8}], "timeFrom": null, "timeRegions": [], "timeShift": null, "title": "Used docker disk space  [current]", "tooltip": {"shared": true, "sort": 0, "value_type": "individual"}, "type": "graph", "xaxis": {"buckets": null, "mode": "time", "name": null, "show": true, "values": []}, "yaxes": [{"format": "percentunit", "label": null, "logBase": 1, "max": null, "min": null, "show": true}, {"format": "short", "label": null, "logBase": 1, "max": null, "min": null, "show": true}], "yaxis": {"align": false, "alignLevel": null}}], "schemaVersion": 26, "style": "dark", "tags": [], "templating": {"list": []}, "time": {"from": "now-6h", "to": "now"}, "timepicker": {}, "timezone": "", "title": "Alerts Dashboard", "uid": "MAd4JJfGz", "version": 1}}
+{
+  "dashboard": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "gnetId": null,
+    "graphTooltip": 0,
+    "id": 17,
+    "links": [],
+    "panels": [
+      {
+        "alert": {
+          "alertRuleTags": {},
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [
+                  0.8
+                ],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": [
+                  "B",
+                  "5m",
+                  "now"
+                ]
+              },
+              "reducer": {
+                "params": [],
+                "type": "last"
+              },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "keep_state",
+          "for": "0m",
+          "frequency": "1m",
+          "handler": 1,
+          "name": "Used system disk space  [current] alert",
+          "noDataState": "no_data",
+          "notifications": [
+            {
+              "uid": "Iok011BMk"
+            }
+          ]
+        },
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": null,
+        "fieldConfig": {
+          "defaults": {
+            "custom": {},
+            "mappings": [],
+            "max": 1,
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "yellow",
+                  "value": 0.85
+                },
+                {
+                  "color": "red",
+                  "value": 0.95
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 0,
+          "y": 0
+        },
+        "hiddenSeries": false,
+        "id": 2,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.3.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "sort_desc(1 - sum(node_filesystem_avail_bytes{mountpoint=~\"/\", device!~'rootfs'}/node_filesystem_size_bytes{mountpoint=~\"/\", device!~'rootfs'} * on(instance) group_left(node_name) node_meta{}) by (node_name))",
+            "instant": false,
+            "interval": "",
+            "legendFormat": "{{node_name}}",
+            "refId": "B"
+          }
+        ],
+        "thresholds": [
+          {
+            "colorMode": "critical",
+            "fill": true,
+            "line": true,
+            "op": "gt",
+            "value": 0.8
+          }
+        ],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Used system disk space  [current]",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "percentunit",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      },
+      {
+        "alert": {
+          "alertRuleTags": {},
+          "conditions": [
+            {
+              "evaluator": {
+                "params": [
+                  0.8
+                ],
+                "type": "gt"
+              },
+              "operator": {
+                "type": "and"
+              },
+              "query": {
+                "params": [
+                  "B",
+                  "5m",
+                  "now"
+                ]
+              },
+              "reducer": {
+                "params": [],
+                "type": "last"
+              },
+              "type": "query"
+            }
+          ],
+          "executionErrorState": "keep_state",
+          "for": "0m",
+          "frequency": "1m",
+          "handler": 1,
+          "name": "Used docker disk space  [current] alert",
+          "noDataState": "no_data",
+          "notifications": [
+            {
+              "uid": "Iok011BMk"
+            }
+          ]
+        },
+        "aliasColors": {},
+        "bars": false,
+        "dashLength": 10,
+        "dashes": false,
+        "datasource": null,
+        "fieldConfig": {
+          "defaults": {
+            "custom": {},
+            "mappings": [],
+            "max": 1,
+            "min": 0,
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "yellow",
+                  "value": 0.85
+                },
+                {
+                  "color": "red",
+                  "value": 0.95
+                }
+              ]
+            },
+            "unit": "percentunit"
+          },
+          "overrides": []
+        },
+        "fill": 1,
+        "fillGradient": 0,
+        "gridPos": {
+          "h": 8,
+          "w": 6,
+          "x": 6,
+          "y": 0
+        },
+        "hiddenSeries": false,
+        "id": 3,
+        "legend": {
+          "avg": false,
+          "current": false,
+          "max": false,
+          "min": false,
+          "show": true,
+          "total": false,
+          "values": false
+        },
+        "lines": true,
+        "linewidth": 1,
+        "nullPointMode": "null",
+        "options": {
+          "alertThreshold": true
+        },
+        "percentage": false,
+        "pluginVersion": "7.3.3",
+        "pointradius": 2,
+        "points": false,
+        "renderer": "flot",
+        "seriesOverrides": [],
+        "spaceLength": 10,
+        "stack": false,
+        "steppedLine": false,
+        "targets": [
+          {
+            "expr": "sort_desc(1 - sum(node_filesystem_avail_bytes{mountpoint=~\"/data\", device!~'rootfs'}/node_filesystem_size_bytes{mountpoint=~\"/data\", device!~'rootfs'} * on(instance) group_left(node_name) node_meta{}) by (node_name))",
+            "instant": false,
+            "interval": "",
+            "legendFormat": "{{node_name}}",
+            "refId": "B"
+          }
+        ],
+        "thresholds": [
+          {
+            "colorMode": "critical",
+            "fill": true,
+            "line": true,
+            "op": "gt",
+            "value": 0.8
+          }
+        ],
+        "timeFrom": null,
+        "timeRegions": [],
+        "timeShift": null,
+        "title": "Used docker disk space  [current]",
+        "tooltip": {
+          "shared": true,
+          "sort": 0,
+          "value_type": "individual"
+        },
+        "type": "graph",
+        "xaxis": {
+          "buckets": null,
+          "mode": "time",
+          "name": null,
+          "show": true,
+          "values": []
+        },
+        "yaxes": [
+          {
+            "format": "percentunit",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          },
+          {
+            "format": "short",
+            "label": null,
+            "logBase": 1,
+            "max": null,
+            "min": null,
+            "show": true
+          }
+        ],
+        "yaxis": {
+          "align": false,
+          "alignLevel": null
+        }
+      }
+    ],
+    "schemaVersion": 26,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": []
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Alerts Dashboard",
+    "uid": "MAd4JJfGz",
+    "version": 3
+  },
+  "meta": {
+    "canAdmin": true,
+    "canEdit": true,
+    "canSave": true,
+    "canStar": true,
+    "created": "2021-12-16T14:15:46Z",
+    "createdBy": "admin",
+    "expires": "0001-01-01T00:00:00Z",
+    "folderId": 3,
+    "folderTitle": "ops",
+    "folderUid": "QGql1MT7k",
+    "folderUrl": "/grafana/dashboards/f/QGql1MT7k/ops",
+    "hasAcl": false,
+    "isFolder": false,
+    "provisioned": false,
+    "provisionedExternalId": "",
+    "slug": "alerts-dashboard",
+    "type": "db",
+    "updated": "2022-03-09T08:05:02Z",
+    "updatedBy": "admin",
+    "url": "/grafana/d/MAd4JJfGz/alerts-dashboard",
+    "version": 3
+  }
+}
