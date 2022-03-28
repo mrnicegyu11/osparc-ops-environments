@@ -2661,7 +2661,7 @@
     "timezone": "",
     "title": "MinIO Dashboard",
     "uid": "TgmJnqnnk",
-    "version": 3
+    "version": 5
   },
   "meta": {
     "canAdmin": true,
@@ -2681,9 +2681,9 @@
     "provisionedExternalId": "",
     "slug": "minio-dashboard",
     "type": "db",
-    "updated": "2022-03-03T10:02:21Z",
+    "updated": "2022-03-08T15:50:31Z",
     "updatedBy": "admin",
     "url": "/grafana/d/TgmJnqnnk/minio-dashboard",
-    "version": 3
+    "version": 5
   }
 }

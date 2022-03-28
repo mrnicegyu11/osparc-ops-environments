@@ -3364,7 +3364,7 @@
     "timezone": "",
     "title": "PostgreSQL Database",
     "uid": "000000039",
-    "version": 3
+    "version": 5
   },
   "meta": {
     "canAdmin": true,
@@ -3384,9 +3384,9 @@
     "provisionedExternalId": "",
     "slug": "postgresql-database",
     "type": "db",
-    "updated": "2022-03-03T10:02:21Z",
+    "updated": "2022-03-08T15:50:31Z",
     "updatedBy": "admin",
     "url": "/grafana/d/000000039/postgresql-database",
-    "version": 3
+    "version": 5
   }
 }

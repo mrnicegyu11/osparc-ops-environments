@@ -1691,7 +1691,7 @@
     "timezone": "browser",
     "title": "Docker Prometheus Monitoring",
     "uid": "64nrElFmk",
-    "version": 3
+    "version": 5
   },
   "meta": {
     "canAdmin": true,
@@ -1711,9 +1711,9 @@
     "provisionedExternalId": "",
     "slug": "docker-prometheus-monitoring",
     "type": "db",
-    "updated": "2022-03-03T10:02:21Z",
+    "updated": "2022-03-08T15:50:31Z",
     "updatedBy": "admin",
     "url": "/grafana/d/64nrElFmk/docker-prometheus-monitoring",
-    "version": 3
+    "version": 5
   }
 }

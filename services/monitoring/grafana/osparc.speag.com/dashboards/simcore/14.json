@@ -2228,7 +2228,7 @@
     "timezone": "browser",
     "title": "Metrics",
     "uid": "X_99jTHWk",
-    "version": 3
+    "version": 5
   },
   "meta": {
     "canAdmin": true,
@@ -2248,9 +2248,9 @@
     "provisionedExternalId": "",
     "slug": "metrics",
     "type": "db",
-    "updated": "2022-03-03T10:02:21Z",
+    "updated": "2022-03-08T15:50:31Z",
     "updatedBy": "admin",
     "url": "/grafana/d/X_99jTHWk/metrics",
-    "version": 3
+    "version": 5
   }
 }

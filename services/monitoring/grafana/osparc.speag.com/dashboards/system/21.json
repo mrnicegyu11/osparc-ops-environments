@@ -13207,7 +13207,7 @@
     "timezone": "browser",
     "title": "Nodes",
     "uid": "rYdddlPWk",
-    "version": 3
+    "version": 5
   },
   "meta": {
     "canAdmin": true,
@@ -13227,9 +13227,9 @@
     "provisionedExternalId": "",
     "slug": "nodes",
     "type": "db",
-    "updated": "2022-03-03T10:02:22Z",
+    "updated": "2022-03-08T15:50:31Z",
     "updatedBy": "admin",
     "url": "/grafana/d/rYdddlPWk/nodes",
-    "version": 3
+    "version": 5
   }
 }

@@ -23,8 +23,8 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": 24,
-    "iteration": 1645178083966,
+    "id": 25,
+    "iteration": 1648482114090,
     "links": [],
     "liveNow": false,
     "panels": [
@@ -160,160 +160,99 @@
         "type": "stat"
       },
       {
-        "aliasColors": {},
-        "bars": false,
-        "dashLength": 10,
-        "dashes": false,
-        "datasource": {
-          "uid": "$Postgresql"
-        },
+        "description": "",
         "fieldConfig": {
           "defaults": {
-            "links": []
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "barAlignment": 0,
+              "drawStyle": "line",
+              "fillOpacity": 10,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineInterpolation": "linear",
+              "lineWidth": 3,
+              "pointSize": 5,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "showPoints": "never",
+              "spanNulls": true,
+              "stacking": {
+                "group": "A",
+                "mode": "none"
+              },
+              "thresholdsStyle": {
+                "mode": "line"
+              }
+            },
+            "links": [],
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 144
+                }
+              ]
+            },
+            "unit": "short"
           },
           "overrides": []
         },
-        "fill": 1,
-        "fillGradient": 0,
         "gridPos": {
           "h": 8,
           "w": 8,
           "x": 0,
           "y": 7
         },
-        "hiddenSeries": false,
         "id": 34,
-        "legend": {
-          "alignAsTable": true,
-          "avg": true,
-          "current": true,
-          "max": true,
-          "min": true,
-          "rightSide": false,
-          "show": true,
-          "total": true,
-          "values": true
-        },
-        "lines": true,
-        "linewidth": 3,
-        "nullPointMode": "null",
         "options": {
-          "alertThreshold": true
+          "legend": {
+            "calcs": [
+              "mean",
+              "lastNotNull",
+              "max",
+              "min",
+              "sum"
+            ],
+            "displayMode": "table",
+            "placement": "bottom"
+          },
+          "tooltip": {
+            "mode": "single"
+          }
         },
-        "percentage": false,
         "pluginVersion": "8.3.3",
-        "pointradius": 2,
-        "points": false,
-        "renderer": "flot",
-        "seriesOverrides": [],
-        "spaceLength": 10,
-        "stack": false,
-        "steppedLine": false,
         "targets": [
           {
-            "format": "time_series",
-            "group": [
-              {
-                "params": [
-                  "$__interval",
-                  "none"
-                ],
-                "type": "time"
-              }
-            ],
-            "metricColumn": "none",
-            "rawQuery": false,
-            "rawSql": "SELECT\n  $__timeGroupAlias(created_at,$__interval),\n  sum(count(id)) OVER (ORDER BY $__timeGroup(created_at,$__interval)) AS \"id\"\nFROM users\nWHERE\n  $__timeFilter(created_at) AND\n  role = 'GUEST' AND\n  created_ip NOT LIKE '195.176.8.%'\nGROUP BY 1\nORDER BY 1",
-            "refId": "A",
-            "select": [
-              [
-                {
-                  "params": [
-                    "id"
-                  ],
-                  "type": "column"
-                },
-                {
-                  "params": [
-                    "count"
-                  ],
-                  "type": "aggregate"
-                },
-                {
-                  "params": [
-                    "sum"
-                  ],
-                  "type": "window"
-                },
-                {
-                  "params": [
-                    "id"
-                  ],
-                  "type": "alias"
-                }
-              ]
-            ],
-            "table": "users",
-            "timeColumn": "created_at",
-            "timeColumnType": "timestamp",
-            "where": [
-              {
-                "name": "$__timeFilter",
-                "params": [],
-                "type": "macro"
-              },
-              {
-                "name": "",
-                "params": [
-                  "role",
-                  "=",
-                  "'GUEST'"
-                ],
-                "type": "expression"
-              },
-              {
-                "datatype": "varchar",
-                "name": "",
-                "params": [
-                  "created_ip",
-                  "NOT LIKE",
-                  "'195.176.8.%'"
-                ],
-                "type": "expression"
-              }
-            ]
+            "datasource": {
+              "type": "prometheus",
+              "uid": "Prometheus"
+            },
+            "exemplar": true,
+            "expr": "sum(rate(http_requests_total{endpoint=\"/study/{id}\", http_status=~\"3[0-9]+\",method=\"GET\"}[30d]))*60*60*24",
+            "interval": "",
+            "legendFormat": "Avg number of redirected users",
+            "refId": "A"
           }
         ],
-        "thresholds": [],
-        "timeRegions": [],
-        "title": "Total number of anonymous users who are redirected to oSPARC from the SPARC Portal",
-        "tooltip": {
-          "shared": true,
-          "sort": 0,
-          "value_type": "individual"
-        },
+        "title": "Number of redirected anonymous users per day",
         "transparent": true,
-        "type": "graph",
-        "xaxis": {
-          "mode": "time",
-          "show": true,
-          "values": []
-        },
-        "yaxes": [
-          {
-            "format": "short",
-            "logBase": 1,
-            "show": true
-          },
-          {
-            "format": "short",
-            "logBase": 1,
-            "show": true
-          }
-        ],
-        "yaxis": {
-          "align": false
-        }
+        "type": "timeseries"
       },
       {
         "collapsed": false,
@@ -335,7 +274,7 @@
         "dashes": false,
         "datasource": {
           "type": "prometheus",
-          "uid": "RmZEr52nz"
+          "uid": "Prometheus"
         },
         "decimals": 1,
         "description": "",
@@ -454,8 +393,8 @@
         "fill": 0,
         "fillGradient": 1,
         "gridPos": {
-          "h": 11,
-          "w": 8,
+          "h": 12,
+          "w": 15,
           "x": 0,
           "y": 25
         },
@@ -494,7 +433,12 @@
         "steppedLine": false,
         "targets": [
           {
-            "expr": "label_replace(topk(10, rate({__name__=~\"simcore_simcore_service_(director|webserver)_services_started_total:sum_by_service_key_service_tag\", deployment=\"$deployment\"}[30d])*60*60*24*30), \"service_name\", \"$3\", \"service_key\", \"simcore/services/(dynamic|comp)/([a-zA-Z0-9]*/)?(.*)\")",
+            "datasource": {
+              "type": "prometheus",
+              "uid": "Prometheus"
+            },
+            "exemplar": true,
+            "expr": "label_replace(topk(20, rate({__name__=~\"simcore_simcore_service_(director|webserver)_services_started_total:sum_by_service_key_service_tag\", deployment=\"$deployment\"}[30d])*60*60*24*30), \"service_name\", \"$3\", \"service_key\", \"simcore/services/(dynamic|comp)/([a-zA-Z0-9]*/)?(.*)\")",
             "interval": "12h",
             "legendFormat": "{{service_name}}:{{service_tag}}",
             "refId": "C"
@@ -502,7 +446,7 @@
         ],
         "thresholds": [],
         "timeRegions": [],
-        "title": "Average number of times per month a service on the oSPARC platform was ran, up to the top 10 most popular services averaged over the quarter reported on",
+        "title": "Average number of times per month a service on the oSPARC platform was ran, up to the top 20 most popular services averaged over the quarter reported on",
         "tooltip": {
           "shared": true,
           "sort": 0,
@@ -539,7 +483,7 @@
           "h": 1,
           "w": 24,
           "x": 0,
-          "y": 36
+          "y": 37
         },
         "id": 32,
         "panels": [],
@@ -604,7 +548,7 @@
           "h": 11,
           "w": 8,
           "x": 0,
-          "y": 37
+          "y": 38
         },
         "id": 28,
         "interval": "",
@@ -658,7 +602,8 @@
               "lineWidth": 1,
               "pointSize": 6,
               "scaleDistribution": {
-                "type": "linear"
+                "log": 2,
+                "type": "log"
               },
               "showPoints": "always",
               "spanNulls": true,
@@ -710,7 +655,7 @@
           "h": 10,
           "w": 8,
           "x": 0,
-          "y": 48
+          "y": 49
         },
         "id": 27,
         "interval": "",
@@ -731,7 +676,7 @@
           {
             "datasource": {
               "type": "prometheus",
-              "uid": "RmZEr52nz"
+              "uid": "Prometheus"
             },
             "exemplar": true,
             "expr": "node_cpu_seconds_total:nonidle_increase_over_nodes_12weeks/3600",
@@ -753,9 +698,9 @@
       "list": [
         {
           "current": {
-            "selected": true,
-            "text": "production",
-            "value": "production"
+            "selected": false,
+            "text": "staging",
+            "value": "staging"
           },
           "hide": 0,
           "includeAll": false,
@@ -764,12 +709,12 @@
           "name": "deployment",
           "options": [
             {
-              "selected": true,
+              "selected": false,
               "text": "production",
               "value": "production"
             },
             {
-              "selected": false,
+              "selected": true,
               "text": "staging",
               "value": "staging"
             }
@@ -782,8 +727,8 @@
         {
           "current": {
             "selected": false,
-            "text": "ProductionPostgres",
-            "value": "ProductionPostgres"
+            "text": "StagingPostgres",
+            "value": "StagingPostgres"
           },
           "hide": 2,
           "includeAll": false,
@@ -829,7 +774,7 @@
     },
     "timezone": "browser",
     "title": "SPARC DRC Metrics",
-    "uid": "j3-z2TRMz",
+    "uid": "j3-z2TRMp",
     "version": 3,
     "weekStart": ""
   },
@@ -838,7 +783,7 @@
     "canEdit": true,
     "canSave": true,
     "canStar": true,
-    "created": "2022-03-03T09:57:53Z",
+    "created": "2022-03-28T15:37:17Z",
     "createdBy": "admin",
     "expires": "0001-01-01T00:00:00Z",
     "folderId": 5,
@@ -851,9 +796,9 @@
     "provisionedExternalId": "",
     "slug": "sparc-drc-metrics",
     "type": "db",
-    "updated": "2022-03-03T10:02:22Z",
+    "updated": "2022-03-28T15:42:08Z",
     "updatedBy": "admin",
-    "url": "/grafana/d/j3-z2TRMz/sparc-drc-metrics",
+    "url": "/grafana/d/j3-z2TRMp/sparc-drc-metrics",
     "version": 3
   }
 }

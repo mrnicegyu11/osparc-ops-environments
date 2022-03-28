@@ -1604,7 +1604,7 @@
     "timezone": "",
     "title": "GitLab CI jobs",
     "uid": "gitlab_ci_jobs",
-    "version": 3
+    "version": 5
   },
   "meta": {
     "canAdmin": true,
@@ -1624,9 +1624,9 @@
     "provisionedExternalId": "",
     "slug": "gitlab-ci-jobs",
     "type": "db",
-    "updated": "2022-03-03T10:02:21Z",
+    "updated": "2022-03-08T15:50:31Z",
     "updatedBy": "admin",
     "url": "/grafana/d/gitlab_ci_jobs/gitlab-ci-jobs",
-    "version": 3
+    "version": 5
   }
 }

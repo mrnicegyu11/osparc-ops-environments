@@ -1884,7 +1884,7 @@
     "timezone": "",
     "title": "Docker Swarm Services",
     "uid": "zr_baSRmk",
-    "version": 3
+    "version": 5
   },
   "meta": {
     "canAdmin": true,
@@ -1904,9 +1904,9 @@
     "provisionedExternalId": "",
     "slug": "docker-swarm-services",
     "type": "db",
-    "updated": "2022-03-03T10:02:22Z",
+    "updated": "2022-03-08T15:50:31Z",
     "updatedBy": "admin",
     "url": "/grafana/d/zr_baSRmk/docker-swarm-services",
-    "version": 3
+    "version": 5
   }
 }

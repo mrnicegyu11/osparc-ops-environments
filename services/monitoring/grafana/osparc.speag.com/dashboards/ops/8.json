@@ -1371,7 +1371,7 @@
     "timezone": "",
     "title": "Traefik2",
     "uid": "3ipsWfViz",
-    "version": 3
+    "version": 5
   },
   "meta": {
     "canAdmin": true,
@@ -1391,9 +1391,9 @@
     "provisionedExternalId": "",
     "slug": "traefik2",
     "type": "db",
-    "updated": "2022-03-03T10:02:21Z",
+    "updated": "2022-03-08T15:50:31Z",
     "updatedBy": "admin",
     "url": "/grafana/d/3ipsWfViz/traefik2",
-    "version": 3
+    "version": 5
   }
 }

@@ -1663,7 +1663,7 @@
     "timezone": "",
     "title": "Docker Registry",
     "uid": "CoBSgj8iz",
-    "version": 3
+    "version": 5
   },
   "meta": {
     "canAdmin": true,
@@ -1683,9 +1683,9 @@
     "provisionedExternalId": "",
     "slug": "docker-registry",
     "type": "db",
-    "updated": "2022-03-03T10:02:21Z",
+    "updated": "2022-03-08T15:50:31Z",
     "updatedBy": "admin",
     "url": "/grafana/d/CoBSgj8iz/docker-registry",
-    "version": 3
+    "version": 5
   }
 }

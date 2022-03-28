@@ -3937,7 +3937,7 @@
     "timezone": "browser",
     "title": "Overall Nodes [node exporter]",
     "uid": "xfpJB9FGz",
-    "version": 3
+    "version": 5
   },
   "meta": {
     "canAdmin": true,
@@ -3957,9 +3957,9 @@
     "provisionedExternalId": "",
     "slug": "overall-nodes-node-exporter",
     "type": "db",
-    "updated": "2022-03-03T10:02:22Z",
+    "updated": "2022-03-08T15:50:32Z",
     "updatedBy": "admin",
     "url": "/grafana/d/xfpJB9FGz/overall-nodes-node-exporter",
-    "version": 3
+    "version": 5
   }
 }

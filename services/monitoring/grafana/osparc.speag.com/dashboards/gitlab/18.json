@@ -1603,7 +1603,7 @@
     "timezone": "",
     "title": "GitLab CI environments & deployments",
     "uid": "gitlab_ci_environment_deployments",
-    "version": 3
+    "version": 5
   },
   "meta": {
     "canAdmin": true,
@@ -1623,9 +1623,9 @@
     "provisionedExternalId": "",
     "slug": "gitlab-ci-environments-and-deployments",
     "type": "db",
-    "updated": "2022-03-03T10:02:22Z",
+    "updated": "2022-03-08T15:50:31Z",
     "updatedBy": "admin",
     "url": "/grafana/d/gitlab_ci_environment_deployments/gitlab-ci-environments-and-deployments",
-    "version": 3
+    "version": 5
   }
 }

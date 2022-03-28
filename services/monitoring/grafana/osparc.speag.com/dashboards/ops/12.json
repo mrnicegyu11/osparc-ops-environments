@@ -623,7 +623,7 @@
     "timezone": "",
     "title": "Cardinality Explorer",
     "uid": "2KnjXXxWz",
-    "version": 3
+    "version": 5
   },
   "meta": {
     "canAdmin": true,
@@ -643,9 +643,9 @@
     "provisionedExternalId": "",
     "slug": "cardinality-explorer",
     "type": "db",
-    "updated": "2022-03-03T10:02:21Z",
+    "updated": "2022-03-08T15:50:31Z",
     "updatedBy": "admin",
     "url": "/grafana/d/2KnjXXxWz/cardinality-explorer",
-    "version": 3
+    "version": 5
   }
 }
