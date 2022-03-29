@@ -55,6 +55,7 @@ services:
           - node.role == worker
   traefik:
     deploy:
+      mode: global
       placement:
         constraints:
           - node.labels.traefik==true
