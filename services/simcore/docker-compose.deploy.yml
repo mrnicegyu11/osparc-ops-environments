@@ -428,6 +428,8 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls.certresolver=myresolver
         - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_http.tls.certresolver=myresolver
         - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_api.tls.certresolver=myresolver
+        - traefik.http.routers.production-simcore_simcore_http.rule=(Host(`osparc.io`) || HostRegexp(`services.osparc.io`,`{subhost:[a-zA-Z0-9-]+}.services.osparc.io`)) && PathPrefix(`/`) && ClientIP()
+        - traefik.http.routers.production-simcore_simcore_http.priority=2
       update_config:
         parallelism: 2
         order: start-first
