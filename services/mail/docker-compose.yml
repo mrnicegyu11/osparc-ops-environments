@@ -28,6 +28,7 @@ services:
       placement:
         constraints:
           - node.role==manager
+          - node.labels.mail==true
       labels:
         - traefik.enable=true
         - traefik.docker.network=${PUBLIC_NETWORK}

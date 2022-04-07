@@ -12,7 +12,8 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.pg==true
+          - node.labels.ops==true
+          - node.labels.pgbackup==true
 networks:
   monitored:
     name: ${MONITORED_NETWORK}

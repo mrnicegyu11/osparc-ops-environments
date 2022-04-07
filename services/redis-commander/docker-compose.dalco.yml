@@ -4,3 +4,8 @@ services:
     environment:
       REDIS_HOSTS: "production_resources:production_redis:${REDIS_PORT}:0,production_locks:production_redis:${REDIS_PORT}:1,production_celery_backend:production_redis:${REDIS_PORT}:2,staging_resources:staging_redis:${REDIS_PORT}:0,staging_locks:staging_redis:${REDIS_PORT}:1,staging_celery_backend:staging_redis:${REDIS_PORT}:2"
       URL_PREFIX: /redis
+    deploy:
+      placement:
+        constraints:
+          - node.labels.ops==true
+          - node.labels.rediscommander==true

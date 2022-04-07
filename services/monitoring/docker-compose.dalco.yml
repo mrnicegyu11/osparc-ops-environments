@@ -60,4 +60,19 @@ services:
     deploy:
       placement:
         constraints:
-          - node.labels.traefik==true
+          - node.labels.grafana==true
+          - node.labels.ops==true
+
+  prometheus:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.prometheus==true
+          - node.labels.ops==true
+
+  alertmanager:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.ops==true
+          - node.labels.prometheus==true

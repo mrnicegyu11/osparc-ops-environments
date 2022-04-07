@@ -1,0 +1,8 @@
+version: '3.7'
+services:
+  adminer:
+    deploy:
+      placement:
+        constraints:
+          - node.labels.adminer==true
+          - node.labels.ops==true

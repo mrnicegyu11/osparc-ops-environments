@@ -6,6 +6,7 @@ services:
       placement:
         constraints:
           - node.labels.postgres==true
+          - node.labels.ops==true
   api-server:
     deploy:
       placement:

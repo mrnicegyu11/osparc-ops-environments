@@ -5,15 +5,18 @@ services:
       placement:
         constraints:
           - node.labels.graylog==true
+          - node.labels.ops==true
 
   elasticsearch:
     deploy:
       placement:
         constraints:
           - node.labels.graylog==true
-
+          - node.labels.ops==true
+          
   graylog:
     deploy:
       placement:
         constraints:
           - node.labels.graylog==true
+          - node.labels.ops==true
