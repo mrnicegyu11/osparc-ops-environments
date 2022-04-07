@@ -9,6 +9,7 @@ services:
       placement:
         constraints:
           - node.labels.ops==true
+          - node.labels.prometheus==true
       resources:
         limits:
           memory: 24576M
@@ -20,6 +21,7 @@ services:
       placement:
         constraints:
           - node.labels.ops==true
+          - node.labels.grafana==true
   postgres-exporter:
     dns: 8.8.8.8
     image: bitnami/postgres-exporter:0.8.0

@@ -7,3 +7,4 @@ services:
       placement:
         constraints:
           - node.labels.leader==true
+          - node.labels.mail==true

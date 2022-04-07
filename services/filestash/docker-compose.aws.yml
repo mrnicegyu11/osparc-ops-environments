@@ -3,3 +3,8 @@ services:
   filestash:
     dns: 
       8.8.8.8
+    deploy:
+      placement:
+        constraints:
+          - node.labels.ops==true
+          - node.labels.filestash==true
