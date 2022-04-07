@@ -12,7 +12,7 @@ env.read_env("./../../../repo.config", recurse=False)
 
 
 
-@retry(stop=stop_after_attempt(10))
+@retry(stop=stop_after_attempt(100))
 def checkGraylogOnline():
     url = "https://monitoring." + env.str('MACHINE_FQDN') + "/graylog/api/users"
     hed = {'Content-Type': 'application/json', 'Accept': 'application/json'}
