@@ -1,1 +1,26 @@
-{"id": 1, "uid": "cjjlJGo7z", "orgId": 1, "name": "Prometheus", "type": "prometheus", "typeLogoUrl": "", "access": "proxy", "url": "http://prometheus:9090", "password": "", "user": "", "database": "", "basicAuth": true, "basicAuthUser": "", "basicAuthPassword": "", "withCredentials": false, "isDefault": true, "jsonData": {"graphiteVersion": "1.1", "tlsAuth": false, "tlsAuthWithCACert": false}, "secureJsonFields": {}, "version": 1, "readOnly": false}
+{
+  "access": "proxy",
+  "basicAuth": true,
+  "basicAuthPassword": "",
+  "basicAuthUser": "",
+  "database": "",
+  "id": 1,
+  "isDefault": true,
+  "jsonData": {
+    "graphiteVersion": "1.1",
+    "tlsAuth": false,
+    "tlsAuthWithCACert": false
+  },
+  "name": "Prometheus",
+  "orgId": 1,
+  "password": "",
+  "readOnly": false,
+  "secureJsonFields": {},
+  "type": "prometheus",
+  "typeLogoUrl": "",
+  "uid": "cjjlJGo7z",
+  "url": "http://prometheus:9090",
+  "user": "",
+  "version": 1,
+  "withCredentials": false
+}
