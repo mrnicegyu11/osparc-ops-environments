@@ -331,6 +331,7 @@ services:
         constraints:
           - node.role==manager
   traefik:
+    hostname: "{{.Node.Hostname}}-{{.Service.Name}}"
     networks:
       - monitored
       - public
