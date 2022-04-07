@@ -425,6 +425,8 @@ services:
         - traefik.http.routers.${SWARM_STACK_NAME}_simcore_api.tls.certresolver=myresolver
         - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_http.tls.certresolver=myresolver
         - traefik.http.routers.${SWARM_STACK_NAME}_testing_simcore_api.tls.certresolver=myresolver
+        - traefik.http.routers.production-simcore_simcore_http.rule=(Host(`osparc.speag.com`) || HostRegexp(`services.osparc.speag.com`,`{subhost:[a-zA-Z0-9-]+}.services.osparc.speag.com`) || Host(`ti-solutions.io`) || HostRegexp(`services.ti-solutions.io`,`{subhost:[a-zA-Z0-9-]+}.services.ti-solutions.io`) || Host(`sim4life.io`) || HostRegexp(`services.sim4life.io`,`{subhost:[a-zA-Z0-9-]+}.services.sim4life.io`) || Host(`tis.speag.com`) || HostRegexp(`services.tis.speag.com`,`{subhost:[a-zA-Z0-9-]+}.services.tis.speag.com`) || Host(`s4l.speag.com`) || HostRegexp(`services.s4l.speag.com`,`{subhost:[a-zA-Z0-9-]+}.services.s4l.speag.com`)) && PathPrefix(`/`) && ClientIP(`172.16.8.39`,`172.16.8.64`,`10.43.103.179`,`172.16.8.68`,`172.16.8.72`,`10.43.103.168`,`172.16.8.26`,`172.16.9.150`,`172.16.9.89`,`10.43.200.15`,`172.16.9.146`)
+        - traefik.http.routers.production-simcore_simcore_http.priority=2
       update_config:
         parallelism: 2
         order: start-first
