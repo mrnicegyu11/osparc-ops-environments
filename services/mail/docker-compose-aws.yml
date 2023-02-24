@@ -8,4 +8,4 @@ services:
         constraints:
           - node.labels.mail==true # mail server goes on the leader
       labels:
-        - traefik.http.routers.mail.tls.certresolver=myresolver
+        - traefik.http.routers.mail.tls.certresolver=customcertresolver

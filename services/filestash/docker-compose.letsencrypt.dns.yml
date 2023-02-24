@@ -3,4 +3,4 @@ services:
   filestash:
     deploy:
       labels:
-        - traefik.http.routers.filestash.tls.certresolver=myresolver
+        - traefik.http.routers.filestash.tls.certresolver=customcertresolver

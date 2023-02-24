@@ -3,9 +3,9 @@ services:
   prometheus:
     deploy:
       labels:
-        - traefik.http.routers.prometheus.tls.certresolver=myresolver
+        - traefik.http.routers.prometheus.tls.certresolver=customcertresolver
 
   grafana:
     deploy:
       labels:
-        - traefik.http.routers.grafana.tls.certresolver=myresolver
+        - traefik.http.routers.grafana.tls.certresolver=customcertresolver

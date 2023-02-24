@@ -3,4 +3,4 @@ services:
   jaeger:
     deploy:
       labels:
-        - traefik.http.routers.jaeger.tls.certresolver=myresolver
+        - traefik.http.routers.jaeger.tls.certresolver=customcertresolver

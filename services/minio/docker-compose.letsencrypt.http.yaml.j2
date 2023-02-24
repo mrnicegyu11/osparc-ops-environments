@@ -7,5 +7,5 @@ services:
   minio{{ service_id|string }}:
     deploy:
       labels:
-        - traefik.http.routers.minio.tls.certresolver=myresolver
+        - traefik.http.routers.minio.tls.certresolver=customcertresolver
 {% endfor %}

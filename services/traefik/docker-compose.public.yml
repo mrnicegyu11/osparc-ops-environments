@@ -25,13 +25,13 @@ services:
       - '--tracing.jaeger.localAgentHostPort=jaeger:6831'
       - "--providers.docker.constraints=!LabelRegex(`io.simcore.zone`, `.+`)"
       - "--entryPoints.https.forwardedHeaders.insecure"
-      - "--certificatesresolvers.myresolver.acme.dnschallenge.provider=rfc2136"
-      - "--certificatesresolvers.myresolver.acme.email=${OSPARC_DEVOPS_MAIL_ADRESS}"
-      - "--certificatesresolvers.myresolver.acme.dnschallenge.delaybeforecheck=120"
-      - "--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json"
+      - "--certificatesresolvers.customcertresolver.acme.dnschallenge.provider=rfc2136"
+      - "--certificatesresolvers.customcertresolver.acme.email=${OSPARC_DEVOPS_MAIL_ADRESS}"
+      - "--certificatesresolvers.customcertresolver.acme.dnschallenge.delaybeforecheck=120"
+      - "--certificatesresolvers.customcertresolver.acme.storage=/letsencrypt/acme.json"
       # For debug purpose, to avoid being ban by let's encrypt servers
-      #- "--certificatesresolvers.myresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      - "--certificatesresolvers.myresolver.acme.dnschallenge.resolvers=${CERTIFICATE_RESOLVE_DNS_CHALLANGE_IP}"
+      #- "--certificatesresolvers.customcertresolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.customcertresolver.acme.dnschallenge.resolvers=${CERTIFICATE_RESOLVE_DNS_CHALLANGE_IP}"
     volumes:
       - "letsencrypt_certs:/letsencrypt"
     environment:
@@ -49,7 +49,7 @@ services:
   whoami:
     deploy:
       labels:
-        - traefik.http.routers.whoami.tls.certresolver=myresolver
+        - traefik.http.routers.whoami.tls.certresolver=customcertresolver
 
 volumes:
   letsencrypt_certs:

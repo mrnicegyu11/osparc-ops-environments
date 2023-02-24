@@ -3,4 +3,4 @@ services:
   batman_nginx:
     deploy:
       labels:
-        - traefik.http.routers.batman_nginx.tls.certresolver=myresolver
+        - traefik.http.routers.batman_nginx.tls.certresolver=customcertresolver

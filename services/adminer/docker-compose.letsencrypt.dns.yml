@@ -3,4 +3,4 @@ services:
   adminer:
     deploy:
       labels:
-        - traefik.http.routers.adminer.tls.certresolver=myresolver
+        - traefik.http.routers.adminer.tls.certresolver=customcertresolver

@@ -17,4 +17,4 @@ services:
         target: /tmp/docker-mailserver/ssl/demoCA/cacert.pem
     deploy:
       labels:
-        - traefik.http.routers.mail.tls.certresolver=myresolver
+        - traefik.http.routers.mail.tls.certresolver=customcertresolver

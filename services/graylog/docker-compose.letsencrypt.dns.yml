@@ -3,4 +3,4 @@ services:
   graylog:
     deploy:
       labels:
-        - traefik.http.routers.graylog.tls.certresolver=myresolver
+        - traefik.http.routers.graylog.tls.certresolver=customcertresolver
