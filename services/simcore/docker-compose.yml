@@ -61,6 +61,11 @@ services:
       - LOGLEVEL=WARNING
       - AGENT_VOLUMES_CLEANUP_TARGET_SWARM_STACK_NAME=${AGENT_VOLUMES_CLEANUP_TARGET_SWARM_STACK_NAME}
     deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 128M
       placement:
         constraints:
           - node.labels.dynamicsidecar==true
@@ -78,6 +83,7 @@ services:
         max_attempts: 3
         window: 120s
     extra_hosts: []
+
   api-server:
     networks:
       - public
@@ -85,6 +91,11 @@ services:
     environment:
       - LOGSPOUT_MULTILINE=true
     deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 256M
       labels:
         # NOTE: apiserver does not need sslheader since there is no socket.io
         - traefik.http.routers.${SWARM_STACK_NAME}_api-server.middlewares=${SWARM_STACK_NAME}_gzip@docker
@@ -129,11 +140,21 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 256M
 
   static-webserver:
     environment:
       - LOGSPOUT_MULTILINE=true
     deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 512M
       labels:
         # Handle freshping service and route it to the faster static webserver.
         - traefik.http.middlewares.${SWARM_STACK_NAME}_static_webserver_prefix.addprefix.prefix=/osparc
@@ -156,6 +177,7 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+
   invitations:
     environment:
       - INVITATIONS_LOGLEVEL=${INVITATIONS_LOGLEVEL}
@@ -201,6 +223,11 @@ services:
         max_attempts: 3
         window: 120s
       replicas: 3
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 512M
     extra_hosts: []
 
   wb-garbage-collector:
@@ -210,6 +237,11 @@ services:
       - default
       - interactive_services_subnet
     deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 256M
       update_config:
         parallelism: 2
         order: start-first
@@ -235,6 +267,11 @@ services:
     networks:
       - monitored
     deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 512M
       update_config:
         parallelism: 2
         order: start-first
@@ -265,6 +302,11 @@ services:
     networks:
       - monitored
     deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 512M
       replicas: 5
       update_config:
         parallelism: 2
@@ -314,6 +356,11 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 512M
   dask-sidecar:
     networks:
       - monitored
@@ -333,6 +380,12 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 512M
+
   dask-scheduler:
     networks:
       - public
@@ -386,6 +439,11 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 256M
   migration:
     environment:
       - LOGSPOUT_MULTILINE=true
@@ -413,6 +471,11 @@ services:
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_rabbit_replace_regex.replacepathregex.regex=^/${PREFIX_STACK_NAME}_rabbit/(.*)$$
         - traefik.http.middlewares.${PREFIX_STACK_NAME}_rabbit_replace_regex.replacepathregex.replacement=/$${1}
         - traefik.http.routers.${PREFIX_STACK_NAME}_rabbit.middlewares=${PREFIX_STACK_NAME}_rabbit_replace_regex@docker, ops_gzip@docker
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 512M
       update_config:
         parallelism: 2
         order: start-first
@@ -445,6 +508,11 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 256M
 
   postgres:
     networks:
@@ -481,6 +549,11 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          memory: 2000M
+        reservations:
+          memory: 2000M
       placement:
         constraints:
           - node.role==manager
@@ -538,6 +611,11 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          memory: 1000MB
+        reservations:
+          memory: 1000MB
   traefik_api:
     # NOTE: this is a trick to allow to access the internal traefik REST API
     # A comment
@@ -576,6 +654,11 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          memory: 64M
+        reservations:
+          memory: 64M
   whoami:
     image: "containous/whoami:v1.5.0"
     networks:
@@ -607,6 +690,11 @@ services:
         delay: 5s
         max_attempts: 3
         window: 120s
+      resources:
+        limits:
+          memory: 64M
+        reservations:
+          memory: 64M
 networks:
   public:
     external: true
