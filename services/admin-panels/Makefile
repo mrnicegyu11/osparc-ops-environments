@@ -54,7 +54,8 @@ up-aws: .init .env jupyter_server_config.py ${TEMP_COMPOSE}-aws  ## Deploys jaeg
 	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-aws ${STACK_NAME}
 
 .PHONY: up-master
-up-master: up-dalco
+up-master:  .init .env jupyter_server_config.py ${TEMP_COMPOSE}-master
+	@docker stack deploy --with-registry-auth --prune --compose-file ${TEMP_COMPOSE}-master ${STACK_NAME}
 
 .PHONY: up-local
 up-local: up
@@ -74,8 +75,13 @@ ${TEMP_COMPOSE}-letsencrypt-dns: docker-compose.yml docker-compose.letsencrypt.d
 	@${REPO_BASE_DIR}/scripts/docker-compose-config.bash -e .env $< docker-compose.letsencrypt.dns.yml  > $@
 
 .PHONY: ${TEMP_COMPOSE}-dalco
-${TEMP_COMPOSE}-dalco: docker-compose.yml docker-compose.letsencrypt.dns.yml docker-compose.dalco.yml
-	@${REPO_BASE_DIR}/scripts/docker-compose-config.bash -e .env $< docker-compose.letsencrypt.dns.yml docker-compose.dalco.yml  > $@
+${TEMP_COMPOSE}-dalco: docker-compose.yml docker-compose.dalco.yml
+	@${REPO_BASE_DIR}/scripts/docker-compose-config.bash -e .env $< docker-compose.dalco.yml  > $@
+
+.PHONY: ${TEMP_COMPOSE}-master
+${TEMP_COMPOSE}-master: docker-compose.yml docker-compose.master.yml
+	@${REPO_BASE_DIR}/scripts/docker-compose-config.bash -e .env $< docker-compose.master.yml  > $@
+
 
 .PHONY: ${TEMP_COMPOSE}-aws
 ${TEMP_COMPOSE}-aws: docker-compose.yml docker-compose.letsencrypt.dns.yml docker-compose.aws.yml
