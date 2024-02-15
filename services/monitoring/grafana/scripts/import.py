@@ -64,9 +64,6 @@ def subsituteDatasources(
     configFilePath,
     dashboardTitle,
     jsonObject,
-    session,
-    url,
-    hed,
 ):
     if configFilePath.is_file():
         cfile = open(str(configFilePath))
@@ -143,7 +140,9 @@ def subsituteDatasources(
                     )
 
 
-def main(foldername: str = "", overwrite: bool = True):
+def main(configuration_files_folder: str, overwrite: bool = True):
+    # Assert that cofinguration_files_folder is a directory
+    assert os.path.isdir(configuration_files_folder)
     # Get mail adress for alerts:
     grafanaAlertingMailTarget = env.str("GRAFANA_ALERTS_MAIL", default=None)
     grafanaAlertingSlackTarget = env.str("GRAFANA_ALERTS_SLACK", default=None)
@@ -164,15 +163,7 @@ def main(foldername: str = "", overwrite: bool = True):
     session.auth = (env.str("SERVICES_USER"), env.str("SERVICES_PASSWORD"))
     hed = {"Content-Type": "application/json"}
 
-    if foldername == "":
-        directoriesDatasources = glob.glob(
-            "./../provisioning/" + env.str("MACHINE_FQDN") + "/datasources/*"
-        )
-        directoriesDatasources += glob.glob(
-            "./../provisioning/allDeployments" + "/datasources/*"
-        )
-    else:
-        directoriesDatasources = glob.glob(foldername + "/datasources/*")
+    directoriesDatasources = glob.glob(configuration_files_folder + "/datasources/*")
     #
     print("**************** Add datasources *******************")
     if overwrite:
@@ -195,11 +186,6 @@ def main(foldername: str = "", overwrite: bool = True):
         if jsonObjectDatasource["type"] == "postgres":
             print("postgres datasource is currently not supported (deprecated)")
             exit(1)
-            jsonObjectDatasource["secureJsonData"] = {
-                "password": env.str("POSTGRES_GRAFANA_PASSWORD")
-            }
-            jsonObjectDatasource["user"] = env.str("POSTGRES_GRAFANA_USER")
-            jsonObjectDatasource["url"] = env.str("POSTGRES_HOST")
             # We keep a list of PG datasources and their UIDs
         elif jsonObjectDatasource["type"] == "Prometheus":
             jsonObjectDatasource["basicAuthUser"] = env.str("SERVICES_USER")
@@ -223,21 +209,11 @@ def main(foldername: str = "", overwrite: bool = True):
             print("JSON file failed uploading.")
         #
     # Second, we import the folders structure
-    directoriesData = []
-    if foldername == "":
-        directoriesDashboards = glob.glob(
-            "./../provisioning/" + env.str("MACHINE_FQDN") + "/dashboards/*"
-        )
-        directoriesDashboards = [
-            *directoriesDashboards,
-            *list(glob.glob("./../provisioning/allDeployments" + "/dashboards/*")),
-        ]
-    else:
-        directoriesDashboards = glob.glob(foldername + "/dashboards/*")
+    directoriesDashboards = glob.glob(configuration_files_folder + "/dashboards/*")
     for directory in directoriesDashboards:
         if ".json" in directory:
             print(
-                "Error: Looking for folders but got json file. Is your folder structure organized properly?\nABORTING"
+                "Error: Looking for subfolders but found a json file instead. Is your folder structure organized properly?\nABORTING"
             )
             exit(1)
         for file in glob.glob(directory + "/*"):
@@ -441,13 +417,7 @@ def main(foldername: str = "", overwrite: bool = True):
     # 2. Import alerts
     print("**************** Add alerts *******************")
     # Finally we import the dashboards
-    if foldername == "":
-        directoriesAlerts = glob.glob(
-            "./../provisioning/" + env.str("MACHINE_FQDN") + "/alerts/*"
-        )
-        directoriesAlerts += glob.glob("./../provisioning/allDeployments" + "/alerts/*")
-    else:
-        directoriesAlerts = glob.glob(foldername + "/alerts/*")
+    directoriesAlerts = glob.glob(configuration_files_folder + "/alerts/*")
     for file in directoriesAlerts:
         with open(file) as jsonFile:
             jsonObject = json.load(jsonFile)
@@ -506,7 +476,5 @@ if __name__ == "__main__":
     """
     Imports grafana dashboard from dumped json files via the Grafana API
 
-    If --foldername is used, the data is taken from this location.
-    Otherwise, the default ops-repo folder is assumed.
     """
     typer.run(main)
