@@ -180,7 +180,7 @@ help:
 	@echo ""
 
 .PHONY: down-default
-down-default: ## Removes the stack from the swarm
+down-default: ## Removes the current stack from the swarm
 	@echo "${STACK_NAME}"
 	@docker stack rm ${STACK_NAME}
 
@@ -189,7 +189,7 @@ leave: ## Leaves swarm stopping all services in it
 	-@docker swarm leave -f
 
 .PHONY: clean-default .check_clean
-clean-default: .check_clean ## Cleans all outputs
+clean-default: .check_clean ## Cleans git-repo
 	# cleaning unversioned files in $(REPO_BASE_DIR)
 	@git clean -dxf -e .vscode/ -e .config.location
 

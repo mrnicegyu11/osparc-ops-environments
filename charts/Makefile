@@ -12,11 +12,11 @@ CHART_DIRS := $(wildcard $(REPO_BASE_DIR)/charts/*/)
 			echo "'helmfile' is not installed. Install it to continue ...";\
 	fi
 
-helmfile.yaml:
+helmfile.yaml: ## Copies helmfile.yaml from osparc-config
 	cp $(CONFIG_DIR)/helmfile.yaml $(REPO_BASE_DIR)/charts/helmfile.yaml
 
 .PHONY: helmfile-lint
-helmfile-lint: .check-helmfile-installed helmfile.yaml
+helmfile-lint: .check-helmfile-installed helmfile.yaml ## Lints and copies helmfile.yaml from osparc-config
 	set -a; source $(REPO_CONFIG_LOCATION); set +a; \
 	helmfile lint
 
@@ -30,7 +30,7 @@ helmfile-lint: .check-helmfile-installed helmfile.yaml
 	@echo "    For insecure connections make sure to disable automatic https redirects in your browser.";
 
 .PHONY: helmfile-apply
-helmfile-apply: .check-helmfile-installed helmfile.yaml
+helmfile-apply: .check-helmfile-installed helmfile.yaml ## Appies helmfile
 	set -a; source $(REPO_CONFIG_LOCATION); set +a; \
 	helmfile -f $(REPO_BASE_DIR)/charts/helmfile.yaml apply
 
@@ -39,16 +39,16 @@ helmfile-apply: .check-helmfile-installed helmfile.yaml
 	fi
 
 .PHONY: configure-local-hosts
-configure-local-hosts:
+configure-local-hosts: ## Configures /etc/hosts for local deployment
 	@echo "Addings $(MACHINE_FQDN) hosts to /etc/hosts ..."
 	@grep -q '127.0.0.1 k8s.monitoring.$(MACHINE_FQDN)' /etc/hosts || echo '127.0.0.1 k8s.monitoring.$(MACHINE_FQDN)' | sudo tee -a /etc/hosts
 
 .PHONY: helmfile-diff
-helmfile-diff: .check-helmfile-installed helmfile.yaml
+helmfile-diff: .check-helmfile-installed helmfile.yaml ## Prints helmfile diff
 	@set -a; source $(REPO_CONFIG_LOCATION); set +a; \
 	helmfile -f $(REPO_BASE_DIR)/charts/helmfile.yaml diff
 
 .PHONY: helmfile-delete
-helmfile-delete: .check-helmfile-installed helmfile.yaml
+helmfile-delete: .check-helmfile-installed helmfile.yaml ## Runs helmfile delete
 	@set -a; source $(REPO_CONFIG_LOCATION); set +a; \
 	helmfile -f $(REPO_BASE_DIR)/charts/helmfile.yaml delete
