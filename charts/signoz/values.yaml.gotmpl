@@ -1,0 +1,52 @@
+
+frontend:
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      namespace: {{ .Release.Namespace }}
+      cert-manager.io/cluster-issuer: "cert-issuer"
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.middlewares: traefik-strip-prefix@kubernetescrd  # namespace + middleware name
+    tls:
+      - hosts:
+          - {{ requiredEnv "K8S_MONITORING_FQDN_SIGNOZ" }}
+        secretName: monitoring-tls
+    hosts:
+      - host: {{ requiredEnv "K8S_MONITORING_FQDN_SIGNOZ" }}
+        paths:
+          - path: /
+            pathType: Prefix
+            port: 3301
+
+otelCollector:
+  ingress:
+    enabled: true
+    className: ""
+    annotations:
+      namespace: {{ .Release.Namespace }}
+      cert-manager.io/cluster-issuer: "cert-issuer"
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.middlewares: traefik-strip-prefix@kubernetescrd  # namespace + middleware name
+    tls:
+      - hosts:
+          - opentelemetrycollector.{{ requiredEnv "K8S_MONITORING_FQDN_SIGNOZ" }}
+        secretName: monitoring-tls
+    hosts:
+      - host: opentelemetrycollector.{{ requiredEnv "K8S_MONITORING_FQDN_SIGNOZ" }}
+        paths:
+          - path: /
+            pathType: Prefix
+            port: 4318
+
+
+resources:
+  limits:
+    cpu: 8
+    memory: 8192Mi
+  requests:
+    cpu: 0.1
+    memory: 128Mi
+
+nodeSelector:
+  ops: "true"

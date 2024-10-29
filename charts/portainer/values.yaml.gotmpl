@@ -22,7 +22,7 @@ persistence:
   enabled: true
   size: "1Gi"
   annotations: {}
-  storageClass: "csi-s3"
+  storageClass: ""
   existingClaim:
 
 podAnnotations: {}
@@ -45,7 +45,7 @@ ingress:
     namespace: {{ .Release.Namespace }}
     cert-manager.io/cluster-issuer: "cert-issuer"
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
-    traefik.ingress.kubernetes.io/router.middlewares: traefik-traefik-basic-auth@kubernetescrd,traefik-portainer-strip-prefix@kubernetescrd  # namespace + middleware name
+    traefik.ingress.kubernetes.io/router.middlewares: traefik-traefik-basic-auth@kubernetescrd,traefik-strip-prefix@kubernetescrd  # namespace + middleware name
   tls:
     - hosts:
         - {{ requiredEnv "K8S_MONITORING_FQDN" }}
