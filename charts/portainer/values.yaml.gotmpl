@@ -22,7 +22,7 @@ persistence:
   enabled: true
   size: "1Gi"
   annotations: {}
-  storageClass: ""
+  storageClass: {{ requiredEnv "K8S_PERSISTANCE_STORAGE_CLASS" }}
   existingClaim:
 
 podAnnotations: {}
