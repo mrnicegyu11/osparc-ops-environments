@@ -9,7 +9,7 @@ services:
       - "/customEntrypoint.sh"
       - "--api=true"
       - "--api.dashboard=true"
-      - "--log.level=${TRAEFIK_LOG_LEVEL}"
+      - "--log.level=${OPS_TRAEFIK_LOGLEVEL}"
       - "--accesslog=true"
       - "--accesslog.format=json"
       - "--accesslog.fields.defaultmode=keep"
