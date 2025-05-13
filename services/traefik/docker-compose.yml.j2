@@ -25,6 +25,8 @@ services:
     configs:
       - source: traefik_dynamic_config.yml
         target: /etc/traefik/dynamic_conf.yml
+    env_file:
+      - .env
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
