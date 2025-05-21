@@ -124,7 +124,13 @@ services:
         - traefik.http.middlewares.strip-www.redirectregex.regex=^(https?)://www\.(.+)
         - traefik.http.middlewares.strip-www.redirectregex.replacement=$${1}://$${2}
         - traefik.http.middlewares.strip-www.redirectregex.permanent=true
-
+        #
+        {% if OPS_TRAEFIK_EXPOSE_RABBITMQ|lower == "true" %}
+        - "--entryPoints.rabbitmq.address=:${RABBIT_EXTERNAL_PORT}"
+        {% endif %}
+        {% if OPS_TRAEFIK_EXPOSE_REDIS|lower == "true" %}
+        - "--entryPoints.redis.address=:${REDIS_EXTERNAL_PORT}"
+        {% endif %}
 
         ###
         # Domain redirects
