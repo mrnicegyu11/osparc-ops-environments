@@ -1,10 +1,16 @@
-version: "3.7"
-
 services:
   traefik:
     image: "traefik:v3.4.0"
     init: true
     dns: 8.8.8.8
+    healthcheck:
+      # NOTE: this healthcheck to check if traefik is up and running must be run on the ping entrypoint defined in command!
+      test: traefik healthcheck --ping --ping.entryPoint=ping --entryPoints.ping.address=:9082
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+      start_interval: 1s
     ports:
       - target: 80
         published: 80
@@ -162,6 +168,7 @@ services:
     networks:
       public: null
       monitored: null
+
   whoami:
     image: "containous/whoami"
     dns: # Add this always for AWS, otherwise we get "No such image: " for docker services
@@ -190,6 +197,11 @@ services:
     networks:
       - public
 
+configs:
+  traefik_dynamic_config.yml:
+    name: {{ STACK_NAME }}_traefik_dynamic_config_{{ "./traefik_dynamic_config.yml" | sha256file | substring(0,10) }}
+    file: ./traefik_dynamic_config.yml
+
 networks:
   public:
     external: true
@@ -197,8 +209,3 @@ networks:
   monitored:
     name: ${MONITORED_NETWORK}
     external: true
-
-configs:
-  traefik_dynamic_config.yml:
-    name: ${STACK_NAME}_traefik_dynamic_config_{{ "./traefik_dynamic_config.yml" | sha256file | substring(0,10) }}
-    file: ./traefik_dynamic_config.yml
