@@ -243,9 +243,9 @@ if [ "$start_opsstack" -eq 0 ]; then
     call_make "." up-"$stack_target";
     popd
 
-    # -------------------------------- LOGGING -------------------------------
-    log_info "starting logging..."
-    service_dir="${repo_basedir}"/services/logging
+    # -------------------------------- Graylog -------------------------------
+    log_info "starting graylog..."
+    service_dir="${repo_basedir}"/services/graylog
     pushd "${service_dir}"
     call_make "." up-"$stack_target"
     sleep 1
