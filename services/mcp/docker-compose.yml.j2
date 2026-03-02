@@ -1,0 +1,60 @@
+version: "3.7"
+
+services:
+  mcp-aggregator:
+    image: ${MCP_AGGREGATOR_IMAGE:-local/mcp-aggregator:latest}
+    init: true
+{%- raw %}
+    hostname: "mcp-aggregator-{{.Node.Hostname}}-{{.Task.Slot}}"
+{%- endraw %}
+    environment:
+      - MCP_TEMPO_ENABLED=${MCP_TEMPO_ENABLED}
+      - MCP_TEMPO_URL=${MCP_TEMPO_URL}
+      - MCP_GRAFANA_ENABLED=${MCP_GRAFANA_ENABLED}
+      - MCP_GRAFANA_URL=${MCP_GRAFANA_URL}
+      - MCP_HOST=0.0.0.0
+      - MCP_PORT=${MCP_PORT}
+      - MCP_LOG_LEVEL=${MCP_LOG_LEVEL}
+      - MCP_READ_ONLY=${MCP_READ_ONLY}
+    networks:
+      - monitored
+      - public
+    deploy:
+      replicas: ${MCP_REPLICAS}
+      placement:
+        constraints:
+          - node.labels.ops==true
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+        reservations:
+          cpus: "0.1"
+          memory: 256M
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: continue
+        delay: 10s
+      labels:
+        - traefik.enable=true
+        - traefik.swarm.network=${PUBLIC_NETWORK}
+        # MCP aggregator service
+        - traefik.http.services.mcp_aggregator.loadbalancer.server.port=${MCP_PORT}
+        - traefik.http.routers.mcp_aggregator.rule=Host(`${MONITORING_DOMAIN}`) && PathPrefix(`/mcp`)
+        - traefik.http.routers.mcp_aggregator.priority=10
+        - traefik.http.routers.mcp_aggregator.entrypoints=https
+        - traefik.http.routers.mcp_aggregator.tls=true
+        # Security: IP allowlist + BasicAuth + gzip
+        - traefik.http.routers.mcp_aggregator.middlewares=ops_whitelist_ips@swarm, ops_auth@swarm, ops_gzip@swarm
+        # Prometheus metrics
+        - prometheus-job=mcp_aggregator
+        - prometheus-port=${MCP_PORT}
+
+networks:
+  monitored:
+    name: ${MONITORED_NETWORK}
+    external: true
+  public:
+    external: true
+    name: ${PUBLIC_NETWORK}
