@@ -1,0 +1,19 @@
+{
+  "inputs": [
+    {
+      "id": "ops-basic-auth",
+      "type": "promptString",
+      "description": "Base64-encoded user:pass (run: echo -n admin:yourpass | base64)",
+      "password": true
+    }
+  ],
+  "servers": {
+    "osparc-ops-local": {
+      "type": "http",
+      "url": "https://monitoring.osparc.local/mcp",
+      "headers": {
+        "Authorization": "Basic ${input:ops-basic-auth}"
+      }
+    }
+  }
+}

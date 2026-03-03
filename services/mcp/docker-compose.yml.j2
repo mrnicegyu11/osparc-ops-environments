@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   mcp-aggregator:
-    image: ${MCP_AGGREGATOR_IMAGE:-local/mcp-aggregator:latest}
+    image: local/mcp-aggregator:latest
     init: true
 {%- raw %}
     hostname: "mcp-aggregator-{{.Node.Hostname}}-{{.Task.Slot}}"
@@ -12,15 +12,34 @@ services:
       - MCP_TEMPO_URL=${MCP_TEMPO_URL}
       - MCP_GRAFANA_ENABLED=${MCP_GRAFANA_ENABLED}
       - MCP_GRAFANA_URL=${MCP_GRAFANA_URL}
+      - MCP_PROMETHEUS_ENABLED=${MCP_PROMETHEUS_ENABLED}
+      - MCP_PROMETHEUS_URL=${MCP_PROMETHEUS_URL}
+      - MCP_PORTAINER_ENABLED=${MCP_PORTAINER_ENABLED}
+      - MCP_PORTAINER_SERVER=${MCP_PORTAINER_SERVER}
+      - PORTAINER_USER=${PORTAINER_USER}
+      - PORTAINER_PASSWORD=${PORTAINER_PASSWORD}
+      - MCP_PORTAINER_READ_ONLY=${MCP_PORTAINER_READ_ONLY}
+      - MCP_RABBITMQ_ENABLED=${MCP_RABBITMQ_ENABLED}
+      - RABBIT_HOST=${RABBIT_HOST}
+      - RABBIT_USER=${RABBIT_USER}
+      - RABBIT_PASSWORD=${RABBIT_PASSWORD}
+      - RABBIT_PORT=${RABBIT_PORT}
+      - RABBIT_SECURE=${RABBIT_SECURE}
+      - MCP_POSTGRES_ENABLED=${MCP_POSTGRES_ENABLED}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_READONLY_USER=${POSTGRES_READONLY_USER}
+      - POSTGRES_READONLY_PASSWORD=${POSTGRES_READONLY_PASSWORD}
+      - MONITORING_DOMAIN=${MONITORING_DOMAIN}
       - MCP_HOST=0.0.0.0
       - MCP_PORT=${MCP_PORT}
       - MCP_LOG_LEVEL=${MCP_LOG_LEVEL}
-      - MCP_READ_ONLY=${MCP_READ_ONLY}
     networks:
       - monitored
       - public
     deploy:
-      replicas: ${MCP_REPLICAS}
+      replicas: 1
       placement:
         constraints:
           - node.labels.ops==true
@@ -47,9 +66,89 @@ services:
         - traefik.http.routers.mcp_aggregator.tls=true
         # Security: IP allowlist + BasicAuth + gzip
         - traefik.http.routers.mcp_aggregator.middlewares=ops_whitelist_ips@swarm, ops_auth@swarm, ops_gzip@swarm
-        # Prometheus metrics
-        - prometheus-job=mcp_aggregator
-        - prometheus-port=${MCP_PORT}
+
+  # ---- Prometheus MCP sidecar (pab1it0/prometheus-mcp-server) ----
+  mcp-prometheus:
+    image: ghcr.io/pab1it0/prometheus-mcp-server:1.5.3
+    init: true
+{%- raw %}
+    hostname: "mcp-prometheus-{{.Node.Hostname}}-{{.Task.Slot}}"
+{%- endraw %}
+    environment:
+      - PROMETHEUS_URL=${MCP_PROMETHEUS_BACKEND_URL}
+      - PROMETHEUS_MCP_SERVER_TRANSPORT=http
+      - PROMETHEUS_MCP_BIND_HOST=0.0.0.0
+      - PROMETHEUS_MCP_BIND_PORT=8080
+    networks:
+      - monitored
+    deploy:
+      replicas: ${MCP_PROMETHEUS_REPLICAS}
+      placement:
+        constraints:
+          - node.labels.ops==true
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.1"
+          memory: 128M
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: continue
+        delay: 10s
+      labels:
+        - prometheus-job=mcp_prometheus
+        - prometheus-port=8080
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep -f prometheus-mcp-server >/dev/null 2>&1 || exit 1"]
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
+  # ---- Grafana MCP sidecar (grafana/mcp-grafana) ----
+  mcp-grafana:
+    image: mcp/grafana
+    init: true
+{%- raw %}
+    hostname: "mcp-grafana-{{.Node.Hostname}}-{{.Task.Slot}}"
+{%- endraw %}
+    environment:
+      - GRAFANA_URL=${MCP_GRAFANA_BACKEND_URL}
+      - GRAFANA_USERNAME=${SERVICES_USER}
+      - GRAFANA_PASSWORD=${SERVICES_PASSWORD}
+    networks:
+      - monitored
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.ops==true
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.1"
+          memory: 128M
+      update_config:
+        parallelism: 1
+        order: start-first
+        failure_action: continue
+        delay: 10s
+      labels:
+        - prometheus-job=mcp_grafana
+        - prometheus-port=8000
+    command:
+      - "-t"
+      - "streamable-http"
+      - "--address"
+      - "0.0.0.0:8000"
+      - "--disable-write"
+    healthcheck:
+      disable: true
 
 networks:
   monitored:
