@@ -473,6 +473,11 @@ def validate_backends(servers: dict) -> dict:
         if "command" in cfg:
             cmd = cfg["command"]
             if not shutil.which(cmd):
+                logger.warning(
+                    "  OMIT  backend '%s': binary '%s' not found in PATH",
+                    name,
+                    cmd,
+                )
                 return (name, 0, f"binary '{cmd}' not found in PATH")
 
         try:
@@ -481,10 +486,28 @@ def validate_backends(servers: dict) -> dict:
                 tools = await asyncio.wait_for(
                     client.list_tools(), timeout=timeout_per_backend
                 )
+                tool_names = [getattr(t, "name", str(t)) for t in tools]
+                logger.info(
+                    "  PROBE backend '%s': discovered %d tool(s): %s",
+                    name,
+                    len(tools),
+                    tool_names,
+                )
             return (name, len(tools), "")
         except asyncio.TimeoutError:
+            logger.warning(
+                "  OMIT  backend '%s': timed out after %ds during probe",
+                name,
+                timeout_per_backend,
+            )
             return (name, 0, f"TIMEOUT after {timeout_per_backend}s")
         except (OSError, RuntimeError, ValueError, TypeError, httpx.HTTPError) as exc:
+            logger.warning(
+                "  OMIT  backend '%s': exception during probe: %s: %s",
+                name,
+                type(exc).__name__,
+                exc,
+            )
             return (name, 0, f"{type(exc).__name__}: {exc}")
 
     async def _probe_all():
