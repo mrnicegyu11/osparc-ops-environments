@@ -100,6 +100,7 @@ RABBIT_HOST = os.getenv("RABBIT_HOST", "master_rabbit")
 RABBIT_USER = os.getenv("RABBIT_USER", "admin")
 RABBIT_PASSWORD = os.getenv("RABBIT_PASSWORD", "")
 RABBIT_PORT = int(os.getenv("RABBIT_PORT", "5672"))
+RABBIT_MANAGEMENT_PORT = int(os.getenv("RABBIT_MANAGEMENT_PORT", "15672") or "15672")
 RABBIT_SECURE = os.getenv("RABBIT_SECURE", "0") in ("true", "1", "yes")
 
 MCP_POSTGRES_ENABLED = os.getenv("MCP_POSTGRES_ENABLED", "false").lower() in (
@@ -325,7 +326,12 @@ def build_mcp_servers_config() -> (
             "command": "amq-mcp-server-rabbitmq",
             "args": [],
         }
-        logger.info("RabbitMQ MCP backend configured (stdio, connect via tool)")
+        logger.info(
+            "RabbitMQ MCP backend configured: amq-mcp-server-rabbitmq "
+            "(management API at %s:%s)",
+            RABBIT_HOST,
+            RABBIT_MANAGEMENT_PORT,
+        )
 
     if MCP_POSTGRES_ENABLED:
         if not POSTGRES_READONLY_USER or not POSTGRES_READONLY_PASSWORD:
@@ -421,10 +427,15 @@ def build_instructions() -> str:
     ]
     if MCP_RABBITMQ_ENABLED and RABBIT_HOST and RABBIT_PASSWORD:
         tls_str = "true" if RABBIT_SECURE else "false"
+        # The Amazon MCP tool's RabbitMQAdmin builds its base_url from
+        # hostname alone (no separate management port param).  Include
+        # the management port in the hostname so the URL becomes e.g.
+        # http://master_rabbit:15672/api  instead of  http://master_rabbit/api
+        mgmt_host = f"{RABBIT_HOST}:{RABBIT_MANAGEMENT_PORT}"
         lines.append(
             f"IMPORTANT: Before using any rabbitmq_* tools, you MUST first call "
             f"rabbitmq_rabbitmq_broker_initialize_connection with: "
-            f'broker_hostname="{RABBIT_HOST}", '
+            f'broker_hostname="{mgmt_host}", '
             f'username="{RABBIT_USER}", '
             f'password="{RABBIT_PASSWORD}", '
             f"port={RABBIT_PORT}, "

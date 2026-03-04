@@ -31,6 +31,8 @@ rootca.crt: rootca.key
 	# Creating certificate for authority in $@ from key $< (10000 days validity)
 	@openssl req -x509 -new -nodes -key $< \
 		-subj "/C=US/ST=sparc/O=oSparc/CN=IT'IS oSparc" \
+		-addext "basicConstraints=critical,CA:TRUE" \
+		-addext "keyUsage=critical,keyCertSign,cRLSign" \
 		-sha384 -days 10000 -out $@;
 
 extfile.cnf:

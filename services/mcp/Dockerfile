@@ -9,7 +9,7 @@ RUN groupadd --gid 1000 appuser && \
 WORKDIR /app
 
 # Install portainer-mcp binary (stdio-based Go binary) and libpq (for postgres-mcp/psycopg3)
-RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates libpq5 && \
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates libpq5 git && \
     curl -fsSL "https://github.com/portainer/portainer-mcp/releases/download/${PORTAINER_MCP_VERSION}/portainer-mcp-${PORTAINER_MCP_VERSION}-linux-amd64.tar.gz" \
       | tar -xz -C /usr/local/bin/ && \
     chmod +x /usr/local/bin/portainer-mcp && \
@@ -28,7 +28,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # import BearerAuthProvider which was renamed in fastmcp >=2.8.
 ENV UV_TOOL_BIN_DIR=/usr/local/bin \
     UV_TOOL_DIR=/opt/uv-tools
-RUN uv tool install "amq-mcp-server-rabbitmq>=2.2.4" --with "fastmcp>=2.7.1,<2.8" --with "pydantic>=2.0,<2.11" && \
+RUN uv tool install "amq-mcp-server-rabbitmq @ git+https://github.com/ITISFoundation/mcp-server-rabbitmq.git@e4b265e7f4d261437178bd8593b3a824e908115d" --with "fastmcp>=2.7.1,<2.8" --with "pydantic>=2.0,<2.11" && \
     uv tool install "postgres-mcp>=0.3.0" --with "fastmcp>=2.7.1,<2.8" --with "pydantic>=2.0,<2.11"
 
 # Copy application code
