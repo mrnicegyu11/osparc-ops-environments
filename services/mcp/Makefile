@@ -15,6 +15,14 @@ up: ${TEMP_COMPOSE} ## Deploy stack
 build: ## Build the MCP aggregator Docker image
 	docker build -t local/mcp-aggregator:latest .
 
+.PHONY: test
+test: ## Run pytest suite via uv
+	uv run --extra test pytest -v --tb=short $(PYTEST_ARGS)
+
+.PHONY: test-design
+test-design: ## Run only DESIGN.md specification tests
+	uv run --extra test pytest -v --tb=short -m design $(PYTEST_ARGS)
+
 #
 # Artifacts
 #

@@ -32,7 +32,7 @@ RUN uv tool install "amq-mcp-server-rabbitmq @ git+https://github.com/ITISFounda
     uv tool install "postgres-mcp>=0.3.0" --with "fastmcp>=2.7.1,<2.8" --with "pydantic>=2.0,<2.11"
 
 # Copy application code
-COPY server.py .
+COPY mcp_aggregator/ ./mcp_aggregator/
 COPY healthcheck.py .
 
 # Copy skills (MCP resources)
@@ -51,4 +51,4 @@ USER appuser
 
 EXPOSE 8080
 
-ENTRYPOINT ["python", "server.py"]
+ENTRYPOINT ["python", "-m", "mcp_aggregator"]

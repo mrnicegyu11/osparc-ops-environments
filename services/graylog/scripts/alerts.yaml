@@ -1,0 +1,156 @@
+- title: "osparc.local: DOCKER IP POOL EXHAUSTED, no service can start"
+  description: "osparc.local: DOCKER IP POOL EXHAUSTED, no service can start. See: https://github.com/moby/moby/issues/30820"
+  priority: 3
+  config:
+    query: >
+      container_name: /.*director-v2.*/ AND "could not find an available, non-overlapping IPv4 address pool among the defaults to assign to the network" AND NOT container_name:/.*graylog_graylog.*/
+    query_parameters: []
+    search_within_ms: 600000
+    event_limit: 1000
+    execute_every_ms: 600000
+    group_by: []
+    series: []
+    conditions: {}
+    type: aggregation-v1
+  field_spec:
+    source:
+      data_type: string
+      providers:
+      - type: template-v1
+        template: "${source.source}"
+        require_values: false
+    container_name:
+      data_type: string
+      providers:
+      - type: template-v1
+        template: "${source.container_name}"
+        require_values: false
+    full_message:
+      data_type: string
+      providers:
+      - type: template-v1
+        template: "${source.full_message}"
+  key_spec:
+    - source
+    - container_name
+    - full_message
+  notification_settings:
+    grace_period_ms: 0
+    backlog_size: 99
+  alert: true
+- title: "osparc.local: Unexpected error with redis lock detected"
+  description: "osparc.local: This error should only occur in unit tests due to very low timings, maybe something happene here"
+  priority: 2
+  config:
+    query: >
+      "lock is no longer owned. This is unexpected and requires investigation" AND NOT container_name:/.*graylog_graylog.*/
+    query_parameters: []
+    search_within_ms: 3600000
+    event_limit: 1000
+    execute_every_ms: 3600000
+    group_by: []
+    series: []
+    conditions: {}
+    type: aggregation-v1
+  field_spec:
+    source:
+      data_type: string
+      providers:
+      - type: template-v1
+        template: "${source.source}"
+        require_values: false
+    container_name:
+      data_type: string
+      providers:
+      - type: template-v1
+        template: "${source.container_name}"
+        require_values: false
+    full_message:
+      data_type: string
+      providers:
+      - type: template-v1
+        template: "${source.full_message}"
+  key_spec:
+    - source
+    - container_name
+  notification_settings:
+    grace_period_ms: 0
+    backlog_size: 99
+  alert: true
+- title: "osparc.local: Detected LockNotOwnedError please invetigate"
+  description: "osparc.local: If LockNotOwnedError is raised the lock extension might have issues, which could be potentially very bad"
+  priority: 2
+  config:
+    query: >
+      "LockNotOwnedError" AND NOT container_name:/.*graylog_graylog.*/
+    query_parameters: []
+    search_within_ms: 3600000
+    event_limit: 1000
+    execute_every_ms: 3600000
+    group_by: []
+    series: []
+    conditions: {}
+    type: aggregation-v1
+  field_spec:
+    source:
+      data_type: string
+      providers:
+      - type: template-v1
+        template: "${source.source}"
+        require_values: false
+    container_name:
+      data_type: string
+      providers:
+      - type: template-v1
+        template: "${source.container_name}"
+        require_values: false
+    full_message:
+      data_type: string
+      providers:
+      - type: template-v1
+        template: "${source.full_message}"
+  key_spec:
+    - source
+    - container_name
+  notification_settings:
+    grace_period_ms: 0
+    backlog_size: 99
+  alert: true
+- title: "osparc.local: Payments service errors or warnings"
+  description: "osparc.local: Payments service errors or warnings"
+  priority: 2
+  config:
+      query: log_service:/.+payments/ AND (log_level:ERROR OR log_level:WARNING)
+      query_parameters: []
+      search_within_ms: 600000
+      event_limit: 1000
+      execute_every_ms: 600000
+      group_by: []
+      series: []
+      conditions: {}
+      type: aggregation-v1
+  field_spec:
+    source:
+      data_type: string
+      providers:
+      - type: template-v1
+        template: "${source.source}"
+        require_values: false
+    container_name:
+      data_type: string
+      providers:
+      - type: template-v1
+        template: "${source.container_name}"
+        require_values: false
+    full_message:
+      data_type: string
+      providers:
+      - type: template-v1
+        template: "${source.full_message}"
+  key_spec:
+    - source
+    - container_name
+  notification_settings:
+    grace_period_ms: 0
+    backlog_size: 99
+  alert: true

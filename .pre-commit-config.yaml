@@ -33,13 +33,14 @@ repos:
           - "[pin];[donotremove]"
         files: .*[.]ipynb$
         types: ["file"]
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v2.34.0
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.10
     hooks:
-      - id: pyupgrade
+      - id: ruff
         name: upgrade code
+        args: [--select, "UP", --fix]
   - repo: https://github.com/hadialqattan/pycln
-    rev: v2.5.0  # https://github.com/hadialqattan/pycln/issues/249
+    rev: v2.6.0
     hooks:
       - id: pycln
         args: [--all, --expand-stars]
@@ -74,8 +75,8 @@ repos:
   #  hooks:
   #    - id: bandit
   #      name: bandit python3 security linter
-  - repo: https://github.com/jumanjihouse/pre-commit-hooks
-    rev: 3.0.0
+  - repo: https://github.com/shellcheck-py/shellcheck-py
+    rev: v0.10.0.1
     hooks:
       - id: shellcheck
         name: Shell scripts conform to shellcheck
@@ -117,7 +118,7 @@ repos:
       - id: helm-update-dependencies
         name: Helm Dependency Update
         description: Make sure all Chart.lock files are up-to-date
-        entry: bash -c 'find . -name Chart.yaml -exec dirname {} \; | xargs -t -I% helm dependency update %'
+        entry: bash -c 'if ! command -v helm >/dev/null 2>&1; then echo Skipping && exit 0; fi; find . -name Chart.yaml -exec dirname {} \; | xargs -t -I% helm dependency update %'
         language: system
         files: ^charts/
         pass_filenames: false
