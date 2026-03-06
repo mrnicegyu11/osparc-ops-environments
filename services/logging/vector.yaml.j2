@@ -1,10 +1,12 @@
-# Ingests GELF logs from Docker daemon and forwards to Loki and Graylog (both over TCP)
+# Ingests GELF logs from Docker daemon AND syslog from nodes,
+# then forwards to Loki, Graylog, and (optionally) VictoriaLogs.
 
 sources:
-  # Receive GELF messages from Docker containers via UDP
   vector_metrics:
     type: internal_metrics
     scrape_interval_secs: ${PROMETHEUS_SCRAPE_INTERVAL_SECONDS}
+
+  # Receive GELF messages from Docker containers via UDP
   docker_gelf:
     type: socket
     address: "0.0.0.0:12201"
@@ -15,6 +17,12 @@ sources:
       method: chunked_gelf
       # Auto-detect compression (gzip, zlib, or uncompressed)
       decompression: Auto
+
+  # Receive syslog (RFC 5424) from rsyslog on every node via UDP
+  node_syslog:
+    type: syslog
+    address: "0.0.0.0:12202"
+    mode: udp
 
 transforms:
   # Process and enrich the logs
@@ -66,6 +74,7 @@ transforms:
 
       # Add processing metadata
       .processed_by = "vector"
+      .log_source = "docker"
 
       # Extract structured log fields from message using regex pattern
       if exists(.message) {
@@ -98,9 +107,42 @@ transforms:
         }
       }
 
+  # Enrich syslog messages with unified fields so they can flow through
+  # the same sinks (Graylog GELF, Loki, VictoriaLogs) as Docker logs.
+  process_syslog:
+    type: remap
+    inputs: ["node_syslog"]
+    source: |
+      # Map syslog severity to a human-readable level name
+      .log_level = to_string(.severity) ?? "UNKNOWN"
+      .level = .log_level
+
+      # Preserve the originating hostname
+      if !exists(.host) {
+        .host = "unknown"
+      }
+
+      # Use appname (rsyslog application_name) as service/container name
+      .service_name = .appname ?? "syslog"
+      .container_name = "syslog:" + .service_name
+      .log_service = .service_name
+      .container_id = "syslog"
+      .image_name = "syslog"
+
+      # Normalise the message field
+      .log_msg = .message ?? ""
+
+      # GELF codec requires these fields to produce valid output
+      .version = "1.1"
+      .short_message = .message ?? ""
+
+      .processed_by = "vector"
+      .log_source = "syslog"
+
+  # Loki-specific transform: ensure .level is set for Grafana label
   process_logs_loki:
     type: "remap"
-    inputs: ["process_logs_base"]
+    inputs: ["process_logs_base", "process_syslog"]
     source: |
       # ensure level field is set for Grafana Loki
       if exists(.log_level){
@@ -123,6 +165,7 @@ sinks:
       host: "{{ host }}"
       container_name: "{{ container_name }}"
       service_name: "{{ service_name }}"
+      log_source: '{{ log_source | default "docker" }}'
       {%- endraw %}
     healthcheck:
       enabled: true
@@ -131,10 +174,10 @@ sinks:
     inputs:
       - vector_metrics
     address: "0.0.0.0:9598"
-  # Send to Graylog via GELF over TCP
+  # Send to Graylog via GELF over TCP (Docker logs + syslog)
   graylog:
     type: socket
-    inputs: ["process_logs_base"]
+    inputs: ["process_logs_base", "process_syslog"]
     address: "${VECTOR_LOG_DESTINATION:?err}:12203"
     mode: tcp
     encoding:
@@ -147,6 +190,7 @@ sinks:
   kubernetes-victoria-logs:
     inputs:
       - process_logs_base
+      - process_syslog
     # https://vector.dev/docs/reference/configuration/sinks/elasticsearch/
     type: elasticsearch
     auth:
