@@ -148,6 +148,12 @@ services:
       - "--address"
       - "0.0.0.0:8000"
       - "--disable-write"
+      # Disable Grafana Cloud features not available on self-hosted instances
+      - "--disable-oncall"
+      - "--disable-sift"
+      - "--disable-asserts"
+      - "--disable-pyroscope"
+      - "--disable-incident"
     healthcheck:
       disable: true
 

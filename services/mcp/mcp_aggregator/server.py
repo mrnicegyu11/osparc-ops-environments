@@ -29,6 +29,22 @@ from .skills import register as register_skills
 
 logger = logging.getLogger("mcp-aggregator")
 
+# ---------------------------------------------------------------------------
+# Redundant tools — grafana re-exposes Tempo tools that the dedicated
+# Tempo backend already provides (and without requiring a datasourceUid).
+# These are hidden via FastMCP's disable() when both backends are active.
+# ---------------------------------------------------------------------------
+
+REDUNDANT_GRAFANA_TEMPO_TOOLS: set[str] = {
+    "grafana_tempo_docs-traceql",
+    "grafana_tempo_get-attribute-names",
+    "grafana_tempo_get-attribute-values",
+    "grafana_tempo_get-trace",
+    "grafana_tempo_traceql-metrics-instant",
+    "grafana_tempo_traceql-metrics-range",
+    "grafana_tempo_traceql-search",
+}
+
 
 # ---------------------------------------------------------------------------
 # Instructions for MCP clients
@@ -161,6 +177,15 @@ class Aggregator:
 
         mcp.instructions = _build_instructions()
         skill_count = register_skills(mcp)
+
+        # Hide redundant tools: grafana's Tempo tools duplicate the
+        # dedicated Tempo backend (which needs no datasourceUid param).
+        if "tempo" in self._active_servers and "grafana" in self._active_servers:
+            mcp.disable(names=REDUNDANT_GRAFANA_TEMPO_TOOLS, components={"tool"})
+            logger.info(
+                "Disabled %d redundant grafana_tempo_* tools",
+                len(REDUNDANT_GRAFANA_TEMPO_TOOLS),
+            )
 
         # Health tool — closure captures ``self`` by reference so
         # ``self._monitor`` resolves at call-time (after start_monitor).
