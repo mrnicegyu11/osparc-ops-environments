@@ -427,18 +427,14 @@ def build_instructions() -> str:
     ]
     if MCP_RABBITMQ_ENABLED and RABBIT_HOST and RABBIT_PASSWORD:
         tls_str = "true" if RABBIT_SECURE else "false"
-        # The Amazon MCP tool's RabbitMQAdmin builds its base_url from
-        # hostname alone (no separate management port param).  Include
-        # the management port in the hostname so the URL becomes e.g.
-        # http://master_rabbit:15672/api  instead of  http://master_rabbit/api
-        mgmt_host = f"{RABBIT_HOST}:{RABBIT_MANAGEMENT_PORT}"
         lines.append(
             f"IMPORTANT: Before using any rabbitmq_* tools, you MUST first call "
             f"rabbitmq_rabbitmq_broker_initialize_connection with: "
-            f'broker_hostname="{mgmt_host}", '
+            f'broker_hostname="{RABBIT_HOST}", '
             f'username="{RABBIT_USER}", '
             f'password="{RABBIT_PASSWORD}", '
             f"port={RABBIT_PORT}, "
+            f"management_port={RABBIT_MANAGEMENT_PORT}, "
             f"use_tls={tls_str}"
         )
     return "\n".join(lines)

@@ -37,7 +37,18 @@ def _build_portainer() -> dict | None:
 
 
 def _build_rabbitmq() -> dict | None:
-    return {"command": "amq-mcp-server-rabbitmq", "args": []}
+    return {
+        "command": "amq-mcp-server-rabbitmq",
+        "args": [],
+        "env": {
+            "RABBITMQ_HOST": cfg.RABBIT_HOST,
+            "RABBITMQ_USERNAME": cfg.RABBIT_USER,
+            "RABBITMQ_PASSWORD": cfg.RABBIT_PASSWORD,
+            "RABBITMQ_PORT": str(cfg.RABBIT_PORT),
+            "RABBITMQ_MANAGEMENT_PORT": str(cfg.RABBIT_MANAGEMENT_PORT),
+            "RABBITMQ_USE_TLS": "true" if cfg.RABBIT_SECURE else "false",
+        },
+    }
 
 
 def _build_postgres() -> dict | None:
@@ -52,6 +63,38 @@ def _build_postgres() -> dict | None:
         "command": "postgres-mcp",
         "args": ["--access-mode=restricted"],
         "env": {"DATABASE_URI": uri},
+    }
+
+
+def _build_aws_cost_explorer() -> dict | None:
+    if not cfg.AWS_ACCESS_KEY_ID or not cfg.AWS_SECRET_ACCESS_KEY:
+        logger.warning("AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY not set – skipping")
+        return None
+    return {
+        "command": "awslabs.cost-explorer-mcp-server",
+        "args": [],
+        "env": {
+            "AWS_ACCESS_KEY_ID": cfg.AWS_ACCESS_KEY_ID,
+            "AWS_SECRET_ACCESS_KEY": cfg.AWS_SECRET_ACCESS_KEY,
+            "AWS_DEFAULT_REGION": cfg.AWS_REGION,
+            "FASTMCP_LOG_LEVEL": "ERROR",
+        },
+    }
+
+
+def _build_aws_pricing() -> dict | None:
+    if not cfg.AWS_ACCESS_KEY_ID or not cfg.AWS_SECRET_ACCESS_KEY:
+        logger.warning("AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY not set – skipping")
+        return None
+    return {
+        "command": "awslabs.aws-pricing-mcp-server",
+        "args": [],
+        "env": {
+            "AWS_ACCESS_KEY_ID": cfg.AWS_ACCESS_KEY_ID,
+            "AWS_SECRET_ACCESS_KEY": cfg.AWS_SECRET_ACCESS_KEY,
+            "AWS_DEFAULT_REGION": cfg.AWS_REGION,
+            "FASTMCP_LOG_LEVEL": "ERROR",
+        },
     }
 
 
@@ -72,6 +115,8 @@ _BACKENDS: list[tuple[bool, str, callable]] = [
     (cfg.PORTAINER_ENABLED, "portainer", _build_portainer),
     (cfg.RABBITMQ_ENABLED, "rabbitmq", _build_rabbitmq),
     (cfg.POSTGRES_ENABLED, "postgres", _build_postgres),
+    (cfg.AWS_COST_EXPLORER_ENABLED, "aws_cost_explorer", _build_aws_cost_explorer),
+    (cfg.AWS_PRICING_ENABLED, "aws_pricing", _build_aws_pricing),
     (
         cfg.GRAFANA_ENABLED,
         "grafana",

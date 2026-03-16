@@ -28,8 +28,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 # import BearerAuthProvider which was renamed in fastmcp >=2.8.
 ENV UV_TOOL_BIN_DIR=/usr/local/bin \
     UV_TOOL_DIR=/opt/uv-tools
-RUN uv tool install "amq-mcp-server-rabbitmq @ git+https://github.com/ITISFoundation/mcp-server-rabbitmq.git@e4b265e7f4d261437178bd8593b3a824e908115d" --with "fastmcp>=2.7.1,<2.8" --with "pydantic>=2.0,<2.11" && \
-    uv tool install "postgres-mcp>=0.3.0" --with "fastmcp>=2.7.1,<2.8" --with "pydantic>=2.0,<2.11"
+RUN uv tool install "amq-mcp-server-rabbitmq @ git+https://github.com/ITISFoundation/mcp-server-rabbitmq.git@92f8fe5" --with "fastmcp>=2.7.1,<2.8" --with "pydantic>=2.0,<2.11" && \
+    uv tool install "postgres-mcp>=0.3.0" --with "fastmcp>=2.7.1,<2.8" --with "pydantic>=2.0,<2.11" && \
+    uv tool install "awslabs.cost-explorer-mcp-server" && \
+    uv tool install "awslabs.aws-pricing-mcp-server"
 
 # Copy application code
 COPY mcp_aggregator/ ./mcp_aggregator/

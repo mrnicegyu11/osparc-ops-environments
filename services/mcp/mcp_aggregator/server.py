@@ -45,6 +45,26 @@ REDUNDANT_GRAFANA_TEMPO_TOOLS: set[str] = {
     "grafana_tempo_traceql-search",
 }
 
+# Portainer tools irrelevant for Docker Swarm deployments or that expose
+# unnecessary user/team management surface.
+EXCLUDED_PORTAINER_TOOLS: set[str] = {
+    "portainer_getKubernetesResourceStripped",
+    "portainer_kubernetesProxy",
+    "portainer_listAccessGroups",
+    "portainer_listEnvironmentGroups",
+    "portainer_listEnvironmentTags",
+    "portainer_listEnvironments",
+    "portainer_listLocalStacks",
+    "portainer_listTeams",
+    "portainer_listUsers",
+}
+
+# RabbitMQ tools irrelevant for our deployment (we don't use OAuth or Amazon MQ).
+EXCLUDED_RABBITMQ_TOOLS: set[str] = {
+    "rabbitmq_rabbitmq_broker_initialize_connection_with_oauth",
+    "rabbitmq_rabbitmq_broker_get_guideline",
+}
+
 
 # ---------------------------------------------------------------------------
 # Instructions for MCP clients
@@ -55,18 +75,18 @@ def _build_instructions() -> str:
     lines = [
         "You are connected to the osparc-ops MCP aggregator.",
         "Available backends are namespaced "
-        "(e.g. tempo_*, prometheus_*, portainer_*, rabbitmq_*, postgres_*).",
+        "(e.g. tempo_*, prometheus_*, portainer_*, rabbitmq_*, postgres_*, aws_cost_explorer_*, aws_pricing_*).",
     ]
     if cfg.RABBITMQ_ENABLED and cfg.RABBIT_HOST and cfg.RABBIT_PASSWORD:
         tls_str = "true" if cfg.RABBIT_SECURE else "false"
-        mgmt_host = f"{cfg.RABBIT_HOST}:{cfg.RABBIT_MANAGEMENT_PORT}"
         lines.append(
             f"IMPORTANT: Before using any rabbitmq_* tools, you MUST first call "
             f"rabbitmq_rabbitmq_broker_initialize_connection with: "
-            f'broker_hostname="{mgmt_host}", '
+            f'broker_hostname="{cfg.RABBIT_HOST}", '
             f'username="{cfg.RABBIT_USER}", '
             f'password="{cfg.RABBIT_PASSWORD}", '
             f"port={cfg.RABBIT_PORT}, "
+            f"management_port={cfg.RABBIT_MANAGEMENT_PORT}, "
             f"use_tls={tls_str}"
         )
     return "\n".join(lines)
@@ -185,6 +205,20 @@ class Aggregator:
             logger.info(
                 "Disabled %d redundant grafana_tempo_* tools",
                 len(REDUNDANT_GRAFANA_TEMPO_TOOLS),
+            )
+
+        if "portainer" in self._active_servers:
+            mcp.disable(names=EXCLUDED_PORTAINER_TOOLS, components={"tool"})
+            logger.info(
+                "Disabled %d excluded portainer tools",
+                len(EXCLUDED_PORTAINER_TOOLS),
+            )
+
+        if "rabbitmq" in self._active_servers:
+            mcp.disable(names=EXCLUDED_RABBITMQ_TOOLS, components={"tool"})
+            logger.info(
+                "Disabled %d excluded rabbitmq tools",
+                len(EXCLUDED_RABBITMQ_TOOLS),
             )
 
         # Health tool — closure captures ``self`` by reference so

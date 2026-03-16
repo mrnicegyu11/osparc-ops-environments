@@ -55,3 +55,13 @@ POSTGRES_PORT = os.getenv("POSTGRES_PORT", "5432")
 POSTGRES_DB = os.getenv("POSTGRES_DB", "simcoredb")
 POSTGRES_READONLY_USER = os.getenv("POSTGRES_READONLY_USER", "")
 POSTGRES_READONLY_PASSWORD = os.getenv("POSTGRES_READONLY_PASSWORD", "")
+
+# AWS credentials (shared by Cost Explorer and Pricing backends)
+AWS_ACCESS_KEY_ID = os.getenv("MCP_AWS_ACCESS_KEY_ID", "")
+AWS_SECRET_ACCESS_KEY = os.getenv("MCP_AWS_SECRET_ACCESS_KEY", "")
+AWS_REGION = os.getenv("MCP_AWS_REGION", "")
+
+# Auto-enable both AWS backends when all three credentials are provided
+_aws_creds_present = bool(AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY and AWS_REGION)
+AWS_COST_EXPLORER_ENABLED = _aws_creds_present
+AWS_PRICING_ENABLED = _aws_creds_present

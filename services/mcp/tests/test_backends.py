@@ -90,7 +90,12 @@ class TestBuildRabbitmq:
         from mcp_aggregator.backends import _build_rabbitmq
 
         result = _build_rabbitmq()
-        assert result == {"command": "amq-mcp-server-rabbitmq", "args": []}
+        assert result["command"] == "amq-mcp-server-rabbitmq"
+        assert result["args"] == []
+        assert "env" in result
+        assert "RABBITMQ_HOST" in result["env"]
+        assert "RABBITMQ_USERNAME" in result["env"]
+        assert "RABBITMQ_MANAGEMENT_PORT" in result["env"]
 
 
 class TestBuildPostgres:
