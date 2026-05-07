@@ -75,7 +75,7 @@ def _build_instructions() -> str:
     lines = [
         "You are connected to the osparc-ops MCP aggregator.",
         "Available backends are namespaced "
-        "(e.g. tempo_*, prometheus_*, portainer_*, rabbitmq_*, postgres_*, aws_cost_explorer_*, aws_pricing_*).",
+        "(e.g. tempo_*, prometheus_*, portainer_*, rabbitmq_*, postgres_*).",
     ]
     if cfg.RABBITMQ_ENABLED and cfg.RABBIT_HOST and cfg.RABBIT_PASSWORD:
         tls_str = "true" if cfg.RABBIT_SECURE else "false"

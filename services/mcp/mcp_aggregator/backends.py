@@ -66,38 +66,6 @@ def _build_postgres() -> dict | None:
     }
 
 
-def _build_aws_cost_explorer() -> dict | None:
-    if not cfg.AWS_ACCESS_KEY_ID or not cfg.AWS_SECRET_ACCESS_KEY:
-        logger.warning("AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY not set – skipping")
-        return None
-    return {
-        "command": "awslabs.cost-explorer-mcp-server",
-        "args": [],
-        "env": {
-            "AWS_ACCESS_KEY_ID": cfg.AWS_ACCESS_KEY_ID,
-            "AWS_SECRET_ACCESS_KEY": cfg.AWS_SECRET_ACCESS_KEY,
-            "AWS_DEFAULT_REGION": cfg.AWS_REGION,
-            "FASTMCP_LOG_LEVEL": "ERROR",
-        },
-    }
-
-
-def _build_aws_pricing() -> dict | None:
-    if not cfg.AWS_ACCESS_KEY_ID or not cfg.AWS_SECRET_ACCESS_KEY:
-        logger.warning("AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY not set – skipping")
-        return None
-    return {
-        "command": "awslabs.aws-pricing-mcp-server",
-        "args": [],
-        "env": {
-            "AWS_ACCESS_KEY_ID": cfg.AWS_ACCESS_KEY_ID,
-            "AWS_SECRET_ACCESS_KEY": cfg.AWS_SECRET_ACCESS_KEY,
-            "AWS_DEFAULT_REGION": cfg.AWS_REGION,
-            "FASTMCP_LOG_LEVEL": "ERROR",
-        },
-    }
-
-
 # Ordered registry: (config_enabled, name, builder)
 _BACKENDS: list[tuple[bool, str, callable]] = [
     (
@@ -115,8 +83,6 @@ _BACKENDS: list[tuple[bool, str, callable]] = [
     (cfg.PORTAINER_ENABLED, "portainer", _build_portainer),
     (cfg.RABBITMQ_ENABLED, "rabbitmq", _build_rabbitmq),
     (cfg.POSTGRES_ENABLED, "postgres", _build_postgres),
-    (cfg.AWS_COST_EXPLORER_ENABLED, "aws_cost_explorer", _build_aws_cost_explorer),
-    (cfg.AWS_PRICING_ENABLED, "aws_pricing", _build_aws_pricing),
     (
         cfg.GRAFANA_ENABLED,
         "grafana",
