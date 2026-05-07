@@ -13,9 +13,7 @@ VS Code Copilot ──HTTPS──▶ Traefik ──▶ MCP Aggregator ─┬─�
                             + BasicAuth)                ├─▶ Prometheus MCP   (streamable-http)
                                                         ├─▶ Portainer MCP    (stdio)
                                                         ├─▶ RabbitMQ MCP     (stdio)
-                                                        ├─▶ Postgres MCP     (stdio)
-                                                        ├─▶ AWS Cost Explorer MCP (stdio)
-                                                        └─▶ AWS Pricing MCP  (stdio)
+                                                        └─▶ Postgres MCP     (stdio)
 ```
 
 - **Traefik** terminates TLS and enforces IP allowlist + BasicAuth (reuses the
@@ -24,7 +22,7 @@ VS Code Copilot ──HTTPS──▶ Traefik ──▶ MCP Aggregator ─┬─�
   `tempo_search_traces`, `grafana_query`, `portainer_listStacks`, …).
 - **HTTP backends** (Tempo, Grafana, Prometheus) run as sidecars and communicate
   via streamable-http inside the Docker overlay network.
-- **Stdio backends** (Portainer, RabbitMQ, Postgres, AWS) are embedded as
+- **Stdio backends** (Portainer, RabbitMQ, Postgres) are embedded as
   subprocesses inside the aggregator container.
 
 ## Backends
@@ -37,8 +35,6 @@ VS Code Copilot ──HTTPS──▶ Traefik ──▶ MCP Aggregator ─┬─�
 | Portainer | stdio | `portainer_*` | Docker/K8s stack & container management |
 | RabbitMQ | stdio | `rabbitmq_*` | Queue inspection, broker diagnostics |
 | Postgres | stdio | `postgres_*` | SQL queries (read-only / restricted) |
-| AWS Cost Explorer | stdio | `aws_cost_explorer_*` | AWS cost analysis & forecasting |
-| AWS Pricing | stdio | `aws_pricing_*` | AWS service pricing & cost reports |
 
 ## Files
 
@@ -93,13 +89,6 @@ All configuration is via environment variables (set in `repo.config`):
 | `POSTGRES_DB` | `simcoredb` | Postgres database name |
 | `POSTGRES_READONLY_USER` | *(empty)* | Postgres read-only username |
 | `POSTGRES_READONLY_PASSWORD` | *(empty)* | Postgres read-only password |
-| `MCP_AWS_ACCESS_KEY_ID` | *(empty)* | AWS access key ID |
-| `MCP_AWS_SECRET_ACCESS_KEY` | *(empty)* | AWS secret access key |
-| `MCP_AWS_REGION` | *(empty)* | AWS region (e.g. `us-east-1`) |
-
-> **Note:** AWS Cost Explorer and AWS Pricing backends auto-enable when all
-> three AWS credential variables (`MCP_AWS_ACCESS_KEY_ID`, `MCP_AWS_SECRET_ACCESS_KEY`,
-> `MCP_AWS_REGION`) are set. No separate enable flag is needed.
 
 ## Skills (MCP Resources)
 
