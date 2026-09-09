@@ -22,6 +22,8 @@ repositories:
     url: https://traefik.github.io/charts
   - name: victoria-metrics
     url: https://victoriametrics.github.io/helm-charts
+  - name: opentelemetry
+    url: https://open-telemetry.github.io/opentelemetry-helm-charts
   - name: cert-manager
     url: https://charts.jetstack.io
 {{- if (.Values | get "aws_ebs_csi_driver.enabled" false) }}
@@ -184,6 +186,26 @@ releases:
         showlogs: true
         command: kubectl
         args: ["delete", "-f", "./victoria-logs-single/namespace.yaml"]
+
+  - name: tracing-stack
+    chart: ./tracing-stack
+    namespace: tracing-stack
+    needs:
+      - victoria-metrics-operator/victoria-metrics-operator
+      - victoria-metrics-operator/prometheus-operator-crds
+    values:
+      - tracing-stack/values.common.yaml.gotmpl
+    hooks:
+      - events:
+          - presync
+        showlogs: true
+        command: kubectl
+        args: ["apply", "-f", "./tracing-stack/namespace.yaml"]
+      - events:
+          - postuninstall
+        showlogs: true
+        command: kubectl
+        args: ["delete", "-f", "./tracing-stack/namespace.yaml"]
 
   - name: grafana
     namespace: grafana
